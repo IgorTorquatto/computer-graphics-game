@@ -87,7 +87,7 @@ estáticas (libs) e dinâmicas (bin)
 1. Abra o painel de extensões `Ctrl + Shift + X`;
 2. Instale as extensões [recomendadas](extensions.json);
 3. Caso você esteja no Linux siga as instruções [abaixo](#linux), caso contrário veja a seção ["Outros"](#outros).
-4. Execute o projeto com `F5` (ou em `View > Command Pallet > `).
+4. Execute o projeto com `F5` (ou em `View > Command Pallet > Debug: Start Debugging`). **Você deve ter o gdb instalado!**
 
 > [!WARNING]
 > Por padrão o projeto será construído em modo debug. Você pode fazer uma build release usando a task `F7` (ou em `View > Command Pallet > Tasks: Run Tasks`): selecione `Build and Run [release]`.

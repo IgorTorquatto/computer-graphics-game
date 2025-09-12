@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "ms-vscode.cpptools-extension-pack",
+        "streetsidesoftware.code-spell-checker",
+        "vivaxy.vscode-conventional-commits",
+        "cschlosser.doxdocgen",
+        "bierner.github-markdown-preview",
+        "ajshort.include-autocomplete",
+        "helly25.helly25iwyu",
+        "bierner.markdown-checkbox",
+        "bierner.markdown-preview-github-styles",
+        "gruntfuggly.todo-tree"
+    ]
+}
