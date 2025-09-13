@@ -1,10 +1,10 @@
 #pragma once
+#include "stdlib.h" // size_t
 
 #define MAX_ENTITIES 256
 #define INVALID_ENTITY MAX_ENTITIES
 
 typedef unsigned long EntityId;
-typedef unsigned long size_t;
 
 /* === Components === */
 
@@ -42,12 +42,12 @@ void set_origin(Transform* m, Position at);
 typedef struct {
     size_t vertex_count = 0;
     Position *vertices = nullptr; // lista de vértices
-} Polygon;
+} C_Polygon;
 
 typedef struct {
     Color color{};
     Transform model{};
-    Polygon polygon{};
+    C_Polygon polygon{};
 } Mesh;
 
 // === Component Arrays ===

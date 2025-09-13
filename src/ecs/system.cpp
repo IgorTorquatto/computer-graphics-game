@@ -8,15 +8,21 @@
 #include "component.h"
 #include "system.h"
 
+#include <iostream>
 
 void render_system()
 {
     for (int e = 0; e < MAX_ENTITIES; e++) {
+
         if (entityAlive[e]) {
-            auto [color, model, polygon] = meshes[e];
+			Mesh mesh = meshes[e];
+			Color color = mesh.color;
+			Transform model = mesh.model;
+			C_Polygon polygon = mesh.polygon;
 
             // loads mesh color
             glColor3f(color.r, color.g, color.b);
+
 
             glPushMatrix();
                 // loads model matrix
@@ -34,9 +40,9 @@ void render_system()
 
                 glBegin(GL_TRIANGLES);
                     // loads polygon vertices
-                    for (size_t i = 0; i < polygon.vertex_count; i++) {
-                        auto [x, y, z] = polygon.vertices[i];
-                        glVertex3f(x, y, z);
+                    for (size_t i = 0; i < polygon.vertex_count; ++i) {
+						Position position = polygon.vertices[i];
+                        glVertex3f(position.x, position.y, position.z);
                     }
                 glEnd();
             glPopMatrix();

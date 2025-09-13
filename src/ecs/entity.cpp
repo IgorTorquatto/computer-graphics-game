@@ -86,6 +86,8 @@ void set_color(EntityId e, Color color) {
     meshes[e].color = color;
 }
 
+#include <iostream>
+
 void add_polygon(EntityId e, Position *vertices, size_t count) {
     meshes[e].polygon.vertex_count = count;
 

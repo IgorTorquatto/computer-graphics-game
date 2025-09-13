@@ -18,6 +18,7 @@
     #include <GL/glut.h>
 #endif
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
@@ -68,7 +69,8 @@ int init()
     glMaterialfv(GL_FRONT, GL_SPECULAR,  mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
 
-    if (EntityId e = create_entity(); e != INVALID_ENTITY) {
+    EntityId e = create_entity();
+    if (e != INVALID_ENTITY) {
         set_color(e, Color{1, 1, 0});
         //set_position(e, Position{0, 0, 0});
         const size_t count = 12;
