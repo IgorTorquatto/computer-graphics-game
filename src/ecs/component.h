@@ -50,9 +50,12 @@ typedef struct {
     C_Polygon polygon{};
 } Mesh;
 
-// === Component Arrays ===
-extern Mesh meshes[MAX_ENTITIES];
-// TODO -> Memory Pool
+// === Archetypes ===
+typedef struct {
+    Mesh mesh;
+    Velocity velocity{};
+} GameObject;
 
-// === Entity Management ===
-extern bool entityAlive[MAX_ENTITIES];
+// === Component Arrays ===
+extern Mesh static_meshes[MAX_ENTITIES];
+extern GameObject game_objects[MAX_ENTITIES];

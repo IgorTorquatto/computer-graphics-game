@@ -1,18 +1,48 @@
 #include <math.h> // para sin, cos
 
 #include "component.h"
+#include "../utils/print.h"
+
+// === Entity Management ===
+size_t meshes_count = 0;
 
 EntityId create_entity() {
-    for (size_t i = 0; i < MAX_ENTITIES; i++)
-        if (!entityAlive[i]) {
-            entityAlive[i] = true;
-            return i;
-        }
-    return INVALID_ENTITY; // sem espaço
+    EntityId e = meshes_count;
+    if (++meshes_count == MAX_ENTITIES)
+        return INVALID_ENTITY; // sem espaço
+    return e; // Using default values for the mesh
+}
+
+// Remoção de entidades não é recomendado nesse sistema.
+// A ordem dos elementos é alterada na remoção.
+void remove_entity(EntityId e)
+{
+    print_warning("Remoção de entidades não é recomendado nesse sistema.\n"
+        "\tA ordem dos elementos é alterada na remoção.");
+
+    auto reset_mesh = [](Mesh* m) {
+        m->model = Transform{
+            Position{1, 0, 0},
+            Position{0, 1, 0},
+            Position{0, 0, 1},
+            Position{0, 0, 0}
+        };
+        m->color = Color{1, 1, 1};
+        delete[] m->polygon.vertices;
+        m->polygon = C_Polygon{};
+    };
+    auto override_mesh = [](Mesh* from, Mesh* to) {
+        to->model = from->model;
+        to->color = from->color;
+        to->polygon = from->polygon;
+    };
+
+    reset_mesh(&static_meshes[e]);
+    override_mesh(&static_meshes[e], &static_meshes[--meshes_count]);
 }
 
 void set_position(EntityId e, Position p) {
-    set_origin(&meshes[e].model, p);
+    set_origin(&static_meshes[e].model, p);
 }
 
 void translate(EntityId e, Position p) {
@@ -22,7 +52,7 @@ void translate(EntityId e, Position p) {
         Position{0, 0, 1},
         p
     };
-    meshes[e].model = transform(&meshes[e].model, &t_mat);
+    static_meshes[e].model = transform(&static_meshes[e].model, &t_mat);
 }
 
 void rotate_x(EntityId e, float theta)
@@ -41,7 +71,7 @@ void rotate_x(EntityId e, float theta)
 
         return transform(t, &r);
     };
-    meshes[e].model = rotate(&meshes[e].model, theta);
+    static_meshes[e].model = rotate(&static_meshes[e].model, theta);
 }
 
 
@@ -59,7 +89,7 @@ void rotate_y(EntityId e, float theta)
 	    return transform(t, &r);
     };
 
-    meshes[e].model = rotate(&meshes[e].model, theta);
+    static_meshes[e].model = rotate(&static_meshes[e].model, theta);
 }
 
 
@@ -79,20 +109,18 @@ void rotate_z(EntityId e, float theta)
         return transform(t, &r);
     };
 
-    meshes[e].model = rotate(&meshes[e].model, theta);
+    static_meshes[e].model = rotate(&static_meshes[e].model, theta);
 }
 
 void set_color(EntityId e, Color color) {
-    meshes[e].color = color;
+    static_meshes[e].color = color;
 }
 
-#include <iostream>
-
 void add_polygon(EntityId e, Position *vertices, size_t count) {
-    meshes[e].polygon.vertex_count = count;
+    static_meshes[e].polygon.vertex_count = count;
 
-    delete[] meshes[e].polygon.vertices; // limpa a memória antiga
-    meshes[e].polygon.vertices = vertices;
+    delete[] static_meshes[e].polygon.vertices; // limpa a memória antiga
+    static_meshes[e].polygon.vertices = vertices;
 
     // setter method
     //for (size_t i = 0; i < count; i++)

@@ -1,7 +1,11 @@
 #pragma once
 #include "component.h"
 
+// === Entity Management ===
+extern size_t meshes_count; // Se a ordem for importante, e houver remoção, usar uma técnica de memory pool.
+
 EntityId create_entity();
+void remove_entity(EntityId e);
 
 void set_position(EntityId e, Position position);
 

@@ -4,11 +4,7 @@
 #include <stdbool.h>
 
 // === Component Arrays ===
-Mesh meshes[MAX_ENTITIES];
-
-// === Entity Management ===
-bool entityAlive[MAX_ENTITIES];
-
+Mesh static_meshes[MAX_ENTITIES];
 
 Transform transform(Transform* m, Transform* by)
 {
