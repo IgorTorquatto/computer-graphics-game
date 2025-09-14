@@ -3,15 +3,43 @@
 #include "../utils/print.h"
 #include "test.h"
 
+static EntityId test_object_id = INVALID_ENTITY;
+
+
+void test_input(InputEvent event) {
+    if (event.type != InputType::KEYBOARD)
+        return;
+    switch (event.key) {
+        case 'a':
+            translate(test_object_id, vector_right);
+            break;
+
+        case 'd':
+            translate(test_object_id, vector_left);
+            break;
+
+        case 'w':
+            translate(test_object_id, vector_up);
+            break;
+
+        case 's':
+            translate(test_object_id, vector_down);
+            break;
+
+        default:
+            break;
+    }
+}
+
 
 void create_test_object() {
-    EntityId id = create_game_object();
+    test_object_id = create_game_object();
 
-    if (id == INVALID_ENTITY) {
+    if (test_object_id == INVALID_ENTITY) {
         print_error("Failed to create test object. Out of space.");
         return;
     }
-    EntityId mesh_id = add_mesh(id);
+    EntityId mesh_id = add_mesh(test_object_id);
     set_mesh_color(mesh_id, color_yellow);
     set_rotation_velocity(mesh_id, Velocity{0.0f, -1.0f, 0.0f});
 
@@ -51,6 +79,8 @@ void create_test_object() {
     //translate(mesh_id, Position{0, 0, -5.0f});
     set_position(mesh_id, Position{0, 0, -5.0f});
 
-    rotate_x(id, deg_to_rad(30));
-    rotate_y(id, deg_to_rad(-45));
+    rotate_x(test_object_id, deg_to_rad(30));
+    rotate_y(test_object_id, deg_to_rad(-45));
+
+    bind_input_function(test_object_id, test_input);
 }

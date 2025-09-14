@@ -86,22 +86,18 @@ static void resize(int width, int height)
     glFrustum(-ar, ar, -1.0, 1.0, 2.0, 100.0);
 
     glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity() ;
+    glLoadIdentity();
 }
 
 static void display(void)
 {
-    static double last_time = 0.0f;
     const double elapsed_time = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-    DeltaTime delta = elapsed_time - last_time;
-    last_time = elapsed_time;
-
     const double speed = 90.0f;
     const double a = elapsed_time * speed;
 
-    process_system(delta);
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // TODO -> uses ecs to render these samples
     glColor3d(1,0,0);
 
     glPushMatrix();
@@ -152,11 +148,26 @@ static void display(void)
 }
 
 
+static void idle(void)
+{
+    const double elapsed_time = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+    static double last_time = 0.0f;
+    DeltaTime delta = elapsed_time - last_time;
+    last_time = elapsed_time;
+
+    process_system(delta);
+    glutPostRedisplay();
+}
+
+
 static void key(unsigned char key, int x, int y)
 {
+    const unsigned char esc = 27;
+
+    // TODO -> implement the input system
     switch (key)
     {
-        case 27 :
+        case esc:
         case 'q':
             exit(0);
             break;
@@ -167,32 +178,30 @@ static void key(unsigned char key, int x, int y)
             break;
 
         case '-':
-            if (slices>3 && stacks>3)
-            {
+            if (slices > 3 && stacks > 3) {
                 slices--;
                 stacks--;
             }
+            break;
+
+        default:
+            input_system({key, glutGetModifiers(), {(float)x, (float)y}, InputType::KEYBOARD});
             break;
     }
 
     glutPostRedisplay();
 }
 
-static void idle(void)
-{
-    glutPostRedisplay();
-}
 
 /* Program entry point */
-
 int main(int argc, char *argv[])
 {
     glutInit(&argc, argv);
-    glutInitWindowSize(640,480);
-    glutInitWindowPosition(10,10);
+    glutInitWindowSize(640, 480);
+    glutInitWindowPosition(10, 10);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 
-    glutCreateWindow("GLUT Shapes");
+    glutCreateWindow("ECS Test");
 
     glutReshapeFunc(resize);
 

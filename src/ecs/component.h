@@ -17,8 +17,35 @@ typedef struct {
     float x = 0.0f, y = 0.0f, z = 0.0f;
 } Position;
 
+inline Position sum(Position p, Position q)
+{
+    return Position{p.x + q.x, p.y + q.y, p.z + q.z};
+}
+
+inline Position sub(Position p, Position q)
+{
+    return Position{p.x - q.x, p.y - q.y, p.z - q.z};
+}
+
+inline Position mul(Position p, float scalar)
+{
+    return Position{p.x * scalar, p.y * scalar, p.z * scalar};
+}
+
+inline Position div(Position p, float scalar)
+{
+    return Position{p.x / scalar, p.y / scalar, p.z / scalar};
+}
+
 typedef Position Vector;
 typedef Vector Velocity;
+
+#define vector_zero  Vector{}
+#define vector_one   Vector{1.0f, 1.0f, 1.0f}
+#define vector_up    Vector{0.0f, 1.0f, 0.0f}
+#define vector_down  Vector{0.0f, -1.0f, 0.0f}
+#define vector_right Vector{1.0f, 0.0f, 0.0f}
+#define vector_left  Vector{-1.0f, 0.0f, 0.0f}
 
 typedef struct {
     float r = 1.0f, g = 1.0f, b = 1.0f;
@@ -64,6 +91,7 @@ enum class GeometryType {
     NONE, MESH, SPHERE,
     CUBOID, CUBE, TORUS,
 };
+// TODO: Add text label component
 
 typedef struct {
     EntityId id = INVALID_ENTITY;
@@ -120,7 +148,7 @@ enum class InputType {
 struct InputEvent {
     int key;
     int state;
-    Position position;
+    Position position; // Screen Position
     InputType type;
 };
 

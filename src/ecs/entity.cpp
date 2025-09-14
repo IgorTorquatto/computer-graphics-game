@@ -56,13 +56,44 @@ void set_position(EntityId id, Position p) {
 }
 
 void translate(EntityId id, Position p) {
-    auto t_mat = Transform{
-        Position{1, 0, 0},
-        Position{0, 1, 0},
-        Position{0, 0, 1},
-        p
-    };
-    meshes[id].model = transform(&meshes[id].model, &t_mat);
+
+    EntityId geometry_id = game_objects[id].geometry.id;
+    GeometryType type = game_objects[id].geometry.type;
+
+    switch (type) {
+    case GeometryType::SPHERE:
+        spheres[geometry_id].center = sum(spheres[geometry_id].center, p);
+        break;
+
+    case GeometryType::CUBE:
+        cubes[geometry_id].center = sum(cubes[geometry_id].center, p);
+        break;
+
+    default: {
+        auto t_mat = Transform{
+            Position{1, 0, 0},
+            Position{0, 1, 0},
+            Position{0, 0, 1},
+            p
+        };
+        switch (type) {
+        case GeometryType::MESH:
+            meshes[geometry_id].model = transform(&meshes[geometry_id].model, &t_mat);
+            break;
+
+        case GeometryType::CUBOID:
+            cuboids[geometry_id].model = transform(&cuboids[geometry_id].model, &t_mat);
+            break;
+
+        case GeometryType::TORUS:
+            toruses[geometry_id].model = transform(&toruses[geometry_id].model, &t_mat);
+            break;
+
+        default:
+            break;
+        }
+    } break;
+    }
 }
 
 void rotate_x(EntityId id, Angle theta)
