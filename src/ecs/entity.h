@@ -2,18 +2,36 @@
 #include "component.h"
 
 // === Entity Management ===
-extern size_t meshes_count; // Se a ordem for importante, e houver remoção, usar uma técnica de memory pool.
+extern size_t game_objects_count;
+extern size_t meshes_count;
+extern size_t spheres_count;
+extern size_t cuboid_count;
+extern size_t cube_count;
+extern size_t torus_count;
+extern size_t polygon_count;
 
-EntityId create_entity();
-void remove_entity(EntityId e);
+EntityId create_game_object();
 
-void set_position(EntityId e, Position position);
+void remove_entity(EntityId);
 
-void set_color(EntityId e, Color color);
+void set_position(EntityId, Position);
+void set_mesh_color(EntityId, Color);
+void set_velocity(EntityId, Velocity);
+void set_rotation_velocity(EntityId, Velocity);
 
-void translate(EntityId e, Position p);
-void rotate_x(EntityId e, float theta);
-void rotate_y(EntityId e, float theta);
-void rotate_z(EntityId e, float theta);
+void translate(EntityId, Position);
+void rotate_x(EntityId, Angle theta);
+void rotate_y(EntityId, Angle theta);
+void rotate_z(EntityId, Angle theta);
 
-void add_polygon(EntityId e, Position *vertices, size_t count);
+typedef Position* Vertices;
+
+EntityId add_mesh(EntityId);
+EntityId add_sphere(EntityId);
+EntityId add_cuboid(EntityId);
+EntityId add_cube(EntityId);
+EntityId add_torus(EntityId);
+void add_polygon(EntityId, Vertices, size_t);
+
+void bind_process_function(EntityId, ProcessFunction);
+void bind_input_function(EntityId, InputFunction);

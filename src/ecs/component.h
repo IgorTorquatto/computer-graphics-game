@@ -1,10 +1,15 @@
 #pragma once
 #include "stdlib.h" // size_t
+#include "math.h"
+
+#define rad_to_deg(radians) ((float)(radians) * 180 / M_PI)
+#define deg_to_rad(degrees) ((float)(degrees) * M_PI / 180)
 
 #define MAX_ENTITIES 256
 #define INVALID_ENTITY MAX_ENTITIES
 
 typedef unsigned long EntityId;
+typedef float Angle;
 
 /* === Components === */
 
@@ -18,6 +23,15 @@ typedef Vector Velocity;
 typedef struct {
     float r = 1.0f, g = 1.0f, b = 1.0f;
 } Color;
+
+#define color_black   Color{}
+#define color_white   Color{1.0f, 1.0f, 1.0f}
+#define color_red     Color{1.0f, 0.0f, 0.0f}
+#define color_green   Color{0.0f, 1.0f, 0.0f}
+#define color_blue    Color{0.0f, 0.0f, 1.0f}
+#define color_magenta Color{1.0f, 0.0f, 1.0f}
+#define color_yellow  Color{1.0f, 1.0f, 0.0f}
+#define color_cyan    Color{0.0f, 1.0f, 1.0f}
 
 // Matriz de transformação 4x4 [coordenadas homogêneas ocultas]
 typedef struct {
@@ -44,18 +58,90 @@ typedef struct {
     Position *vertices = nullptr; // lista de vértices
 } C_Polygon;
 
+
+// === Geometry ===
+enum class GeometryType {
+    NONE, MESH, SPHERE,
+    CUBOID, CUBE, TORUS,
+};
+
+typedef struct {
+    EntityId id = INVALID_ENTITY;
+    GeometryType type = GeometryType::NONE;
+} Geometry;
+
 typedef struct {
     Color color{};
     Transform model{};
     C_Polygon polygon{};
 } Mesh;
 
+typedef struct {
+    float radius;
+    Position center;
+    Color color{};
+    unsigned slices = 32;
+    unsigned stacks = 32;
+    bool isSolid = true;
+} Sphere;
+
+typedef struct {
+    Position center;
+    Transform model; // Defines the dimensions + rotation. Scale from unity cube
+    Color color{};
+    bool isSolid = true;
+} Cuboid;
+
+typedef struct {
+    Position center;
+    Vector dimensions;
+    Color color{};
+    bool isSolid = true;
+} Cube;
+
+typedef struct {
+    Position center;
+    float innerRadius;
+    float outerRadius;
+    Transform model;
+    Color color{};
+    unsigned slices = 32;
+    unsigned stacks = 32;
+    bool isSolid = true;
+} Torus;
+
+
+enum class InputType {
+    KEYBOARD,
+    SPECIAL,
+    MOUSE,
+};
+
+struct InputEvent {
+    int key;
+    int state;
+    Position position;
+    InputType type;
+};
+
+typedef float DeltaTime;
+typedef void(* ProcessFunction)(DeltaTime);
+typedef void(* InputFunction)(InputEvent);
+
 // === Archetypes ===
 typedef struct {
-    Mesh mesh;
+    Geometry geometry{};
     Velocity velocity{};
+    Velocity rotationVelocity{};
+    ProcessFunction process = nullptr;
+    InputFunction input = nullptr;
 } GameObject;
 
 // === Component Arrays ===
-extern Mesh static_meshes[MAX_ENTITIES];
+extern Mesh meshes[MAX_ENTITIES];
+extern Sphere spheres[MAX_ENTITIES];
+extern Cuboid cuboids[MAX_ENTITIES];
+extern Cube cubes[MAX_ENTITIES];
+extern Torus toruses[MAX_ENTITIES];
+
 extern GameObject game_objects[MAX_ENTITIES];

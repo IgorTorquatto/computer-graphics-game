@@ -20,20 +20,19 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
+#include <time.h>
 
 // === ECS ===
 #include "ecs/entity.h"
 #include "ecs/component.h"
 #include "ecs/system.h"
 
+// === Game Objects ===
+#include "game_objects/test.h"
+
 
 static int slices = 16;
 static int stacks = 16;
-
-#define rad_to_deg(radians) ((float)(radians) * 180 / M_PI)
-#define deg_to_rad(degrees) ((float)(degrees) * M_PI / 180)
-
 
 int init()
 {
@@ -69,48 +68,7 @@ int init()
     glMaterialfv(GL_FRONT, GL_SPECULAR,  mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
 
-    EntityId e = create_entity();
-    if (e != INVALID_ENTITY) {
-        set_color(e, Color{1, 1, 0});
-        //set_position(e, Position{0, 0, 0});
-        const size_t count = 12;
-        Position *vertices = new Position[count * 3];
-        Position v[8] = {
-            {-0.5f, -0.5f, -0.5f}, // 0
-            { 0.5f, -0.5f, -0.5f}, // 1
-            { 0.5f,  0.5f, -0.5f}, // 2
-            {-0.5f,  0.5f, -0.5f}, // 3
-            {-0.5f, -0.5f,  0.5f}, // 4
-            { 0.5f, -0.5f,  0.5f}, // 5
-            { 0.5f,  0.5f,  0.5f}, // 6
-            {-0.5f,  0.5f,  0.5f}  // 7
-        };
-        int faces[12][3] = {
-            // fundo (z = -0.5)
-            {0, 1, 2}, {0, 2, 3},
-            // topo (z = +0.5)
-            {4, 6, 5}, {4, 7, 6},
-            // frente (y = +0.5)
-            {3, 2, 6}, {3, 6, 7},
-            // trás (y = -0.5)
-            {0, 5, 1}, {0, 4, 5},
-            // direita (x = +0.5)
-            {1, 5, 6}, {1, 6, 2},
-            // esquerda (x = -0.5)
-            {0, 3, 7}, {0, 7, 4}
-        };
-        for (size_t i = 0; i < count; i++) {
-            vertices[i*3 + 0] = v[faces[i][0]];
-            vertices[i*3 + 1] = v[faces[i][1]];
-            vertices[i*3 + 2] = v[faces[i][2]];
-        }
-        add_polygon(e, vertices, count * 3);
-        //translate(e, Position{0, 0, -5.0f});
-        set_position(e, Position{0, 0, -5.0f});
-
-        rotate_x(e, deg_to_rad(30));
-        rotate_y(e, deg_to_rad(-45));
-    }
+    create_test_object();
 
     return EXIT_SUCCESS;
 }
@@ -133,8 +91,15 @@ static void resize(int width, int height)
 
 static void display(void)
 {
-    const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
-    const double a = t*90.0;
+    static double last_time = 0.0f;
+    const double elapsed_time = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
+    DeltaTime delta = elapsed_time - last_time;
+    last_time = elapsed_time;
+
+    const double speed = 90.0f;
+    const double a = elapsed_time * speed;
+
+    process_system(delta);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor3d(1,0,0);
