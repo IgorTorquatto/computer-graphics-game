@@ -11,6 +11,8 @@ extern size_t torus_count;
 extern size_t polygons_count;
 extern size_t labels_count;
 
+typedef Position* Vertices;
+
 EntityId create_game_object();
 
 EntityId create_label(char *text, Position p);
@@ -29,8 +31,6 @@ void translate(EntityId, Position);
 void rotate_x(EntityId, Angle theta);
 void rotate_y(EntityId, Angle theta);
 void rotate_z(EntityId, Angle theta);
-
-typedef Position* Vertices;
 
 GeometryId add_mesh(EntityId);
 GeometryId add_sphere(EntityId, float, Position);
