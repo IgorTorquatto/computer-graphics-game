@@ -13,6 +13,7 @@ size_t cuboids_count = 0;
 size_t cubes_count = 0;
 size_t toruses_count = 0;
 size_t polygons_count = 0;
+size_t labels_count = 0;
 
 
 EntityId create_game_object()
@@ -21,6 +22,15 @@ EntityId create_game_object()
     if (++game_objects_count == MAX_ENTITIES)
         return INVALID_ENTITY; // sem espaço
     return id; // Empty geometry
+}
+
+EntityId create_label(char *text, Position p)
+{
+    EntityId id = labels_count;
+    if (++labels_count == MAX_ENTITIES)
+        return INVALID_ENTITY; // sem espaço
+    labels[id] = {text, p};
+	return id;
 }
 
 // Remoção de entidades não é recomendado nesse sistema.
@@ -50,6 +60,17 @@ void remove_entity(EntityId id)
     reset_mesh(&meshes[id]);
     override_mesh(&meshes[id], &meshes[--meshes_count]);
 }
+
+void set_label_text(EntityId id, char *text)
+{
+    labels[id].text = text;
+}
+
+void set_label_color(EntityId id, Color color)
+{
+    labels[id].color = color;
+}
+
 
 void set_position(EntityId id, Position p) {
     set_origin(&meshes[id].model, p);

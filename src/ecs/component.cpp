@@ -5,6 +5,7 @@
 
 // === Component Arrays ===
 
+Label labels[MAX_ENTITIES];
 // Geometry
 Mesh meshes[MAX_ENTITIES];
 Sphere spheres[MAX_ENTITIES];
@@ -13,6 +14,8 @@ Cube cubes[MAX_ENTITIES];
 Torus toruses[MAX_ENTITIES];
 // Archetypes
 GameObject game_objects[MAX_ENTITIES];
+
+float fps = 0.0f;
 
 
 Transform transform(Transform* m, Transform* by)

@@ -8,7 +8,9 @@
 #include "component.h"
 #include "system.h"
 
-#include <iostream>
+#include "stdio.h"
+#include "string.h"
+
 
 void render_system() {
 	auto render_mesh = [](Mesh &mesh) {
@@ -120,10 +122,46 @@ void render_system() {
                 break;
         }
     };
+    auto render_text = [](Label label) {
+        char *text = label.text;
+        Position at = label.position;
+        Color color = label.color;
 
-    for (int e = 0; e < game_objects_count; e++) {
-        render_geometry(game_objects[e].geometry);
-    }
+        glColor3f(color.r, color.g, color.b);
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+            glLoadIdentity();
+            // projection em pixels: (0,0)=esq/inf, (w,h)=dir/top
+            int w = glutGet(GLUT_WINDOW_WIDTH);
+            int h = glutGet(GLUT_WINDOW_HEIGHT);
+            glOrtho(0, w, 0, h, -1, 1);
+
+            glMatrixMode(GL_MODELVIEW);
+            glPushMatrix();
+                glLoadIdentity();
+
+                glDisable(GL_LIGHTING);
+                glDisable(GL_DEPTH_TEST);
+
+                // glRasterPos usa o sistema atual (x, y) em pixels
+                glRasterPos2f(at.x, at.y);
+
+                for (const char *c = text; *c; c++)
+                    glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
+
+                glEnable(GL_DEPTH_TEST);
+                glEnable(GL_LIGHTING);
+            glPopMatrix();
+            glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+    };
+
+    for (EntityId id = 0; id < game_objects_count; ++id)
+        render_geometry(game_objects[id].geometry);
+
+    for (EntityId id = 0; id < labels_count; ++id)
+        render_text(labels[id]);
 }
 
 
@@ -137,8 +175,19 @@ void process_system(DeltaTime delta)
         return Vector{a.x * scalar, a.y * scalar, a.z * scalar};
     };
 
-    // TODO -> Render text using label
-    printf("△t %f\n", delta);
+    // Fill text buffer with approximate delta time
+    // Assumes delta is always less than 10sec
+    char template_string[] = "△t: 0000ms\t" "fps:00000"; // [23]
+    static char* text = new char[sizeof(template_string) / sizeof(char)]; // destroyed when program ends
+    static bool first = true;
+    static EntityId label_id = create_label(text, {15, 15, 0});
+    if (first) {
+        strcpy(text, template_string);
+        //set_label_text(label_id, text);
+        set_label_color(label_id, color_black);
+        first = false;
+    }
+    snprintf(text, (sizeof(template_string) / sizeof(char)), "△t: %4.0fms\t" "fps:%5.0f", delta * ms, fps);
 
     // Process velocity
     for (int e = 0; e < game_objects_count; e++)

@@ -8,11 +8,17 @@ extern size_t spheres_count;
 extern size_t cuboid_count;
 extern size_t cube_count;
 extern size_t torus_count;
-extern size_t polygon_count;
+extern size_t polygons_count;
+extern size_t labels_count;
 
 EntityId create_game_object();
 
+EntityId create_label(char *text, Position p);
+
 void remove_entity(EntityId);
+
+void set_label_text(EntityId, char*);
+void set_label_color(EntityId, Color);
 
 void set_position(EntityId, Position);
 void set_mesh_color(EntityId, Color);

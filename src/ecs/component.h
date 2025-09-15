@@ -5,6 +5,8 @@
 #define rad_to_deg(radians) ((float)(radians) * 180 / M_PI)
 #define deg_to_rad(degrees) ((float)(degrees) * M_PI / 180)
 
+#define ms (1e3) // milliseconds
+
 #define MAX_ENTITIES 256
 #define INVALID_ENTITY MAX_ENTITIES
 
@@ -51,7 +53,7 @@ typedef struct {
     float r = 1.0f, g = 1.0f, b = 1.0f;
 } Color;
 
-#define color_black   Color{}
+#define color_black   Color{0.0f, 0.0f, 0.0f}
 #define color_white   Color{1.0f, 1.0f, 1.0f}
 #define color_red     Color{1.0f, 0.0f, 0.0f}
 #define color_green   Color{0.0f, 1.0f, 0.0f}
@@ -85,6 +87,11 @@ typedef struct {
     Position *vertices = nullptr; // lista de vértices
 } C_Polygon;
 
+typedef struct {
+    char* text = nullptr;
+    Position position{};
+    Color color{};
+} Label;
 
 // === Geometry ===
 enum class GeometryType {
@@ -166,6 +173,8 @@ typedef struct {
 } GameObject;
 
 // === Component Arrays ===
+extern Label labels[MAX_ENTITIES];
+
 extern Mesh meshes[MAX_ENTITIES];
 extern Sphere spheres[MAX_ENTITIES];
 extern Cuboid cuboids[MAX_ENTITIES];
@@ -173,3 +182,5 @@ extern Cube cubes[MAX_ENTITIES];
 extern Torus toruses[MAX_ENTITIES];
 
 extern GameObject game_objects[MAX_ENTITIES];
+
+extern float fps; // measured in main

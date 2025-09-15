@@ -34,6 +34,21 @@
 static int slices = 16;
 static int stacks = 16;
 
+
+void calculate_frames_per_second() {
+    static int frameCount = 0;
+    static int previousTime = 0;
+    frameCount++;
+    int currentTime = glutGet(GLUT_ELAPSED_TIME); // milliseconds
+    int timeInterval = currentTime - previousTime;
+
+    if (timeInterval > 1000) { // update every second
+        fps = frameCount / (timeInterval / 1000.0f);
+        previousTime = currentTime;
+        frameCount = 0;
+    }
+}
+
 int init()
 {
     const GLfloat light_ambient[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -145,6 +160,8 @@ static void display(void)
     render_system();
 
     glutSwapBuffers();
+
+    calculate_frames_per_second();
 }
 
 
@@ -164,7 +181,6 @@ static void key(unsigned char key, int x, int y)
 {
     const unsigned char esc = 27;
 
-    // TODO -> implement the input system
     switch (key)
     {
         case esc:
