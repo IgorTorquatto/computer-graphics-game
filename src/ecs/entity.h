@@ -15,13 +15,13 @@ EntityId create_game_object();
 
 EntityId create_label(char *text, Position p);
 
-void remove_entity(EntityId);
+void remove_game_object(EntityId);
 
 void set_label_text(EntityId, char*);
 void set_label_color(EntityId, Color);
 
 void set_position(EntityId, Position);
-void set_mesh_color(EntityId, Color);
+void set_color(EntityId, Color);
 void set_velocity(EntityId, Velocity);
 void set_rotation_velocity(EntityId, Velocity);
 
@@ -32,12 +32,28 @@ void rotate_z(EntityId, Angle theta);
 
 typedef Position* Vertices;
 
-EntityId add_mesh(EntityId);
-EntityId add_sphere(EntityId);
-EntityId add_cuboid(EntityId);
-EntityId add_cube(EntityId);
-EntityId add_torus(EntityId);
-void add_polygon(EntityId, Vertices, size_t);
+GeometryId add_mesh(EntityId);
+GeometryId add_sphere(EntityId, float, Position);
+GeometryId add_cuboid(EntityId, Position);
+GeometryId add_cube(EntityId);
+GeometryId add_torus(EntityId, float, float, Position);
+
+inline GeometryType get_geometry_type(GeometryId id) {
+    return game_objects[id].geometry.type;
+}
+
+// References the data directly.
+inline Sphere& get_sphere_ref(GeometryId id) {
+    return spheres[id];
+}
+
+// References the data directly.
+inline Torus& get_torus_ref(GeometryId id) {
+    return toruses[id];
+}
+
+// Adds an array of polygons to a mesh.
+void add_polygon(GeometryId, Vertices, size_t);
 
 void bind_process_function(EntityId, ProcessFunction);
 void bind_input_function(EntityId, InputFunction);

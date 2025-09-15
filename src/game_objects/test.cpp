@@ -40,8 +40,8 @@ void create_test_object() {
         return;
     }
     EntityId mesh_id = add_mesh(test_object_id);
-    set_mesh_color(mesh_id, color_yellow);
-    set_rotation_velocity(mesh_id, Velocity{0.0f, -1.0f, 0.0f});
+    set_color(test_object_id, color_yellow);
+    set_rotation_velocity(test_object_id, Velocity{0.0f, 1.0f, 0.0f});
 
     //set_position(mesh_id, Position{0, 0, 0});
     const size_t count = 12;
@@ -76,11 +76,11 @@ void create_test_object() {
         vertices[i*3 + 2] = v[faces[i][2]];
     }
     add_polygon(mesh_id, vertices, count * 3);
-    //translate(mesh_id, Position{0, 0, -5.0f});
-    set_position(mesh_id, Position{0, 0, -5.0f});
+    translate(test_object_id, Position{0, 0, -5.0f});
+    //set_position(test_object_id, Position{0, 0, -5.0f});
 
-    rotate_x(test_object_id, deg_to_rad(30));
-    rotate_y(test_object_id, deg_to_rad(-45));
+    rotate_x(test_object_id, deg_to_rad(-30));
+    rotate_y(test_object_id, deg_to_rad(45));
 
     bind_input_function(test_object_id, test_input);
 }

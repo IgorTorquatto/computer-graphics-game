@@ -10,7 +10,8 @@
 #define MAX_ENTITIES 256
 #define INVALID_ENTITY MAX_ENTITIES
 
-typedef unsigned long EntityId;
+typedef unsigned long EntityId; // Used for Game Objects and other components
+typedef EntityId GeometryId; // Entities of type Geometry
 typedef float Angle;
 
 /* === Components === */
@@ -42,6 +43,7 @@ inline Position div(Position p, float scalar)
 typedef Position Vector;
 typedef Vector Velocity;
 
+// === Vector Constants ===
 #define vector_zero  Vector{}
 #define vector_one   Vector{1.0f, 1.0f, 1.0f}
 #define vector_up    Vector{0.0f, 1.0f, 0.0f}
@@ -53,6 +55,7 @@ typedef struct {
     float r = 1.0f, g = 1.0f, b = 1.0f;
 } Color;
 
+// === Color Constants ===
 #define color_black   Color{0.0f, 0.0f, 0.0f}
 #define color_white   Color{1.0f, 1.0f, 1.0f}
 #define color_red     Color{1.0f, 0.0f, 0.0f}
@@ -72,26 +75,39 @@ typedef struct {
     }; // default to identity
 } Transform;
 
-// Aliases para nomear cada vetor-coluna da matriz.
+// === Aliases para nomear cada vetor-coluna da matriz. ===
 // Ex.: model.x_axis = models.columns[0], model.origin = model.columns[3]
 #define x_axis columns[0]
 #define y_axis columns[1]
 #define z_axis columns[2]
 #define origin columns[3]
 
-Transform transform(Transform* by, Transform* m); // Matrix transformation 3D
-void set_origin(Transform* m, Position at);
+// Type conversion macros
 
-typedef struct {
-    size_t vertex_count = 0;
-    Position *vertices = nullptr; // lista de vértices
-} C_Polygon;
+// converts Transform to glMatrix
+#define to_GLfloat_matrix(m) { \
+    model.x_axis.x, model.x_axis.y, model.x_axis.z, 0.0f, model.y_axis.x, \
+    model.y_axis.y, model.y_axis.z, 0.0f, model.z_axis.x, model.z_axis.y, \
+    model.z_axis.z, 0.0f, model.origin.x, model.origin.y, model.origin.z, 1.0f \
+}
 
 typedef struct {
     char* text = nullptr;
     Position position{};
     Color color{};
 } Label;
+
+//#region === Geometry primitives ===
+#pragma region // TODO -> Check if it is available in code blocks Mingw
+    Transform transform(Transform* by, Transform* m); // Matrix transformation 3D
+    void set_origin(Transform* m, Position at);
+
+    typedef struct {
+        size_t vertices_count = 0;
+        Position *vertices = nullptr; // lista de vértices
+    } C_Polygon;
+#pragma endregion
+//#endregion
 
 // === Geometry ===
 enum class GeometryType {
@@ -103,11 +119,11 @@ enum class GeometryType {
 typedef struct {
     EntityId id = INVALID_ENTITY;
     GeometryType type = GeometryType::NONE;
+    Transform model; // Matriz de transformação 4x4
 } Geometry;
 
 typedef struct {
     Color color{};
-    Transform model{};
     C_Polygon polygon{};
 } Mesh;
 
@@ -121,8 +137,9 @@ typedef struct {
 } Sphere;
 
 typedef struct {
+    // The dimensions + rotation, and scale are determined from unity
+    // cube using the `Geometry` `model`'s `Transform` matrix.
     Position center;
-    Transform model; // Defines the dimensions + rotation. Scale from unity cube
     Color color{};
     bool isSolid = true;
 } Cuboid;
@@ -138,7 +155,6 @@ typedef struct {
     Position center;
     float innerRadius;
     float outerRadius;
-    Transform model;
     Color color{};
     unsigned slices = 32;
     unsigned stacks = 32;

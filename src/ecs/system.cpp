@@ -13,9 +13,8 @@
 
 
 void render_system() {
-	auto render_mesh = [](Mesh &mesh) {
+	auto render_mesh = [](const Mesh& mesh, const Transform& model) {
         Color color = mesh.color;
-        Transform model = mesh.model;
         C_Polygon polygon = mesh.polygon;
 
         // loads mesh color
@@ -25,65 +24,76 @@ void render_system() {
             // loads model matrix
             // glMatrixMode(GL_MODELVIEW);
             // glLoadIdentity(); // reset
-            float m[16] = {// converts Transform to glMatrix
-                model.x_axis.x, model.x_axis.y, model.x_axis.z, 0.0f, model.y_axis.x,
-                model.y_axis.y, model.y_axis.z, 0.0f, model.z_axis.x, model.z_axis.y,
-                model.z_axis.z, 0.0f, model.origin.x, model.origin.y, model.origin.z, 1.0f};
-            // glLoadMatrixf(m);
+            float m[16] = to_GLfloat_matrix(model);
             glMultMatrixf(m); // multiplica pela matriz do objeto
 
             glBegin(GL_TRIANGLES);
                 // loads polygon vertices
-                for (size_t i = 0; i < polygon.vertex_count; ++i) {
+                for (size_t i = 0; i < polygon.vertices_count; ++i) {
                     Position position = polygon.vertices[i];
                     glVertex3f(position.x, position.y, position.z);
                 }
             glEnd();
         glPopMatrix();
     };
-    auto render_sphere = [](Sphere &sphere) {
+    auto render_sphere = [](const Sphere& sphere, const Transform& model) {
         Color color = sphere.color;
         Position position = sphere.center;
 
         glColor3f(color.r, color.g, color.b);
+        glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
             glTranslatef(position.x, position.y, position.z);
+
+            float m[16] = to_GLfloat_matrix(model);
+            glMultMatrixf(m);
+
             if (sphere.isSolid)
                 glutSolidSphere(sphere.radius, sphere.slices, sphere.stacks);
             else
                 glutWireSphere(sphere.radius, sphere.slices, sphere.stacks);
         glPopMatrix();
     };
-    auto render_cuboid = [](Cuboid &cuboid) {
+    auto render_cuboid = [](const Cuboid& cuboid, const Transform& model) {
         Color color = cuboid.color;
         Position position = cuboid.center;
 
         glColor3f(color.r, color.g, color.b);
+        glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
-            glLoadMatrixf(&cuboid.model.columns[0].x);
+            // primeiro leva o objeto até a posição no mundo
             glTranslatef(position.x, position.y, position.z);
+            // depois aplica rotações/escala
+            float m[16] = to_GLfloat_matrix(model);
+            glMultMatrixf(m);
+
             if (cuboid.isSolid)
                 glutSolidCube(1);
             else
                 glutWireCube(1);
         glPopMatrix();
     };
-    auto render_cube = [](Cube &cube) {
+    auto render_cube = [](const Cube& cube, const Transform& model) {
         Color color = cube.color;
         Vector dimensions = cube.dimensions;
         Position position = cube.center;
 
         glColor3f(color.r, color.g, color.b);
+        glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
             glScalef(dimensions.x, dimensions.y, dimensions.z);
-            glTranslated(position.x, position.y, position.z);
+
+            glTranslatef(position.x, position.y, position.z);
+            float m[16] = to_GLfloat_matrix(model);
+            glMultMatrixf(m);
+
             if (cube.isSolid)
                 glutSolidCube(1);
             else
                 glutWireCube(1);
         glPopMatrix();
     };
-    auto render_torus = [](Torus &torus) {
+    auto render_torus = [](const Torus& torus, const Transform& model) {
         Color color = torus.color;
         Position position = torus.center;
         float outer_radius = torus.outerRadius;
@@ -91,9 +101,12 @@ void render_system() {
 
         glColor3f(color.r, color.g, color.b);
 
+        glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
-            glLoadMatrixf(&torus.model.columns[0].x);
             glTranslatef(position.x, position.y, position.z);
+            float m[16] = to_GLfloat_matrix(model);
+            glMultMatrixf(m);
+
             if (torus.isSolid)
                 glutSolidTorus(inner_radius, outer_radius, torus.slices, torus.stacks);
             else
@@ -104,19 +117,19 @@ void render_system() {
     auto render_geometry = [&](Geometry geometry) {
         switch (geometry.type) {
             case GeometryType::MESH:
-                render_mesh(meshes[geometry.id]);
+                render_mesh(meshes[geometry.id], geometry.model);
                 break;
             case GeometryType::SPHERE:
-                render_sphere(spheres[geometry.id]);
+                render_sphere(spheres[geometry.id], geometry.model);
                 break;
             case GeometryType::CUBOID:
-                render_cuboid(cuboids[geometry.id]);
+                render_cuboid(cuboids[geometry.id], geometry.model);
                 break;
             case GeometryType::CUBE:
-                render_cube(cubes[geometry.id]);
+                render_cube(cubes[geometry.id], geometry.model);
                 break;
             case GeometryType::TORUS:
-                render_torus(toruses[geometry.id]);
+                render_torus(toruses[geometry.id], geometry.model);
                 break;
             default:
                 break;

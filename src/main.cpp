@@ -18,6 +18,7 @@
     #include <GL/glut.h>
 #endif
 
+#include <algorithm> // std::fill
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -33,6 +34,31 @@
 
 static int slices = 16;
 static int stacks = 16;
+static EntityId geometry_samples[6];
+// TODO -> Cone component
+
+
+void update_geometry_slices_and_stacks() {
+    for (EntityId id : geometry_samples) {
+        if (id == INVALID_ENTITY)
+            continue;
+        GeometryId geometry_id = game_objects[id].geometry.id;
+        switch (get_geometry_type(id)) {
+            case GeometryType::SPHERE:
+                get_sphere_ref(geometry_id).slices = slices;
+                get_sphere_ref(geometry_id).stacks = stacks;
+                break;
+
+            case GeometryType::TORUS:
+                get_torus_ref(geometry_id).slices = slices;
+                get_torus_ref(geometry_id).stacks = stacks;
+                break;
+
+            default:
+                break;
+        }
+    }
+}
 
 
 void calculate_frames_per_second() {
@@ -83,6 +109,29 @@ int init()
     glMaterialfv(GL_FRONT, GL_SPECULAR,  mat_specular);
     glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
 
+    // Initialize game objects to "empty"
+    std::fill(geometry_samples, geometry_samples + sizeof(geometry_samples) / sizeof(EntityId), INVALID_ENTITY);
+
+    const double speed = 1.5f;
+
+    EntityId sphere_object = create_game_object();
+    GeometryId sphere = add_sphere(sphere_object, 1.0f, Position{-2.4f, 1.2f, -6.0f});
+    rotate_x(sphere_object, deg_to_rad(60));
+    set_color(sphere_object, color_red);
+    set_rotation_velocity(sphere_object, Velocity{0.0f, 0.0f, speed});
+    get_sphere_ref(sphere).slices = slices;
+    get_sphere_ref(sphere).stacks = stacks;
+    geometry_samples[0] = sphere_object;
+
+    EntityId torus_object = create_game_object();
+    GeometryId torus = add_torus(torus_object, 0.2f, 0.8f, Position{2.4f, 1.2f, -6.0f});
+    rotate_x(torus_object, deg_to_rad(60));
+    set_color(torus_object, color_red);
+    set_rotation_velocity(torus_object, Velocity{0.0f, 0.0f, speed});
+    get_torus_ref(torus).slices = slices;
+    get_torus_ref(torus).stacks = stacks;
+    geometry_samples[1] = torus_object;
+
     create_test_object();
 
     return EXIT_SUCCESS;
@@ -115,12 +164,13 @@ static void display(void)
     // TODO -> uses ecs to render these samples
     glColor3d(1,0,0);
 
-    glPushMatrix();
-        glTranslated(-2.4,1.2,-6);
-        glRotated(60,1,0,0);
-        glRotated(a,0,0,1);
-        glutSolidSphere(1,slices,stacks);
-    glPopMatrix();
+    // old sample code
+    // glPushMatrix();
+    //     glTranslated(-2.4,1.2,-6);
+    //     glRotated(60,1,0,0);
+    //     glRotated(a,0,0,1);
+    //     glutSolidSphere(1,slices,stacks);
+    // glPopMatrix();
 
     glPushMatrix();
         glTranslated(0,1.2,-6);
@@ -129,12 +179,12 @@ static void display(void)
         glutSolidCone(1,1,slices,stacks);
     glPopMatrix();
 
-    glPushMatrix();
-        glTranslated(2.4,1.2,-6);
-        glRotated(60,1,0,0);
-        glRotated(a,0,0,1);
-        glutSolidTorus(0.2,0.8,slices,stacks);
-    glPopMatrix();
+    // glPushMatrix();
+    //     glTranslated(2.4,1.2,-6);
+    //     glRotated(60,1,0,0);
+    //     glRotated(a,0,0,1);
+    //     glutSolidTorus(0.2,0.8,slices,stacks);
+    // glPopMatrix();
 
     glPushMatrix();
         glTranslated(-2.4,-1.2,-6);
@@ -188,15 +238,17 @@ static void key(unsigned char key, int x, int y)
             exit(0);
             break;
 
-        case '+':
+        case '+': {
             slices++;
             stacks++;
-            break;
+            update_geometry_slices_and_stacks();
+        } break;
 
         case '-':
             if (slices > 3 && stacks > 3) {
                 slices--;
                 stacks--;
+                update_geometry_slices_and_stacks();
             }
             break;
 
