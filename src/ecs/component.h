@@ -1,6 +1,9 @@
 #pragma once
 #include "stdlib.h" // size_t
-#include "math.h"
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 #define rad_to_deg(radians) ((float)(radians) * 180 / M_PI)
 #define deg_to_rad(degrees) ((float)(degrees) * M_PI / 180)
