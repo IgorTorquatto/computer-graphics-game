@@ -13,6 +13,8 @@ Federal do Cariri (UFCA).
     - [Linux](#linux)
     - [Outros](#objetivos)
 
+> [Divisão de tarefas](./TODO.md)
+
 ----
 
 ## Objetivos
