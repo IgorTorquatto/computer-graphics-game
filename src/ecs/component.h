@@ -15,8 +15,6 @@
     typedef float Angle;
 
     typedef float DeltaTime;
-    typedef void(* ProcessFunction)(DeltaTime);
-    typedef void(* InputFunction)(InputEvent);
 #pragma endregion
 
 #define MAX_ENTITIES 256
@@ -183,6 +181,9 @@ struct InputEvent {
     Position position; // Screen Position
     InputType type;
 };
+
+typedef void(* ProcessFunction)(DeltaTime);
+typedef void(* InputFunction)(InputEvent);
 
 #pragma region Archetypes
     typedef struct {

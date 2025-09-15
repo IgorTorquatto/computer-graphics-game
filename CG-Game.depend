@@ -359,7 +359,7 @@
 1512594589 c:\mingw\include\math.h
 	<_mingw.h>
 
-1757969062 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\component.h
+1757975875 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\component.h
 	"stdlib.h"
 
 1757968780 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\component.cpp
@@ -383,7 +383,7 @@
 	"stdio.h"
 	"string.h"
 
-1757968780 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\entity.h
+1757975610 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\entity.h
 	"component.h"
 
 1757968780 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\system.h
@@ -399,4 +399,9 @@
 	<stdio.h>
 	<stdarg.h>
 	<windows.h>
+
+1757969064 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\game_objects\test.cpp
+	"../ecs/entity.h"
+	"../utils/print.h"
+	"test.h"
 
