@@ -57,7 +57,7 @@ void spawnObstacle() {
             obsPool[i].lane = rand()%3;
             obsPool[i].x = LANE_X(obsPool[i].lane);
             obsPool[i].y = 0;
-            obsPool[i].z = 40.0f + (rand()%20); // spawn ahead
+            obsPool[i].z = 40.0f + (rand()%20);
             obsPool[i].w = 1.0f; obsPool[i].h = 2.2f; obsPool[i].d = 1.0f;
             return;
         }
@@ -73,44 +73,36 @@ int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
 }
 
 void update(float dt) {
-    if(gstate != STATE_PLAY) return;
-    // speed up slowly
+    if(modoAtual != MODO_JOGO) return;
+
     worldSpeed += dt * 0.5f;
 
-    // player lane smoothing (instant for now)
     player.x = LANE_X(player.lane);
 
-    // jump physics
     if(player.state == P_JUMPING) {
         player.vy += GRAVITY * dt;
         player.y += player.vy * dt;
         if(player.y <= 0.0f) { player.y = 0.0f; player.vy = 0.0f; player.state = P_RUNNING; }
     }
 
-    // obstacles move towards player (z decreases)
     for(int i=0;i<MAX_OBS;i++){
         if(!obsPool[i].active) continue;
         obsPool[i].z -= worldSpeed * dt;
-        // if passed behind player, deactivate
         if(obsPool[i].z < -10.0f) obsPool[i].active = 0;
         else {
-            // collision check
             float ph = player.height, pw = player.width, pd = player.depth;
-            float pye = player.y + ph*0.5f;
             float oby = obsPool[i].y + obsPool[i].h*0.5f;
             if (aabbCollision(player.x, player.y + ph*0.5f, player.z, pw, ph, pd,
                               obsPool[i].x, oby, obsPool[i].z, obsPool[i].w, obsPool[i].h, obsPool[i].d)) {
-                gstate = STATE_GAMEOVER;
+                modoAtual = MODO_GAMEOVER;
             }
         }
     }
 
-    // spawning
     spawnTimer += dt;
     if(spawnTimer >= spawnInterval) {
         spawnTimer = 0;
         spawnObstacle();
-        // vary spawn interval with speed
         spawnInterval = 0.8f - fmin(0.5f, worldSpeed * 0.01f);
     }
 }
@@ -137,7 +129,7 @@ void renderScene() {
     float camZpos = player.z - 6.0f;
     gluLookAt(camX, camY, camZpos, player.x, 1.0f, player.z+6.0f, 0,1,0);
 
-    // ground (simple repeated quads)
+    // Ground
     for(int i=0;i<60;i++){
         glPushMatrix();
         glTranslatef(0, -0.01f, i*5.0f - fmodf((float)time(NULL),5.0f)*0 );

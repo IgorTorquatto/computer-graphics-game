@@ -466,6 +466,17 @@
 	<stdio.h>
 	<stdlib.h>
 	<time.h>
+	"ecs/entity.h"
+	"ecs/component.h"
+	"ecs/system.h"
+	"game_objects/test.h"
+
+1758154959 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game-1\src\main.cpp
+	<GL/glut.h>
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
 	"estado.h"
 	"menu.h"
 
