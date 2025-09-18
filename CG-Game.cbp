@@ -35,8 +35,20 @@
 		<UnitsGlob directory="src" wildcard="*" recursive="1" id="744811448" addToProject="1">
 			<Option target="Debug" />
 		</UnitsGlob>
+		<Unit filename="src/estado.cpp">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/estado.h">
+			<Option glob="744811448" />
+		</Unit>
 		<Unit filename="src/main.cpp">
 			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/menu.cpp">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/menu.h">
 			<Option glob="744811448" />
 		</Unit>
 		<Extensions>
