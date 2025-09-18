@@ -11,9 +11,9 @@
 #define BOTAO_SAIR_X 412
 #define BOTAO_SAIR_Y 250
 
-extern void resetGame(); // garante que resetGame() definido em main.cpp será linkado
+extern void resetGame(); // garante que resetGame() definido em main.cpp serï¿½ linkado
 
-// Função para desenhar cada botão
+// Funï¿½ï¿½o para desenhar cada botï¿½o
 void desenhaBotao(int x, int y, int largura, int altura, const char* texto) {
     glColor3f(0.2f, 0.5f, 0.8f);
     glBegin(GL_QUADS);
@@ -23,7 +23,7 @@ void desenhaBotao(int x, int y, int largura, int altura, const char* texto) {
         glVertex2f(x, y + altura);
     glEnd();
 
-    // Desenha texto centralizado no botão
+    // Desenha texto centralizado no botï¿½o
     glColor3f(1, 1, 1);
     int len = 0;
     const char* c;
@@ -37,7 +37,7 @@ void desenhaBotao(int x, int y, int largura, int altura, const char* texto) {
 void desenhaMenu() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Configura projeção 2D temporária para o menu
+    // Configura projeï¿½ï¿½o 2D temporï¿½ria para o menu
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -59,7 +59,7 @@ void desenhaMenu() {
     glutSwapBuffers();
 }
 
-// Função para tratar clique do mouse no menu
+// Funï¿½ï¿½o para tratar clique do mouse no menu
 void cliqueMenu(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
         int my = 600 - y; // altura da janela
