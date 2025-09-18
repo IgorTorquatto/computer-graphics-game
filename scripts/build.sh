@@ -4,9 +4,9 @@ set -e
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"/..
 
-function print_info() { printf "\033[34m[INFO] $1\033[m\n"; }
-function print_error() { printf "\033[31m[ERROR] $1\033[m\n"; }
-function print_success() { printf "\033[32m[SUCCESS] $1\033[m\n"; }
+function print_info()    { printf "\033[34m[INFO] %s\033[m\n" "$1"; }
+function print_error()   { printf "\033[31m[ERROR] %s\033[m\n" "$1"; }
+function print_success() { printf "\033[32m[SUCCESS] %s\033[m\n" "$1"; }
 
 mkdir -p bin
 
@@ -40,11 +40,13 @@ case "$UNAME" in
   *) LINK_LIBS=( -lglut -lGL -lGLU -lm ) ;;
 esac
 
-# Usando CMake do ./scripts/CMakeLists.txt
+# ==== Build com CMake ====
 if command -v cmake &> /dev/null; then
     print_info "CMake encontrado. Iniciando build via CMake..."
     mkdir -p "$BIN"
-    cd "$BIN"
+
+    BUILD_DIR="$BIN"
+    cd "$BUILD_DIR"
 
     if $DEBUG; then
       cmake ../scripts -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
@@ -59,10 +61,10 @@ if command -v cmake &> /dev/null; then
     exit 0
 fi
 
-# fallback gcc
-if command -v g++ &> /dev/null; then
-    print_info "Buscando arquivos .cpp e .c recursivamente em '$SRC_DIR'..."
-	readarray -d '' -t SOURCES < <(find "$SRC_DIR" \( -name '*.cpp' -o -name '*.c' \) -print0)
+# ==== Fallback manual com GCC ====
+if command -v g++ &> /dev/null || command -v gcc &> /dev/null; then
+    print_info "Buscando arquivos .c e .cpp recursivamente em '$SRC_DIR'..."
+    readarray -d '' -t SOURCES < <(find "$SRC_DIR" \( -name '*.c' -o -name '*.cpp' \) -print0)
 
     if [ ${#SOURCES[@]} -eq 0 ]; then
         print_error "Nenhum arquivo .c ou .cpp encontrado em $SRC_DIR"
@@ -86,8 +88,15 @@ if command -v g++ &> /dev/null; then
     done
 
     mkdir -p "$(dirname "$OUT")"
-    print_info "Compilando com gcc..."
-    gcc "${SOURCES[@]}" -o "$OUT" "${CXXFLAGS[@]}" "${LINK_LIBS[@]}"
+    print_info "Compilando com GCC/G++..."
+
+    # Usa g++ se disponível (linka C++ por padrão), senão gcc
+    if command -v g++ &> /dev/null; then
+      g++ "${SOURCES[@]}" -o "$OUT" "${CXXFLAGS[@]}" "${LINK_LIBS[@]}"
+    else
+      gcc "${SOURCES[@]}" -o "$OUT" "${CXXFLAGS[@]}" "${LINK_LIBS[@]}"
+    fi
+
     print_success "Compilado com sucesso: $OUT"
     exit 0
 fi

@@ -11,7 +11,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # raiz do projeto (um nível acima de scripts)
 set(PROJECT_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/..")
 
-# pega fontes
+# pega todos os .c e .cpp recursivamente
 file(GLOB_RECURSE SOURCES
     "${PROJECT_ROOT}/src/*.c"
     "${PROJECT_ROOT}/src/*.cpp"
@@ -26,15 +26,12 @@ include_directories("${PROJECT_ROOT}/src")
 # cria executável
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-# decide diretório de saída com base no build type
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(OUT_DIR "${PROJECT_ROOT}/bin/debug")
-else()
-    set(OUT_DIR "${PROJECT_ROOT}/bin/release")
-endif()
-
+# define diretórios de saída específicos por configuração
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY "${OUT_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${PROJECT_ROOT}/bin/debug"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_ROOT}/bin/release"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${PROJECT_ROOT}/bin/relwithdebinfo"
+    RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${PROJECT_ROOT}/bin/minsizerel"
 )
 
 # bibliotecas por plataforma

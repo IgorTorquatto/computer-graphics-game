@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "numeric": "cpp",
+        "optional": "cpp",
+        "ranges": "cpp"
+    },
+    "cmake.ignoreCMakeListsMissing": true
+}

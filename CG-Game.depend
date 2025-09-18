@@ -336,8 +336,72 @@
 	<stddef.h>
 	<GL/gl.h>
 
-1757713296 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\main.cpp
+1757968780 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\main.cpp
 	<GLUT/glut.h>
 	<GL/glut.h>
+	<algorithm>
+	<stdio.h>
 	<stdlib.h>
+	<time.h>
+	"ecs/entity.h"
+	"ecs/component.h"
+	"ecs/system.h"
+	"game_objects/test.h"
+
+1757968780 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\entity.cpp
+	<math.h>
+	<algorithm>
+	"component.h"
+	"../utils/print.h"
+	"entity.h"
+	"assert.h"
+
+1512594589 c:\mingw\include\math.h
+	<_mingw.h>
+
+1757975875 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\component.h
+	"stdlib.h"
+
+1757968780 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\component.cpp
+	"component.h"
+	<GL/freeglut.h>
+	<stdbool.h>
+
+1426360528 c:\mingw\include\gl\freeglut.h
+	"freeglut_std.h"
+	"freeglut_ext.h"
+
+1426360528 c:\mingw\include\gl\freeglut_ext.h
+	<stdarg.h>
+
+1757968780 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\system.cpp
+	<GLUT/glut.h>
+	<GL/glut.h>
+	"entity.h"
+	"component.h"
+	"system.h"
+	"stdio.h"
+	"string.h"
+
+1757975610 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\entity.h
+	"component.h"
+
+1757968780 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\system.h
+
+1757968780 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\utils\print.h
+
+1512594589 c:\mingw\include\assert.h
+	<_mingw.h>
+
+1757968780 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\game_objects\test.h
+
+1757968780 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\utils\print.cpp
+	<stdio.h>
+	<stdarg.h>
+	<windows.h>
+
+1757969064 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\game_objects\test.cpp
+	"../ecs/entity.h"
+	"../utils/print.h"
+	"test.h"
 
