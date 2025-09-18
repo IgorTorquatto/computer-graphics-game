@@ -341,3 +341,46 @@
 	<GL/glut.h>
 	<stdlib.h>
 
+1758154959 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\main.cpp
+	<GL/glut.h>
+	<math.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	"estado.h"
+	"menu.h"
+
+1426360528 c:\program files\codeblocks\mingw\include\gl\glut.h
+	"freeglut_std.h"
+
+1426360528 c:\program files\codeblocks\mingw\include\gl\freeglut_std.h
+	<windows.h>
+	<EGL/egl.h>
+	<GLES/gl.h>
+	<GLES2/gl2.h>
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdlib.h>
+
+1758153419 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\main.h
+	<GL/glut.h>
+
+1758153079 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\menu.c
+	<GL/glut.h>
+	<stdlib.h>
+	"menu.h"
+
+1758154655 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\menu.h
+
+1758155489 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\menu.cpp
+	<GL/glut.h>
+	"menu.h"
+	"estado.h"
+
+1758155702 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\estado.cpp
+	"estado.h"
+
+1758154761 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\estado.h
+
