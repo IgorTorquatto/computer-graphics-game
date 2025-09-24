@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 #define LANE_X(i) ((i) * 2.5f)
-#define GRAVITY -25.0f
+#define GRAVITY -20.0f
 
-/* Inicializa o jogador com valores padrão */
+/* Inicializa o jogador com valores padrÃ£o */
 void initPlayer(Player *p) {
     p->lane = 1;
     p->x = LANE_X(1);
@@ -18,7 +18,7 @@ void initPlayer(Player *p) {
     p->depth = 1.0f;
 }
 
-/* Atualiza física do jogador (pulo, slide, movimentação lateral) */
+/* Atualiza fï¿½sica do jogador (pulo, slide, movimentaÃ§Ã£o lateral) */
 void updatePlayer(Player *p, float dt) {
     p->x = LANE_X(p->lane);
 
@@ -40,7 +40,7 @@ void updatePlayer(Player *p, float dt) {
     }
 }
 
-/* Função auxiliar para reset do slide do jogador */
+/* Funï¿½ï¿½o auxiliar para reset do slide do jogador */
 static void endSlide(int value) {
     Player* p = (Player*)(intptr_t)value;
     p->height = 2.0f;
@@ -48,7 +48,7 @@ static void endSlide(int value) {
 }
 
 
-/* Entrada por teclado para movimentação do jogador */
+/* Entrada por teclado para movimentaï¿½ï¿½o do jogador */
 void handlePlayerInput(Player *p, unsigned char key) {
     switch (key) {
         case 'w': case 'W': case ' ':
