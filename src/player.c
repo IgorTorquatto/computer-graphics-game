@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #define LANE_X(i) ((i) * 2.5f)
-#define GRAVITY -30.0f
+#define GRAVITY -20.0f
 
 /* Inicializa o jogador com valores padrão */
 void initPlayer(Player *p) {
@@ -54,7 +54,7 @@ void handlePlayerInput(Player *p, unsigned char key) {
         case 'w': case 'W': case ' ':
             if (p->state == P_RUNNING) {
                 p->state = P_JUMPING;
-                p->vy = 12.0f;
+                p->vy = 16.0f;
             }
             break;
         case 's': case 'S':
