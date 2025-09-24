@@ -18,7 +18,7 @@
     #include <GL/glut.h>
 #endif
 
-#include <algorithm> // std::fill
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -39,19 +39,19 @@ static EntityId geometry_samples[6];
 
 
 void update_geometry_slices_and_stacks() {
-    for (EntityId id : geometry_samples) {
+    for (EntityId id = 0; id < (sizeof(geometry_samples) / sizeof(EntityId)); ++id) {
         if (id == INVALID_ENTITY)
             continue;
         GeometryId geometry_id = game_objects[id].geometry.id;
         switch (get_geometry_type(id)) {
-            case GeometryType::SPHERE:
-                get_sphere_ref(geometry_id).slices = slices;
-                get_sphere_ref(geometry_id).stacks = stacks;
+            case SPHERE:
+                spheres[geometry_id].slices = slices;
+                spheres[geometry_id].stacks = stacks;
                 break;
 
-            case GeometryType::TORUS:
-                get_torus_ref(geometry_id).slices = slices;
-                get_torus_ref(geometry_id).stacks = stacks;
+            case TORUS:
+                toruses[geometry_id].slices = slices;
+                toruses[geometry_id].stacks = stacks;
                 break;
 
             default:
@@ -74,6 +74,7 @@ void calculate_frames_per_second() {
         frameCount = 0;
     }
 }
+
 
 int init()
 {
@@ -110,26 +111,27 @@ int init()
     glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
 
     // Initialize game objects to "empty"
-    std::fill(geometry_samples, geometry_samples + sizeof(geometry_samples) / sizeof(EntityId), INVALID_ENTITY);
+
+    memset(geometry_samples, INVALID_ENTITY, sizeof(geometry_samples) / sizeof(EntityId));
 
     const double speed = 1.5f;
 
     EntityId sphere_object = create_game_object();
-    GeometryId sphere = add_sphere(sphere_object, 1.0f, Position{-2.4f, 1.2f, -6.0f});
+    GeometryId sphere = add_sphere(sphere_object, 1.0f, (Position){-2.4f, 1.2f, -6.0f});
     rotate_x(sphere_object, deg_to_rad(60));
     set_color(sphere_object, color_red);
-    set_rotation_velocity(sphere_object, Velocity{0.0f, 0.0f, speed});
-    get_sphere_ref(sphere).slices = slices;
-    get_sphere_ref(sphere).stacks = stacks;
+    set_rotation_velocity(sphere_object, (Velocity){0.0f, 0.0f, speed});
+    spheres[sphere].slices = slices;
+    spheres[sphere].stacks = stacks;
     geometry_samples[0] = sphere_object;
 
     EntityId torus_object = create_game_object();
-    GeometryId torus = add_torus(torus_object, 0.2f, 0.8f, Position{2.4f, 1.2f, -6.0f});
+    GeometryId torus = add_torus(torus_object, 0.2f, 0.8f, (Position){2.4f, 1.2f, -6.0f});
     rotate_x(torus_object, deg_to_rad(60));
     set_color(torus_object, color_red);
-    set_rotation_velocity(torus_object, Velocity{0.0f, 0.0f, speed});
-    get_torus_ref(torus).slices = slices;
-    get_torus_ref(torus).stacks = stacks;
+    set_rotation_velocity(torus_object, (Velocity){0.0f, 0.0f, speed});
+    toruses[torus].slices = slices;
+    toruses[torus].stacks = stacks;
     geometry_samples[1] = torus_object;
 
     create_test_object();
@@ -253,7 +255,7 @@ static void key(unsigned char key, int x, int y)
             break;
 
         default:
-            input_system({key, glutGetModifiers(), {(float)x, (float)y}, InputType::KEYBOARD});
+            input_system((InputEvent){key, glutGetModifiers(), {(float)x, (float)y}, KEYBOARD});
             break;
     }
 

@@ -1,13 +1,13 @@
-#include "../ecs/entity.h"
+#include "ecs/entity.h"
+#include "utils/print.h"
 
-#include "../utils/print.h"
 #include "test.h"
 
 static EntityId test_object_id = INVALID_ENTITY;
 
 
 void test_input(InputEvent event) {
-    if (event.type != InputType::KEYBOARD)
+    if (event.type != KEYBOARD)
         return;
     switch (event.key) {
         case 'a':
@@ -41,11 +41,11 @@ void create_test_object() {
     }
     EntityId mesh_id = add_mesh(test_object_id);
     set_color(test_object_id, color_yellow);
-    set_rotation_velocity(test_object_id, Velocity{0.0f, 1.0f, 0.0f});
+    set_rotation_velocity(test_object_id, (Velocity){0.0f, 1.0f, 0.0f});
 
     //set_position(mesh_id, Position{0, 0, 0});
     const size_t count = 12;
-    Position *vertices = new Position[count * 3];
+    Position *vertices = (Position *)malloc(sizeof(Position) * count * 3);
     Position v[8] = {
         {-0.5f, -0.5f, -0.5f}, // 0
         { 0.5f, -0.5f, -0.5f}, // 1
@@ -76,7 +76,7 @@ void create_test_object() {
         vertices[i*3 + 2] = v[faces[i][2]];
     }
     add_polygon(mesh_id, vertices, count * 3);
-    translate(test_object_id, Position{0, 0, -5.0f});
+    translate(test_object_id, (Position){0, 0, -5.0f});
     //set_position(test_object_id, Position{0, 0, -5.0f});
 
     rotate_x(test_object_id, deg_to_rad(-30));

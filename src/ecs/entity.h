@@ -38,20 +38,6 @@ GeometryId add_cuboid(EntityId, Position);
 GeometryId add_cube(EntityId);
 GeometryId add_torus(EntityId, float, float, Position);
 
-inline GeometryType get_geometry_type(GeometryId id) {
-    return game_objects[id].geometry.type;
-}
-
-// References the data directly.
-inline Sphere& get_sphere_ref(GeometryId id) {
-    return spheres[id];
-}
-
-// References the data directly.
-inline Torus& get_torus_ref(GeometryId id) {
-    return toruses[id];
-}
-
 // Adds an array of polygons to a mesh.
 void add_polygon(GeometryId, Vertices, size_t);
 
