@@ -33,10 +33,10 @@ int loadOBJ(const char* filename, Model* model) {
     rewind(file);
 
     model->numVertices = vertCount;
-    model->numFaces = 0;  // contar faces v�lidas
+    model->numFaces = 0;  // contar faces válidas
 
     model->vertices = (float*)malloc(sizeof(float)*3*vertCount);
-    // Alocar o m�ximo poss�vel: faceCount faces, depois ajustamos numFaces
+    // Alocar o máximo possível: faceCount faces, depois ajustamos numFaces
     model->faces = (int*)malloc(sizeof(int)*3*faceCount);
 
     if(!model->vertices || !model->faces) {
@@ -63,11 +63,11 @@ int loadOBJ(const char* filename, Model* model) {
             int v1 = vi[1] - 1;
             int v2 = vi[2] - 1;
 
-            // Validar �ndices
+            // Validar índices
             if (v0 < 0 || v0 >= vertCount ||
                 v1 < 0 || v1 >= vertCount ||
                 v2 < 0 || v2 >= vertCount) {
-                fprintf(stderr, "Face ignorada por �ndice inv�lido: %s", line);
+                fprintf(stderr, "Face ignorada por índice inválido: %s", line);
                 continue;  // pular essa face inv�lida
             }
 
@@ -145,6 +145,7 @@ void drawModel(const Model* model) {
     }
     glEnd();
 }
+
 
 void freeModel(Model* model) {
     if(model->vertices) free(model->vertices);

@@ -580,7 +580,7 @@
 
 1758751198 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\hud.h
 
-1758756628 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\main.c
+1758751198 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\main.c
 	<GL/glut.h>
 	<GL/glu.h>
 	<math.h>
@@ -614,7 +614,7 @@
 
 1758752320 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\player.h
 
-1758755521 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\coin.h
+1758751198 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\coin.h
 
 1758751198 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\obstacle.h
 	"model.h"
@@ -627,15 +627,14 @@
 	"menu.h"
 	"estado.h"
 
-1758755661 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\model.c
+1758751775 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\model.c
 	<stdio.h>
 	<stdlib.h>
 	<string.h>
 	<GL/gl.h>
 	"model.h"
-	"math.h"
 
-1758754721 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\obstacle.c
+1758751198 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\obstacle.c
 	"obstacle.h"
 	<stdlib.h>
 	<GL/glut.h>
@@ -643,7 +642,7 @@
 	<stdio.h>
 	"model.h"
 
-1758753744 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\player.c
+1758752462 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\player.c
 	"player.h"
 	<GL/glut.h>
 	<stdint.h>
@@ -665,7 +664,7 @@
 	<stdbool.h>
 	<assert.h>
 
-1758755489 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\coin.c
+1758751470 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computa��o gr�fica\jogo\computer-graphics-game\src\coin.c
 	"coin.h"
 	"player.h"
 	<GL/glut.h>

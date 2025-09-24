@@ -40,7 +40,7 @@ void updatePlayer(Player *p, float dt) {
     }
 }
 
-/* Fun��o auxiliar para reset do slide do jogador */
+/* Função auxiliar para reset do slide do jogador */
 static void endSlide(int value) {
     Player* p = (Player*)(intptr_t)value;
     p->height = 2.0f;
@@ -48,7 +48,7 @@ static void endSlide(int value) {
 }
 
 
-/* Entrada por teclado para movimenta��o do jogador */
+/* Entrada por teclado para movimentação do jogador */
 void handlePlayerInput(Player *p, unsigned char key) {
     switch (key) {
         case 'w': case 'W': case ' ':
