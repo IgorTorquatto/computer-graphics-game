@@ -89,17 +89,41 @@ void updateCoins(float dt) {
     }
 }
 
+void drawSolidCubeWithNormals(float size) {
+    float s = size * 0.5f;
+    glBegin(GL_QUADS);
+    // Frente
+    glNormal3f(0,0,1);
+    glVertex3f(-s,-s, s); glVertex3f( s,-s, s); glVertex3f( s, s, s); glVertex3f(-s, s, s);
+    // Trás
+    glNormal3f(0,0,-1);
+    glVertex3f(-s,-s,-s); glVertex3f(-s, s,-s); glVertex3f( s, s,-s); glVertex3f( s,-s,-s);
+    // Direita
+    glNormal3f(1,0,0);
+    glVertex3f( s,-s,-s); glVertex3f( s, s,-s); glVertex3f( s, s, s); glVertex3f( s,-s, s);
+    // Esquerda
+    glNormal3f(-1,0,0);
+    glVertex3f(-s,-s,-s); glVertex3f(-s,-s, s); glVertex3f(-s, s, s); glVertex3f(-s, s,-s);
+    // Topo
+    glNormal3f(0,1,0);
+    glVertex3f(-s, s,-s); glVertex3f(-s, s, s); glVertex3f( s, s, s); glVertex3f( s, s,-s);
+    // Base
+    glNormal3f(0,-1,0);
+    glVertex3f(-s,-s,-s); glVertex3f( s,-s,-s); glVertex3f( s,-s, s); glVertex3f(-s,-s, s);
+    glEnd();
+}
+
+
 /* Desenha as moedas em 3D na cena */
 void drawCoins3D() {
     glColor3f(1.0f, 0.85f, 0.1f);
     for(int i = 0; i < MAX_COINS; i++) {
         if(!coinPool[i].active) continue;
-
         glPushMatrix();
         glTranslatef(coinPool[i].x, coinPool[i].y + coinPool[i].h * 0.5f, coinPool[i].z);
         glRotatef(coinPool[i].angle, 0.0f, 1.0f, 0.0f);
         glScalef(coinPool[i].w, coinPool[i].h, coinPool[i].d);
-        glutSolidCube(1.0f);
+        drawSolidCubeWithNormals(1.0f);
         glPopMatrix();
     }
 }

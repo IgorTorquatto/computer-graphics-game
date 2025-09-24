@@ -153,8 +153,9 @@ void renderScene() {
     GLfloat light_position[] = { player.x + 5.0f, 10.0f, player.z + 5.0f, 1.0f };
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    //glEnable(GL_COLOR_MATERIAL);
+    //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
 
     glDisable(GL_LIGHTING);
     glColor3f(0.9f, 0.9f, 0.9f);
@@ -184,9 +185,9 @@ void renderScene() {
         glPushMatrix();
         glLoadIdentity();
         glDisable(GL_LIGHTING);
-        glColor3f(1, 1, 1);
+        glColor3f(1.0f, 0.0f, 0.0f);
         glRasterPos2i(w / 2 - 80, h / 2);
-        const char *s = "GAME OVER - Press R to return";
+        const char *s = "Game over! R para reiniciar";
         for(const char *c = s; *c; ++c) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
         glEnable(GL_LIGHTING);
         glPopMatrix();
@@ -251,29 +252,29 @@ void initGL() {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 
-    GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    GLfloat light_diffuse[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+    // Configuração da luz
+    GLfloat light_ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
+    GLfloat light_diffuse[]  = { 0.9f, 0.9f, 0.9f, 1.0f };
     GLfloat light_specular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
     GLfloat light_position[] = { 5.0f, 10.0f, 5.0f, 1.0f };
-
-    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
     glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-    GLfloat mat_ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
-    GLfloat mat_diffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
-    GLfloat mat_specular[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    GLfloat high_shininess[] = { 50.0f };
+    // Material: especular e brilho
+    GLfloat mat_specular[]  = { 0.3f, 0.3f, 0.3f, 1.0f };
+    GLfloat mat_shininess[] = { 16.0f };
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
 
-    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
-
+    // ESSENCIAL: Ativar uso de cor como material ambiente e difuso
     glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_NORMALIZE);
+
 }
+
 
 int main(int argc, char** argv) {
     srand((unsigned)time(NULL));

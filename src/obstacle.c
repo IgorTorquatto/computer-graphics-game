@@ -65,16 +65,18 @@ void drawObstacles() {
 
         if (obstacles[i].type == OBST_SINGLE) {
             glScalef(escalaRock, escalaRock, escalaRock);
+            glColor3f(0.6f, 0.6f, 0.6f); // cinza
         } else {
             glScalef(escalaLog, escalaLog, escalaLog);
+            glColor3f(0.7f, 0.4f, 0.1f); // marrom
         }
 
-        glColor3f(0.8f, 0.7f, 0.5f);  // Cor básica opcional
         drawModel(obstacles[i].model);
 
         glPopMatrix();
     }
 }
+
 
 void spawnObstacle() {
     int lanes[3] = {0, 0, 0};
