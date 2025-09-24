@@ -5,7 +5,7 @@
 #include <string.h>
 
 #include "menu.h"
-#include "estado.h"
+#include "game/state.h"
 
 #define LARGURA_BOTAO 240
 #define ALTURA_BOTAO 60

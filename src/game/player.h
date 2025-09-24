@@ -1,6 +1,4 @@
-#ifndef PLAYER_H
-#define PLAYER_H
-
+#pragma once
 
 typedef enum { P_RUNNING, P_JUMPING, P_SLIDING } PlayerState;
 
@@ -18,6 +16,3 @@ static void endSlide(void *data);
 void handlePlayerInput(Player *p, unsigned char key);
 void handlePlayerSpecial(Player *p, int key);
 void drawPlayer(const Player *p);
-
-#endif
-

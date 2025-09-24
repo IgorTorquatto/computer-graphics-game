@@ -12,11 +12,10 @@
 #include "ecs/component.h" // model
 #include "ecs/system.h" // menu
 
-#include "estado.h"
-#include "tree.h"
-#include "player.h"
-
-#include "obstacle.h"
+#include "game/state.h"
+#include "game/tree.h"
+#include "game/player.h"
+#include "game/obstacle.h"
 
 
 Player player;
