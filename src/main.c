@@ -9,13 +9,12 @@
 
 #include "utils/print.h"
 
-#include "ecs/components/model.h"
+#include "ecs/component.h" // model
+#include "ecs/system.h" // menu
 
 #include "estado.h"
-#include "menu.h"
 #include "tree.h"
 #include "player.h"
-#include "ecs/component.h"
 
 #include "hud.h"
 #include "obstacle.h"
