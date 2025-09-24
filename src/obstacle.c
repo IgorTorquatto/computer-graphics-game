@@ -128,7 +128,8 @@ void spawnObstacle() {
             }
 
             obstacles[i].y = 0.0f;
-            obstacles[i].h = 2.0f + (float)(rand() % 20) * 0.05f;
+            //obstacles[i].h = 2.0f + (float)(rand() % 20) * 0.05f;
+            obstacles[i].h = 1.2f + (float)(rand() % 10) * 0.03f;
             obstacles[i].d = 1.0f;
             obstacles[i].z = -60.0f - (rand() % 40);
             return;

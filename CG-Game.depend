@@ -580,7 +580,7 @@
 
 1758751198 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game\src\hud.h
 
-1758751198 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game\src\main.c
+1758753396 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game\src\main.c
 	<GL/glut.h>
 	<GL/glu.h>
 	<math.h>
@@ -634,7 +634,7 @@
 	<GL/gl.h>
 	"model.h"
 
-1758751198 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game\src\obstacle.c
+1758753600 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game\src\obstacle.c
 	"obstacle.h"
 	<stdlib.h>
 	<GL/glut.h>
@@ -642,7 +642,7 @@
 	<stdio.h>
 	"model.h"
 
-1758752462 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game\src\player.c
+1758753012 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game\src\player.c
 	"player.h"
 	<GL/glut.h>
 	<stdint.h>
