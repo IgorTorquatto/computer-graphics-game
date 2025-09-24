@@ -59,13 +59,13 @@ void updateCoins(float dt) {
             continue;
         }
 
-        float ph = 2.0f; // altura player padrão
+        float ph = 2.0f; // altura player padrão (ou obtenha via player.height)
         float pw = 1.0f;
         float pd = 1.0f;
 
         float coinCenterY = coinPool[i].y + coinPool[i].h * 0.5f;
 
-        /* Colisão AABB simples */
+        /* Colisão AABB simples, utilize a função aabbCollision do jogo principal */
         extern int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
                                 float bx, float by, float bz, float bw, float bh, float bd);
 
