@@ -16,7 +16,6 @@
 #include "tree.h"
 #include "player.h"
 
-#include "hud.h"
 #include "obstacle.h"
 
 

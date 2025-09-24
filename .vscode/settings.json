@@ -5,7 +5,8 @@
         "model.h": "c",
         "coin.h": "c",
         "estado.h": "c",
-        "menu.h": "c"
+        "menu.h": "c",
+        "system.h": "c"
     },
     "cmake.ignoreCMakeListsMissing": true
 }
