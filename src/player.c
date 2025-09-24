@@ -30,16 +30,23 @@ void updatePlayer(Player *p, float dt) {
             p->vy = 0.0f;
             p->state = P_RUNNING;
         }
+    }else if (p->state == P_SLIDING) {
+        p->slideTimeRemaining -= dt;
+        if (p->slideTimeRemaining <= 0.0f) {
+            p->height = 2.0f;
+            p->state = P_RUNNING;
+            p->slideTimeRemaining = 0.0f;
+        }
     }
-    // Slide (recuperação automática feita por timer externo)
 }
 
 /* Função auxiliar para reset do slide do jogador */
-static void endSlide(void *data) {
-    Player *p = (Player*)data;
+static void endSlide(int value) {
+    Player* p = (Player*)(intptr_t)value;
     p->height = 2.0f;
     p->state = P_RUNNING;
 }
+
 
 /* Entrada por teclado para movimentação do jogador */
 void handlePlayerInput(Player *p, unsigned char key) {
@@ -54,9 +61,7 @@ void handlePlayerInput(Player *p, unsigned char key) {
             if (p->state == P_RUNNING) {
                 p->state = P_SLIDING;
                 p->height = 1.0f;
-                // Timer para retornar ao estado normal após 600ms
-                // Necessário passar ponteiro do player via cast para int
-                glutTimerFunc(600, (void (*)(int))endSlide, (int)(intptr_t)p);
+                p->slideTimeRemaining = 0.6f;
             }
             break;
         case 'a': case 'A':
@@ -91,7 +96,7 @@ void handlePlayerSpecial(Player *p, int key) {
             if (p->state == P_RUNNING) {
                 p->state = P_SLIDING;
                 p->height = 1.0f;
-                glutTimerFunc(600, (void (*)(int))endSlide, (int)(intptr_t)p);
+                p->slideTimeRemaining = 0.6f;
             }
             break;
     }

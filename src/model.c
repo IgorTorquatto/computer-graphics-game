@@ -32,9 +32,11 @@ int loadOBJ(const char* filename, Model* model) {
     rewind(file);
 
     model->numVertices = vertCount;
-    model->numFaces = faceCount;
+    model->numFaces = 0;  // contar faces válidas
+
     model->vertices = (float*)malloc(sizeof(float)*3*vertCount);
-    model->faces = (int*)malloc(sizeof(int)*3*faceCount); // 3 indices por face
+    // Alocar o máximo possível: faceCount faces, depois ajustamos numFaces
+    model->faces = (int*)malloc(sizeof(int)*3*faceCount);
 
     if(!model->vertices || !model->faces) {
         fclose(file);
@@ -50,23 +52,33 @@ int loadOBJ(const char* filename, Model* model) {
             model->vertices[vIdx++] = x;
             model->vertices[vIdx++] = y;
             model->vertices[vIdx++] = z;
+
         } else if(strncmp(line, "f ", 2) == 0) {
-            // Aqui assumimos faces triangulares sem normais ou texturas
-            // Formato comum: f v1 v2 v3 ou f v1/... v2/... v3/...
             int vi[3] = {0,0,0};
             if(sscanf(line+2, "%d %d %d", &vi[0], &vi[1], &vi[2]) < 3) {
-                // Tentar formato com barras: "f 1/1/1 2/2/2 3/3/3"
                 sscanf(line+2, "%d/%*d/%*d %d/%*d/%*d %d/%*d/%*d", &vi[0], &vi[1], &vi[2]);
             }
-            // OBJ é 1-indexado, converter para 0-index
-            model->faces[fIdx++] = vi[0]-1;
-            model->faces[fIdx++] = vi[1]-1;
-            model->faces[fIdx++] = vi[2]-1;
+            int v0 = vi[0] - 1;
+            int v1 = vi[1] - 1;
+            int v2 = vi[2] - 1;
+
+            // Validar índices
+            if (v0 < 0 || v0 >= vertCount ||
+                v1 < 0 || v1 >= vertCount ||
+                v2 < 0 || v2 >= vertCount) {
+                fprintf(stderr, "Face ignorada por índice inválido: %s", line);
+                continue;  // pular essa face inválida
+            }
+
+            model->faces[fIdx++] = v0;
+            model->faces[fIdx++] = v1;
+            model->faces[fIdx++] = v2;
+            model->numFaces++;
         }
     }
     fclose(file);
 
-    // Calcular altura mínima e máxima (eixo Y)
+    // Calcular minY e maxY
     model->minY = model->vertices[1];
     model->maxY = model->vertices[1];
     for(int i=0; i<model->numVertices; i++) {
@@ -81,20 +93,29 @@ int loadOBJ(const char* filename, Model* model) {
 // Desenha o modelo usando GL_TRIANGLES
 void drawModel(const Model* model) {
     glBegin(GL_TRIANGLES);
-    for(int i=0; i < model->numFaces; i++) {
-        int idx0 = model->faces[i*3] * 3;
-        int idx1 = model->faces[i*3 + 1] * 3;
-        int idx2 = model->faces[i*3 + 2] * 3;
+    for (int i = 0; i < model->numFaces; i++) {
+        int vi0 = model->faces[i * 3];
+        int vi1 = model->faces[i * 3 + 1];
+        int vi2 = model->faces[i * 3 + 2];
 
-        // Nessa versão simples não tem normais — pode calcular normais para iluminação após
-        // Por enquanto, chamamos vertex diretamente
+        if (vi0 < 0 || vi0 >= model->numVertices ||
+            vi1 < 0 || vi1 >= model->numVertices ||
+            vi2 < 0 || vi2 >= model->numVertices) {
+            fprintf(stderr, "Índice de face inválido em drawModel: face %d\n", i);
+            continue;
+        }
 
-        glVertex3f(model->vertices[idx0], model->vertices[idx0+1], model->vertices[idx0+2]);
-        glVertex3f(model->vertices[idx1], model->vertices[idx1+1], model->vertices[idx1+2]);
-        glVertex3f(model->vertices[idx2], model->vertices[idx2+1], model->vertices[idx2+2]);
+        int idx0 = vi0 * 3;
+        int idx1 = vi1 * 3;
+        int idx2 = vi2 * 3;
+
+        glVertex3f(model->vertices[idx0], model->vertices[idx0 + 1], model->vertices[idx0 + 2]);
+        glVertex3f(model->vertices[idx1], model->vertices[idx1 + 1], model->vertices[idx1 + 2]);
+        glVertex3f(model->vertices[idx2], model->vertices[idx2 + 1], model->vertices[idx2 + 2]);
     }
     glEnd();
 }
+
 
 void freeModel(Model* model) {
     if(model->vertices) free(model->vertices);

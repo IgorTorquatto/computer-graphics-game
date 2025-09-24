@@ -13,7 +13,7 @@ Coin coinPool[MAX_COINS];
 static int coinCount = 0;
 static float coinSpawnTimer = 0.0f;
 static float coinSpawnInterval = 1.0f;
-extern float worldSpeed; // declarado em main.c ou game.c para velocidade global
+extern float worldSpeed;
 extern Player player;
 
 /* Inicializa o pool de moedas */
@@ -57,13 +57,13 @@ void updateCoins(float dt) {
             continue;
         }
 
-        float ph = 2.0f; // altura player padrão (ou obtenha via player.height)
+        float ph = 2.0f; // altura player padrão
         float pw = 1.0f;
         float pd = 1.0f;
 
         float coinCenterY = coinPool[i].y + coinPool[i].h * 0.5f;
 
-        /* Colisão AABB simples, utilize a função aabbCollision do jogo principal */
+        /* Colisão AABB simples */
         extern int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
                                 float bx, float by, float bz, float bw, float bh, float bd);
 
