@@ -15,7 +15,8 @@
 #include "menu.h"
 #include "tree.h"
 #include "player.h"
-#include "coin.h"
+#include "ecs/component.h"
+
 #include "hud.h"
 #include "obstacle.h"
 

@@ -1,5 +1,4 @@
-#ifndef COIN_H
-#define COIN_H
+#pragma once
 
 typedef struct {
     int active;
@@ -18,5 +17,3 @@ void spawnCoin();
 void updateCoins(float dt);
 void drawCoins3D();
 int getCoinCount();
-
-#endif
