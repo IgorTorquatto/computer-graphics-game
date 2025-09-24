@@ -1,6 +1,7 @@
 #include "player.h"
 #include <GL/glut.h>
 
+#include <stdint.h>
 #define LANE_X(i) ((i) * 2.5f)
 #define GRAVITY -30.0f
 
