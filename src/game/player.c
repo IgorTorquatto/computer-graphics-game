@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 #define LANE_X(i) ((i) * 2.5f)
-#define GRAVITY -25.0f
+#define GRAVITY -20.0f
 
 /* Inicializa o jogador com valores padrão */
 void initPlayer(Player *p) {
