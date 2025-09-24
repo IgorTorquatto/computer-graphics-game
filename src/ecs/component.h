@@ -30,28 +30,13 @@ typedef EntityId GeometryId; // Entities of type Geometry
     } Position;
     #define position_zero (Position){0.0f, 0.0f, 0.0f}
 
-    Position sum(Position p, Position q)
-    {
-        return (Position){p.x + q.x, p.y + q.y, p.z + q.z};
-    }
-
-    Position sub(Position p, Position q)
-    {
-        return (Position){p.x - q.x, p.y - q.y, p.z - q.z};
-    }
-
-    Position mul(Position p, float scalar)
-    {
-        return (Position){p.x * scalar, p.y * scalar, p.z * scalar};
-    }
-
-    Position div(Position p, float scalar)
-    {
-        return (Position){p.x / scalar, p.y / scalar, p.z / scalar};
-    }
-
     typedef Position Vector;
     typedef Vector Velocity;
+
+    #define vector_sum(v, u) (Vector){(v).x + (u).x, (v).y + (u).y, (v).z + (u).z}
+    #define vector_sub(v, u) (Vector){(v).x - (u).x, (v).y - (u).y, (v).z - (u).z}
+    #define vector_mul(v, scalar) (Vector){(v).x * (scalar), (v).y * (scalar), (v).z * (scalar)}
+    #define vector_div(v, scalar) (Vector){(v).x / (scalar), (v).y / (scalar), (v).z / (scalar)}
 
     // === Vector Constants ===
     #define vector_zero  (Vector)(position_zero)
@@ -66,14 +51,14 @@ typedef EntityId GeometryId; // Entities of type Geometry
     } Color;
 
     // === Color Constants ===
-    #define color_black   Color{0.0f, 0.0f, 0.0f}
-    #define color_white   Color{1.0f, 1.0f, 1.0f}
-    #define color_red     Color{1.0f, 0.0f, 0.0f}
-    #define color_green   Color{0.0f, 1.0f, 0.0f}
-    #define color_blue    Color{0.0f, 0.0f, 1.0f}
-    #define color_magenta Color{1.0f, 0.0f, 1.0f}
-    #define color_yellow  Color{1.0f, 1.0f, 0.0f}
-    #define color_cyan    Color{0.0f, 1.0f, 1.0f}
+    #define color_black   (Color){0.0f, 0.0f, 0.0f}
+    #define color_white   (Color){1.0f, 1.0f, 1.0f}
+    #define color_red     (Color){1.0f, 0.0f, 0.0f}
+    #define color_green   (Color){0.0f, 1.0f, 0.0f}
+    #define color_blue    (Color){0.0f, 0.0f, 1.0f}
+    #define color_magenta (Color){1.0f, 0.0f, 1.0f}
+    #define color_yellow  (Color){1.0f, 1.0f, 0.0f}
+    #define color_cyan    (Color){0.0f, 1.0f, 1.0f}
 #pragma endregion
 
 typedef struct {
@@ -93,10 +78,10 @@ typedef struct {
     } Transform;
 
     #define transform_identity (Transform){ \
-        { 1.0f, 0.0f, 0.0f }, \
-        { 0.0f, 1.0f, 0.0f }, \
-        { 0.0f, 0.0f, 1.0f }, \
-        { 0.0f, 0.0f, 0.0f } \
+        (Vector){ 1.0f, 0.0f, 0.0f }, \
+        (Vector){ 0.0f, 1.0f, 0.0f }, \
+        (Vector){ 0.0f, 0.0f, 1.0f }, \
+        (Position){ 0.0f, 0.0f, 0.0f } \
     } // default Transform matrix value.
 
     // === Aliases para nomear cada vetor-coluna da matriz. ===
@@ -108,9 +93,9 @@ typedef struct {
 
     // === Type conversion macros ===
     #define to_GLfloat_matrix(m) { \
-        model.x_axis.x, model.x_axis.y, model.x_axis.z, 0.0f, model.y_axis.x, \
-        model.y_axis.y, model.y_axis.z, 0.0f, model.z_axis.x, model.z_axis.y, \
-        model.z_axis.z, 0.0f, model.origin.x, model.origin.y, model.origin.z, 1.0f \
+        model->x_axis.x, model->x_axis.y, model->x_axis.z, 0.0f, model->y_axis.x, \
+        model->y_axis.y, model->y_axis.z, 0.0f, model->z_axis.x, model->z_axis.y, \
+        model->z_axis.z, 0.0f, model->origin.x, model->origin.y, model->origin.z, 1.0f \
     } // converts Transform to glMatrix
 
     Transform transform(Transform* by, Transform* m); // Matrix transformation 3D
@@ -133,7 +118,7 @@ typedef struct {
         Transform model; // Matriz de transformação 4x4
     } Geometry;
 
-    #define geometry_empty (Geometry){INVALID_ENTITY, geometry_type.NONE, transform_identity}
+    #define geometry_empty (Geometry){INVALID_ENTITY, NONE, transform_identity}
 
     typedef struct {
         Color color;

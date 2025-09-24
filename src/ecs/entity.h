@@ -35,7 +35,7 @@ void rotate_z(EntityId, Angle theta);
 GeometryId add_mesh(EntityId);
 GeometryId add_sphere(EntityId, float, Position);
 GeometryId add_cuboid(EntityId, Position);
-GeometryId add_cube(EntityId);
+GeometryId add_cube(EntityId, Position, Vector);
 GeometryId add_torus(EntityId, float, float, Position);
 
 // Adds an array of polygons to a mesh.

@@ -43,7 +43,7 @@ void update_geometry_slices_and_stacks() {
         if (id == INVALID_ENTITY)
             continue;
         GeometryId geometry_id = game_objects[id].geometry.id;
-        switch (get_geometry_type(id)) {
+        switch (game_objects[id].geometry.type) {
             case SPHERE:
                 spheres[geometry_id].slices = slices;
                 spheres[geometry_id].stacks = stacks;
@@ -229,13 +229,12 @@ static void idle(void)
 }
 
 
+#define escape 27
 static void key(unsigned char key, int x, int y)
 {
-    const unsigned char esc = 27;
-
     switch (key)
     {
-        case esc:
+        case escape:
         case 'q':
             exit(0);
             break;
