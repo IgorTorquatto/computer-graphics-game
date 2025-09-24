@@ -35,44 +35,48 @@
         va_list args;
         _init();
         SET_CLI_YELLOW();
-        printf("[WARNING]: ");
+        fprintf(stderr, "[WARNING]: ");
         va_start(args, msg);
         vfprintf(stderr, msg, args);
         va_end(args);
         RESET_CLI();
+        fputc('\n', stderr);
     }
 
     void print_error(const char *msg, ...) {
         va_list args;
         _init();
         SET_CLI_RED();
-        printf("[ERROR]: ");
+        fprintf(stderr, "[ERROR]: ");
         va_start(args, msg);
         vfprintf(stderr, msg, args);
         va_end(args);
         RESET_CLI();
+        fputc('\n', stderr);
     }
 
     void print_info(const char *msg, ...) {
         va_list args;
         _init();
-        printf("[INFO]: ");
+        fprintf(stderr, "[INFO]: ");
         SET_CLI_BLUE();
         va_start(args, msg);
         vfprintf(stderr, msg, args);
         va_end(args);
         RESET_CLI();
+        fputc('\n', stderr);
     }
 
     void print_success(const char *msg, ...) {
         va_list args;
         _init();
-        printf("[SUCCESS]: ");
+        fprintf(stderr, "[SUCCESS]: ");
         SET_CLI_GREEN();
         va_start(args, msg);
         vfprintf(stderr, msg, args);
         va_end(args);
         RESET_CLI();
+        fputc('\n', stderr);
     }
 
 #elif defined(__APPLE__) || defined(__MACH__) || defined(__linux__) \
@@ -85,42 +89,46 @@
 
     void print_warning(const char *msg, ...) {
         va_list args;
-        printf(YELLOW);
-        printf("[WARNING]: ");
+        fprintf(stderr, YELLOW);
+        fprintf(stderr, "[WARNING]: ");
         va_start(args, msg);
         vprintf(msg, args);
         va_end(args);
-        printf(RESET);
+        fprintf(stderr, RESET);
+        fputc('\n', stderr);
     }
 
     void print_error(const char *msg, ...) {
         va_list args;
-        printf(RED);
-        printf("[ERROR]: ");
+        fprintf(stderr, RED);
+        fprintf(stderr, "[ERROR]: ");
         va_start(args, msg);
         vprintf(msg, args);
         va_end(args);
-        printf(RESET);
+        fprintf(stderr, RESET);
+        fputc('\n', stderr);
     }
 
     void print_info(const char *msg, ...) {
         va_list args;
-        printf(BLUE);
-        printf("[INFO]: ");
+        fprintf(stderr, BLUE);
+        fprintf(stderr, "[INFO]: ");
         va_start(args, msg);
         vprintf(msg, args);
         va_end(args);
-        printf(RESET);
+        fprintf(stderr, RESET);
+        fputc('\n', stderr);
     }
 
     void print_success(const char *msg, ...) {
         va_list args;
-        printf(GREEN);
-        printf("[SUCCESS]: ");
+        fprintf(stderr, GREEN);
+        fprintf(stderr, "[SUCCESS]: ");
         va_start(args, msg);
         vprintf(msg, args);
         va_end(args);
-        printf(RESET);
+        fprintf(stderr, RESET);
+        fputc('\n', stderr);
     }
 #else
 	static_assert(false, "Sistema operacional desconhecido");

@@ -180,7 +180,7 @@ static void render_text(Label label) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-void render_system() {
+void system_render() {
 
     for (EntityId id = 0; id < game_objects_count; ++id)
         render_geometry(game_objects[id].geometry);
@@ -190,7 +190,7 @@ void render_system() {
 }
 
 
-void process_system(DeltaTime delta)
+void system_process(DeltaTime delta)
 {
     for (int e = 0; e < game_objects_count; e++)
         if (game_objects[e].process != nullptr)
@@ -230,7 +230,7 @@ void process_system(DeltaTime delta)
             rotate_z(e, game_objects[e].rotationVelocity.z * delta);
 }
 
-void input_system(InputEvent input_event)
+void system_input(InputEvent input_event)
 {
     for (int e = 0; e < game_objects_count; e++)
         if (game_objects[e].input != nullptr)

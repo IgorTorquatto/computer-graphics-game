@@ -7,14 +7,18 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "utils/print.h"
+
+#include "ecs/components/model.h"
+
 #include "estado.h"
 #include "menu.h"
-#include "model.h"
 #include "tree.h"
 #include "player.h"
 #include "coin.h"
 #include "hud.h"
 #include "obstacle.h"
+
 
 Player player;
 
@@ -275,17 +279,12 @@ void initGL() {
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
 
-int main(int argc, char** argv) {
-    srand((unsigned)time(NULL));
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-    glutInitWindowSize(1024, 600);
-    glutCreateWindow("Prototipo");
-    initGL();
+
+static int start_game() {
     resetGame();
 
     if(!loadOBJ("tree.obj", &treeModel)) {
-        fprintf(stderr, "Falha ao carregar modelo de arvore.\n");
+        print_error("Falha ao carregar modelo de arvore.");
     } else {
         float alturaTree = treeModel.maxY - treeModel.minY;
         if (alturaTree > 0.1f) {
@@ -294,7 +293,22 @@ int main(int argc, char** argv) {
     }
 
     initTrees();
+}
 
+
+int main(int argc, char** argv) {
+    srand((unsigned)time(NULL));
+
+    // Glut Init
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
+    glutInitWindowSize(1024, 600);
+    glutCreateWindow("Protótipo");
+    initGL();
+
+    start_game(); // game content created here
+
+    // Event Bindings
     glutDisplayFunc(renderScene);
     glutIdleFunc(idleCB);
     glutKeyboardFunc(keyboardCB);
@@ -304,6 +318,7 @@ int main(int argc, char** argv) {
 
     glutMainLoop();
 
+    // Clear memory
     freeModel(&treeModel);
     freeModel(&rockModel);
     freeModel(&logModel);
@@ -524,7 +539,7 @@ static void display(void)
         glutWireTorus(0.2,0.8,slices,stacks);
     glPopMatrix();
 
-    render_system();
+    system_render();
 
     glutSwapBuffers();
 
@@ -539,7 +554,7 @@ static void idle(void)
     DeltaTime delta = elapsed_time - last_time;
     last_time = elapsed_time;
 
-    process_system(delta);
+    system_process(delta);
     glutPostRedisplay();
 }
 
@@ -569,7 +584,7 @@ static void key(unsigned char key, int x, int y)
             break;
 
         default:
-            input_system((InputEvent){key, glutGetModifiers(), {(float)x, (float)y}, KEYBOARD});
+            system_input((InputEvent){key, glutGetModifiers(), {(float)x, (float)y}, KEYBOARD});
             break;
     }
 

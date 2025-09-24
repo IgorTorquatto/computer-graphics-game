@@ -1,7 +1,7 @@
 #ifndef OBSTACLE_H
 #define OBSTACLE_H
 
-#include "model.h"
+#include "ecs/components/model.h"
 
 #define MAX_OBSTACLES 64
 #define LANE_WIDTH 2.5f

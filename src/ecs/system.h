@@ -3,8 +3,10 @@
 // Diferença de tempo em segundos
 typedef float DeltaTime;
 
-void render_system();
+void system_init();
 
-void process_system(DeltaTime);
+void system_render();
 
-void input_system(InputEvent);
+void system_process(DeltaTime);
+
+void system_input(InputEvent);
