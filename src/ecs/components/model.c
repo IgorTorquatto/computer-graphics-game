@@ -5,21 +5,21 @@
 #include "model.h"
 #include "math.h"
 
-// Fun��o auxiliar para contar elementos em arquivo OBJ (vértices e faces)
+// Função auxiliar para contar elementos em arquivo OBJ (vértices e faces)
 static void countElements(FILE* file, int* outVertCount, int* outFaceCount) {
     char line[256];
     *outVertCount = 0;
     *outFaceCount = 0;
 
     while(fgets(line, sizeof(line), file)) {
-        // Contar v�rtices
+        // Contar vértices
         if(strncmp(line, "v ", 2) == 0) (*outVertCount)++;
         // Contar faces
         else if(strncmp(line, "f ", 2) == 0) (*outFaceCount)++;
     }
 }
 
-// Fun��o para carregar OBJ simples (v�rtices + faces triangulares)
+// Fun��o para carregar OBJ simples (vértices + faces triangulares)
 int loadOBJ(const char* filename, Model* model) {
     FILE* file = fopen(filename, "r");
     if(!file) {
@@ -79,7 +79,7 @@ int loadOBJ(const char* filename, Model* model) {
     }
     fclose(file);
 
-    // Calcular minY e maxY
+    // Calcular altura mínima e máxima (eixo Y)
     model->minY = model->vertices[1];
     model->maxY = model->vertices[1];
     for(int i=0; i<model->numVertices; i++) {

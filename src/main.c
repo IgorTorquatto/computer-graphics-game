@@ -18,6 +18,7 @@
 #include "game/obstacle.h"
 
 
+
 Player player;
 
 float worldSpeed = 12.0f;
@@ -278,13 +279,7 @@ void initGL() {
 }
 
 
-int main(int argc, char** argv) {
-    srand((unsigned)time(NULL));
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-    glutInitWindowSize(1024, 600);
-    glutCreateWindow("Prototipo");
-    initGL();
+static int start_game() {
     resetGame();
 
     if(!loadOBJ("tree.obj", &treeModel)) {
