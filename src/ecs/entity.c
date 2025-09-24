@@ -21,6 +21,7 @@ EntityId create_game_object()
     EntityId id = game_objects_count;
     if (++game_objects_count == MAX_ENTITIES)
         return INVALID_ENTITY; // sem espaço
+    game_objects[id] = game_object_empty;
     return id; // Empty geometry
 }
 
@@ -103,14 +104,14 @@ void set_label_color(EntityId id, Color color)
 static Position mid_point(Vertices vertices, size_t n) {
     Position mid = {0, 0, 0};
     for (Position *p = vertices; p < vertices + n; p++)
-        mid = sum(mid, *p);
-    mid = div(mid, n);
+        mid = vector_sum(mid, *p);
+    mid = vector_div(mid, n);
     return mid;
 };
 
 Mesh offset_local_positions(Vertices vertices, Position offset, size_t n) {
     for (Position *p = vertices; p < vertices + n; p++)
-        *p = sum(*p, offset);
+        *p = vector_sum(*p, offset);
 };
 
 
@@ -123,7 +124,7 @@ void set_position(EntityId id, Position p) {
     case MESH: {
         offset_local_positions(
             meshes[geometry_id].polygon.vertices,
-            sub(p, mid_point(
+            vector_sub(p, mid_point(
                 meshes[geometry_id].polygon.vertices,
                 meshes[geometry_id].polygon.vertices_count)),
             meshes[geometry_id].polygon.vertices_count);
@@ -289,7 +290,9 @@ GeometryId add_sphere(EntityId id, float radius, Position p)
     game_objects[id].geometry.id = sphere_id;
 
     if (++spheres_count == MAX_ENTITIES)
-        return INVALID_ENTITY; // sem espaço
+        return INVALID_ENTITY; // sem e
+
+    spheres[sphere_id] = sphere_default;
     spheres[sphere_id].radius = radius;
     spheres[sphere_id].center = p;
     return sphere_id;
@@ -304,6 +307,8 @@ GeometryId add_cuboid(EntityId id, Position p)
 
     if (++cuboids_count == MAX_ENTITIES)
         return INVALID_ENTITY; // sem espaço
+
+    cuboids[cuboid_id] = cuboid_default;
     cuboids[cuboid_id].center = p;
     return cuboid_id;
 }
@@ -317,6 +322,8 @@ GeometryId add_cube(EntityId id, Position p, Vector d)
 
     if (++cubes_count == MAX_ENTITIES)
         return INVALID_ENTITY; // sem espaço
+
+    cubes[cube_id] = cube_default;
     cubes[cube_id].center = p;
     cubes[cube_id].dimensions = d;
     return cube_id;
@@ -331,6 +338,8 @@ GeometryId add_torus(EntityId id, float innerRadius, float outerRadius, Position
 
     if (++toruses_count == MAX_ENTITIES)
         return INVALID_ENTITY; // sem espaço
+
+    toruses[torus_id] = torus_default;
     toruses[torus_id].innerRadius = innerRadius;
     toruses[torus_id].outerRadius = outerRadius;
     toruses[torus_id].center = p;
