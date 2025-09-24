@@ -2,7 +2,8 @@
     "files.associations": {
         "numeric": "cpp",
         "optional": "cpp",
-        "ranges": "cpp"
+        "ranges": "cpp",
+        "component.h": "c"
     },
     "cmake.ignoreCMakeListsMissing": true
 }

@@ -1,10 +1,10 @@
 #pragma once
-#include "stdlib.h" // size_t
+
+#include "utils/basics.h"
 
 #ifndef M_PI
     #define M_PI 3.14159265358979323846
 #endif
-
 
 #pragma region Unities
     #define rad_to_deg(radians) ((float)(radians) * 180 / M_PI)
@@ -26,42 +26,43 @@ typedef EntityId GeometryId; // Entities of type Geometry
 
 #pragma region Primitives
     typedef struct {
-        float x = 0.0f, y = 0.0f, z = 0.0f;
+        float x, y, z;
     } Position;
+    #define position_zero (Position){0.0f, 0.0f, 0.0f}
 
-    inline Position sum(Position p, Position q)
+    Position sum(Position p, Position q)
     {
-        return Position{p.x + q.x, p.y + q.y, p.z + q.z};
+        return (Position){p.x + q.x, p.y + q.y, p.z + q.z};
     }
 
-    inline Position sub(Position p, Position q)
+    Position sub(Position p, Position q)
     {
-        return Position{p.x - q.x, p.y - q.y, p.z - q.z};
+        return (Position){p.x - q.x, p.y - q.y, p.z - q.z};
     }
 
-    inline Position mul(Position p, float scalar)
+    Position mul(Position p, float scalar)
     {
-        return Position{p.x * scalar, p.y * scalar, p.z * scalar};
+        return (Position){p.x * scalar, p.y * scalar, p.z * scalar};
     }
 
-    inline Position div(Position p, float scalar)
+    Position div(Position p, float scalar)
     {
-        return Position{p.x / scalar, p.y / scalar, p.z / scalar};
+        return (Position){p.x / scalar, p.y / scalar, p.z / scalar};
     }
 
     typedef Position Vector;
     typedef Vector Velocity;
 
     // === Vector Constants ===
-    #define vector_zero  Vector{}
-    #define vector_one   Vector{1.0f, 1.0f, 1.0f}
-    #define vector_up    Vector{0.0f, 1.0f, 0.0f}
-    #define vector_down  Vector{0.0f, -1.0f, 0.0f}
-    #define vector_right Vector{1.0f, 0.0f, 0.0f}
-    #define vector_left  Vector{-1.0f, 0.0f, 0.0f}
+    #define vector_zero  (Vector)(position_zero)
+    #define vector_one   (Vector){1.0f, 1.0f, 1.0f}
+    #define vector_up    (Vector){0.0f, 1.0f, 0.0f}
+    #define vector_down  (Vector){0.0f, -1.0f, 0.0f}
+    #define vector_right (Vector){1.0f, 0.0f, 0.0f}
+    #define vector_left  (Vector){-1.0f, 0.0f, 0.0f}
 
     typedef struct {
-        float r = 1.0f, g = 1.0f, b = 1.0f;
+        float r, g, b;
     } Color;
 
     // === Color Constants ===
@@ -76,23 +77,27 @@ typedef EntityId GeometryId; // Entities of type Geometry
 #pragma endregion
 
 typedef struct {
-    char* text = nullptr;
-    Position position{};
-    Color color{};
+    char* text;
+    Position position;
+    Color color;
 } Label;
+
+#define label_empty (Label){nullptr, position_zero, color_white}
 
 #pragma region Geometry
 
 #pragma region Primitives
     // Matriz de transformação 4x4 [coordenadas homogêneas ocultas]
     typedef struct {
-        Vector columns[4]{
-            { 1.0f, 0.0f, 0.0f },
-            { 0.0f, 1.0f, 0.0f },
-            { 0.0f, 0.0f, 1.0f },
-            { 0.0f, 0.0f, 0.0f }
-        }; // default to identity
+        Vector columns[4];
     } Transform;
+
+    #define transform_identity (Transform){ \
+        { 1.0f, 0.0f, 0.0f }, \
+        { 0.0f, 1.0f, 0.0f }, \
+        { 0.0f, 0.0f, 1.0f }, \
+        { 0.0f, 0.0f, 0.0f } \
+    } // default Transform matrix value.
 
     // === Aliases para nomear cada vetor-coluna da matriz. ===
     // Ex.: model.x_axis = models.columns[0], model.origin = model.columns[3]
@@ -112,87 +117,103 @@ typedef struct {
     void set_origin(Transform* m, Position at);
 
     typedef struct {
-        size_t vertices_count = 0;
-        Position *vertices = nullptr; // lista de vértices
+        size_t vertices_count;
+        Position *vertices; // lista de vértices
     } C_Polygon;
 #pragma endregion
 
-    enum class GeometryType {
+    typedef enum geometry_type {
         NONE, MESH, SPHERE,
         CUBOID, CUBE, TORUS,
-    };
+    } GeometryType;
 
     typedef struct {
-        EntityId id = INVALID_ENTITY;
-        GeometryType type = GeometryType::NONE;
+        EntityId id;
+        GeometryType type;
         Transform model; // Matriz de transformação 4x4
     } Geometry;
 
+    #define geometry_empty (Geometry){INVALID_ENTITY, geometry_type.NONE, transform_identity}
+
     typedef struct {
-        Color color{};
-        C_Polygon polygon{};
+        Color color;
+        C_Polygon polygon;
     } Mesh;
+
+    #define mesh_empty (Mesh){color_white, (C_Polygon){0, NULL}}
+
+    #define default_slices 32
 
     typedef struct {
         float radius;
         Position center;
-        Color color{};
-        unsigned slices = 32;
-        unsigned stacks = 32;
-        bool isSolid = true;
+        Color color;
+        unsigned slices;
+        unsigned stacks;
+        bool isSolid;
     } Sphere;
+
+    #define sphere_default (Sphere){1.0f, position_zero, color_white, default_slices, default_slices, true}
 
     typedef struct {
         // The dimensions + rotation, and scale are determined from unity
         // cube using the `Geometry` `model`'s `Transform` matrix.
         Position center;
-        Color color{};
-        bool isSolid = true;
+        Color color;
+        bool isSolid;
     } Cuboid;
+
+    #define cuboid_default (Cuboid){position_zero, color_white, true}
 
     typedef struct {
         Position center;
         Vector dimensions;
-        Color color{};
-        bool isSolid = true;
+        Color color;
+        bool isSolid;
     } Cube;
+
+    #define cube_default (Cube){position_zero, vector_one, color_white, true}
 
     typedef struct {
         Position center;
         float innerRadius;
         float outerRadius;
-        Color color{};
-        unsigned slices = 32;
-        unsigned stacks = 32;
-        bool isSolid = true;
+        Color color;
+        unsigned slices;
+        unsigned stacks;
+        bool isSolid;
     } Torus;
+
+    #define torus_default (Torus){position_zero, 0.5f, 1.0f, color_white, default_slices, default_slices, true}
 #pragma endregion
 
 
-enum class InputType {
+enum InputType {
     KEYBOARD,
     SPECIAL,
     MOUSE,
 };
 
-struct InputEvent {
+typedef struct {
     int key;
     int state;
     Position position; // Screen Position
-    InputType type;
-};
+    enum InputType type;
+} InputEvent;
 
 typedef void(* ProcessFunction)(DeltaTime);
 typedef void(* InputFunction)(InputEvent);
 
 #pragma region Archetypes
     typedef struct {
-        Geometry geometry{};
-        Velocity velocity{};
-        Velocity rotationVelocity{};
-        ProcessFunction process = nullptr;
-        InputFunction input = nullptr;
+        Geometry geometry;
+        Velocity velocity;
+        Velocity rotationVelocity;
+        ProcessFunction process;
+        InputFunction input;
     } GameObject;
+
+    #define game_object_empty (GameObject){geometry_empty, vector_zero, vector_zero, nullptr, nullptr}
 #pragma endregion
 
 #pragma region Component Arrays

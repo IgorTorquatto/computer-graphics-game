@@ -1,10 +1,8 @@
 #include <math.h> // para sin, cos
 
-#include <algorithm>
 #include "component.h"
-#include "../utils/print.h"
+#include "utils/print.h"
 #include "entity.h"
-#include "assert.h"
 
 // === Entity Management ===
 // Se a ordem for importante, e houver remoção, usar uma técnica de memory pool.
@@ -31,7 +29,7 @@ EntityId create_label(char *text, Position p)
     EntityId id = labels_count;
     if (++labels_count == MAX_ENTITIES)
         return INVALID_ENTITY; // sem espaço
-    labels[id] = {text, p};
+    labels[id] = (Label){text, p};
 	return id;
 }
 
@@ -48,38 +46,38 @@ void remove_game_object(EntityId id)
 
     switch (type)
     {
-    case GeometryType::MESH: {
-        std::swap(meshes[id], meshes[--meshes_count]); // troca com o ultimo e ignora o final
-        delete meshes[geometry_id].polygon.vertices; // Clear memory
-        meshes[geometry_id] = Mesh{}; // Reset
+    case MESH: {
+        swap(meshes[id], meshes[--meshes_count], Mesh); // troca com o ultimo e ignora o final
+        free(meshes[geometry_id].polygon.vertices); // Clear memory
+        meshes[geometry_id] = mesh_empty; // Reset
     } break;
 
-    case GeometryType::SPHERE:
-        std::swap(spheres[id], spheres[--spheres_count]);
-        spheres[geometry_id] = Sphere{};
+    case SPHERE:
+        swap(spheres[id], spheres[--spheres_count], Sphere);
+        spheres[geometry_id] = sphere_default;
         break;
 
-    case GeometryType::CUBOID:
-        std::swap(cuboids[id], cuboids[--cuboids_count]);
-        cuboids[geometry_id] = Cuboid{};
+    case CUBOID:
+        swap(cuboids[id], cuboids[--cuboids_count], Cuboid);
+        cuboids[geometry_id] = cuboid_default;
         break;
 
-    case GeometryType::CUBE:
-        std::swap(cubes[id], cubes[--cubes_count]);
-        cubes[geometry_id] = Cube{};
+    case CUBE:
+        swap(cubes[id], cubes[--cubes_count], Cube);
+        cubes[geometry_id] = cube_default;
         break;
 
-    case GeometryType::TORUS:
-        std::swap(toruses[id], toruses[--toruses_count]);
-        toruses[geometry_id] = Torus{};
+    case TORUS:
+        swap(toruses[id], toruses[--toruses_count], Torus);
+        toruses[geometry_id] = torus_default;
         break;
 
     default:
         break;
     }
 
-    std::swap(game_objects[id], game_objects[--game_objects_count]);
-    game_objects[geometry_id] = GameObject{}; // Reset
+    swap(game_objects[id], game_objects[--game_objects_count], GameObject);
+    game_objects[geometry_id] = game_object_empty; // Reset
 }
 
 void remove_label(EntityId id)
@@ -88,8 +86,8 @@ void remove_label(EntityId id)
     print_warning("Remoção de entidades não é recomendado nesse sistema.\n"
         "\tA ordem dos elementos é alterada na remoção.");
 
-    std::swap(labels[id], labels[--labels_count]); // troca com o ultimo e ignora o final
-    labels[labels_count] = Label{}; // Reset
+    swap(labels[id], labels[--labels_count], Label); // troca com o ultimo e ignora o final
+    labels[labels_count] = label_empty; // Reset
 }
 
 void set_label_text(EntityId id, char *text)
@@ -102,24 +100,27 @@ void set_label_color(EntityId id, Color color)
     labels[id].color = color;
 }
 
+static Position mid_point(Vertices vertices, size_t n) {
+    Position mid = {0, 0, 0};
+    for (Position *p = vertices; p < vertices + n; p++)
+        mid = sum(mid, *p);
+    mid = div(mid, n);
+    return mid;
+};
+
+Mesh offset_local_positions(Vertices vertices, Position offset, size_t n) {
+    for (Position *p = vertices; p < vertices + n; p++)
+        *p = sum(*p, offset);
+};
+
 
 void set_position(EntityId id, Position p) {
     GeometryId geometry_id = game_objects[id].geometry.id;
     GeometryType type = game_objects[id].geometry.type;
 
     switch (type) {
-    case GeometryType::MESH: {
-        auto mid_point = [](Vertices vertices, size_t n) {
-            Position mid = {0, 0, 0};
-            for (Position *p = vertices; p < vertices + n; p++)
-                mid = sum(mid, *p);
-            mid = div(mid, n);
-            return mid;
-        };
-        auto offset_local_positions = [](Vertices vertices, Position offset, size_t n) {
-            for (Position *p = vertices; p < vertices + n; p++)
-                *p = sum(*p, offset);
-        };
+
+    case MESH: {
         offset_local_positions(
             meshes[geometry_id].polygon.vertices,
             sub(p, mid_point(
@@ -128,19 +129,19 @@ void set_position(EntityId id, Position p) {
             meshes[geometry_id].polygon.vertices_count);
     } break;
 
-    case GeometryType::SPHERE:
+    case SPHERE:
         spheres[geometry_id].center = p;
         break;
 
-    case GeometryType::CUBOID:
+    case CUBOID:
         cuboids[geometry_id].center = p;
         break;
 
-    case GeometryType::CUBE:
+    case CUBE:
         cubes[geometry_id].center = p;
         break;
 
-    case GeometryType::TORUS:
+    case TORUS:
         toruses[geometry_id].center = p;
         break;
 
@@ -151,74 +152,76 @@ void set_position(EntityId id, Position p) {
 
 void translate(EntityId id, Position p)
 {
-    auto t_mat = Transform{
-        Position{1, 0, 0},
-        Position{0, 1, 0},
-        Position{0, 0, 1},
+    Transform t_mat = (Transform){
+        (Position){1, 0, 0},
+        (Position){0, 1, 0},
+        (Position){0, 0, 1},
         p
     };
     Transform *model_p = &game_objects[id].geometry.model;
     *model_p = transform(model_p, &t_mat);
 }
 
+
+static Transform x_rotation(Transform* t, Angle theta) {
+    float c = cosf(theta);
+    float s = sinf(theta);
+
+    // matriz de rotação em X
+    Transform r = {
+        (Vector){1, 0, 0},  // x_axis permanece
+        (Vector){0, c, s}, // y_axis rotaciona
+        (Vector){0, -s, c},  // z_axis rotaciona
+        (Position){0, 0, 0}
+    };
+
+    return transform(t, &r);
+};
+
 void rotate_x(EntityId id, Angle theta)
 {
-    auto rotate = [](Transform* t, Angle theta) {
-        float c = cosf(theta);
-        float s = sinf(theta);
-
-        // matriz de rotação em X
-        Transform r = {
-            Vector{1, 0, 0},  // x_axis permanece
-            Vector{0, c, s}, // y_axis rotaciona
-            Vector{0, -s, c},  // z_axis rotaciona
-            Position{0, 0, 0}
-        };
-
-        return transform(t, &r);
-    };
     Transform *model_p = &game_objects[id].geometry.model;
-    *model_p = rotate(model_p, theta);
+    *model_p = x_rotation(model_p, theta);
 }
 
+static Transform y_rotation(Transform *t, Angle theta) {
+    float c = cosf(theta);
+    float s = sinf(theta);
+
+    Transform r = {
+        (Vector){c, 0, -s}, // x_axis rotaciona
+        (Vector){0, 1, 0},  // y_axis permanece
+        (Vector){s, 0, c},  // z_axis rotaciona
+        (Position){0, 0, 0}
+    };
+
+    return transform(t, &r);
+};
 
 void rotate_y(EntityId id, Angle theta)
 {
-	auto rotate = [](Transform *t, Angle theta) {
-        float c = cosf(theta);
-        float s = sinf(theta);
-
-        Transform r = {
-            Vector{c, 0, -s}, // x_axis rotaciona
-            Vector{0, 1, 0},  // y_axis permanece
-            Vector{s, 0, c},  // z_axis rotaciona
-            Position{0, 0, 0}
-        };
-
-	    return transform(t, &r);
-    };
     Transform *model_p = &game_objects[id].geometry.model;
-    *model_p = rotate(model_p, theta);
+    *model_p = y_rotation(model_p, theta);
 }
 
+static Transform z_rotation(Transform* t, Angle theta) {
+    float c = cosf(theta);
+    float s = sinf(theta);
+
+    Transform r = {
+        (Vector){c, s, 0},  // x_axis rotaciona
+        (Vector){-s, c, 0}, // y_axis rotaciona
+        (Vector){0, 0, 1},  // z_axis permanece
+        (Position){0, 0, 0}
+    };
+
+    return transform(t, &r);
+};
 
 void rotate_z(EntityId id, Angle theta)
 {
-    auto rotate = [](Transform* t, Angle theta) {
-        float c = cosf(theta);
-        float s = sinf(theta);
-
-        Transform r = {
-            Vector{c, s, 0},  // x_axis rotaciona
-            Vector{-s, c, 0}, // y_axis rotaciona
-            Vector{0, 0, 1},  // z_axis permanece
-            Position{0, 0, 0}
-        };
-
-        return transform(t, &r);
-    };
     Transform *model_p = &game_objects[id].geometry.model;
-    *model_p = rotate(model_p, theta);
+    *model_p = z_rotation(model_p, theta);
 }
 
 
@@ -230,23 +233,23 @@ void set_color(EntityId id, Color color) {
     // In the future different types of geometry could draw color with variations
     switch (type)
     {
-    case GeometryType::MESH:
+    case MESH:
         meshes[geometry_id].color = color;
         break;
 
-    case GeometryType::SPHERE:
+    case SPHERE:
         spheres[geometry_id].color = color;
         break;
 
-    case GeometryType::CUBOID:
+    case CUBOID:
         cuboids[geometry_id].color = color;
         break;
 
-    case GeometryType::CUBE:
+    case CUBE:
         cubes[geometry_id].color = color;
         break;
 
-    case GeometryType::TORUS:
+    case TORUS:
         toruses[geometry_id].color = color;
         break;
 
@@ -269,7 +272,7 @@ EntityId add_mesh(EntityId id)
 {
     GeometryId mesh_id = meshes_count;
 
-    game_objects[id].geometry.type = GeometryType::MESH;
+    game_objects[id].geometry.type = MESH;
     game_objects[id].geometry.id = mesh_id;
 
     if (++meshes_count == MAX_ENTITIES)
@@ -282,7 +285,7 @@ GeometryId add_sphere(EntityId id, float radius, Position p)
 {
     GeometryId sphere_id = spheres_count;
 
-    game_objects[id].geometry.type = GeometryType::SPHERE;
+    game_objects[id].geometry.type = SPHERE;
     game_objects[id].geometry.id = sphere_id;
 
     if (++spheres_count == MAX_ENTITIES)
@@ -296,7 +299,7 @@ GeometryId add_cuboid(EntityId id, Position p)
 {
     GeometryId cuboid_id = cuboids_count;
 
-    game_objects[id].geometry.type = GeometryType::CUBOID;
+    game_objects[id].geometry.type = CUBOID;
     game_objects[id].geometry.id = cuboid_id;
 
     if (++cuboids_count == MAX_ENTITIES)
@@ -309,7 +312,7 @@ GeometryId add_cube(EntityId id, Position p, Vector d)
 {
     GeometryId cube_id = cubes_count;
 
-    game_objects[id].geometry.type = GeometryType::CUBE;
+    game_objects[id].geometry.type = CUBE;
     game_objects[id].geometry.id = cube_id;
 
     if (++cubes_count == MAX_ENTITIES)
@@ -323,7 +326,7 @@ GeometryId add_torus(EntityId id, float innerRadius, float outerRadius, Position
 {
     GeometryId torus_id = toruses_count;
 
-    game_objects[id].geometry.type = GeometryType::TORUS;
+    game_objects[id].geometry.type = TORUS;
     game_objects[id].geometry.id = torus_id;
 
     if (++toruses_count == MAX_ENTITIES)
@@ -337,7 +340,7 @@ GeometryId add_torus(EntityId id, float innerRadius, float outerRadius, Position
 void add_polygon(GeometryId id, Position *vertices, size_t count) {
     meshes[id].polygon.vertices_count = count;
 
-    delete[] meshes[id].polygon.vertices; // limpa a memória antiga
+    free(meshes[id].polygon.vertices); // limpa a memória antiga
     meshes[id].polygon.vertices = vertices;
 
     // setter method
