@@ -3,7 +3,9 @@
         "component.h": "c",
         "print.h": "c",
         "model.h": "c",
-        "coin.h": "c"
+        "coin.h": "c",
+        "estado.h": "c",
+        "menu.h": "c"
     },
     "cmake.ignoreCMakeListsMissing": true
 }

@@ -3,14 +3,15 @@
 #include <GL/glut.h>
 #include <math.h>
 #include <stdio.h>
-#include "model.h"
+
+#include "ecs/components/model.h"
 
 #define LANE_WIDTH 2.5f
 #define TARGET_HEIGHT_LOG 1.0f
 #define TARGET_HEIGHT_ROCK 1.0f
 
 static Obstacle obstacles[MAX_OBSTACLES];
-extern float worldSpeed;  // Vari�vel global do jogo para velocidade do mundo
+extern float worldSpeed;  // Variável global do jogo para velocidade do mundo
 static float spawnTimer = 0.0f;
 static float spawnInterval = 1.0f;
 
@@ -71,6 +72,7 @@ void drawObstacles() {
             glColor3f(0.7f, 0.4f, 0.1f); // marrom
         }
 
+        glColor3f(0.8f, 0.7f, 0.5f);  // Cor básica opcional
         drawModel(obstacles[i].model);
 
         glPopMatrix();
@@ -179,4 +181,3 @@ void initObstacleModels() {
         escalaRock = TARGET_HEIGHT_ROCK / alturaRock;
     }
 }
-

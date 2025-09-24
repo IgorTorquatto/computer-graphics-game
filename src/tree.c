@@ -2,9 +2,10 @@
 #include <stdlib.h>
 #include <GL/glut.h>
 #include "tree.h"
-#include "model.h"  // Para drawModel e carregar OBJ
 
-extern Model treeModel;  // Modelo da árvore carregado externamente
+#include "ecs/components/model.h" // Para drawModel e carregar OBJ
+
+extern Model treeModel;  // Modelo da ï¿½rvore carregado externamente
 extern float escalaArvoreDefault;
 
 static Tree treesPool[MAX_TREES];
@@ -29,7 +30,7 @@ void updateTrees(float dt, float worldSpeed) {
                 treesPool[i].y = 0.0f;
                 treesPool[i].z = -60.0f - (rand() % 20);
 
-                // Escala aleatória maior
+                // Escala aleatï¿½ria maior
                 treesPool[i].escala = 2.5f + ((float)(rand() % 100) / 100.0f) * 2.0f;
 
                 break;
@@ -49,7 +50,7 @@ void updateTrees(float dt, float worldSpeed) {
 
 
 void drawTrees() {
-    glColor3f(0.0f, 0.6f, 0.0f); // Verde para árvore (pode mudar para cor da textura)
+    glColor3f(0.0f, 0.6f, 0.0f); // Verde para ï¿½rvore (pode mudar para cor da textura)
 
     for(int i=0; i<MAX_TREES; i++) {
         if(!treesPool[i].active) continue;
