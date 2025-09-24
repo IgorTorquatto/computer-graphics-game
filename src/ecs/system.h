@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ecs/systems/menu.h"
+#include "ecs/systems/hud.h"
 
 // Diferença de tempo em segundos
 typedef float DeltaTime;
