@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1743445502 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\main.c
+1743445502 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\main.c
 	<GLUT/glut.h>
 	<GL/glut.h>
 	<stdlib.h>
@@ -336,7 +336,7 @@
 	<stddef.h>
 	<GL/gl.h>
 
-1757968780 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\main.cpp
+1757968780 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\main.cpp
 	<GLUT/glut.h>
 	<GL/glut.h>
 	<algorithm>
@@ -348,7 +348,7 @@
 	"ecs/system.h"
 	"game_objects/test.h"
 
-1757968780 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\entity.cpp
+1757968780 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\entity.cpp
 	<math.h>
 	<algorithm>
 	"component.h"
@@ -359,10 +359,10 @@
 1512594589 c:\mingw\include\math.h
 	<_mingw.h>
 
-1757975875 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\component.h
-	"stdlib.h"
+1758733727 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\component.h
+	"utils/basics.h"
 
-1757968780 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\component.cpp
+1757968780 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\component.cpp
 	"component.h"
 	<GL/freeglut.h>
 	<stdbool.h>
@@ -374,7 +374,7 @@
 1426360528 c:\mingw\include\gl\freeglut_ext.h
 	<stdarg.h>
 
-1757968780 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\system.cpp
+1757968780 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\system.cpp
 	<GLUT/glut.h>
 	<GL/glut.h>
 	"entity.h"
@@ -383,29 +383,29 @@
 	"stdio.h"
 	"string.h"
 
-1757975610 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\entity.h
+1758733727 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\entity.h
 	"component.h"
 
-1757968780 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\system.h
+1757968780 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\system.h
 
-1757968780 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\utils\print.h
+1757968780 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\utils\print.h
 
 1512594589 c:\mingw\include\assert.h
 	<_mingw.h>
 
-1757968780 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\game_objects\test.h
+1757968780 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\game_objects\test.h
 
-1757968780 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\utils\print.cpp
+1757968780 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\utils\print.cpp
 	<stdio.h>
 	<stdarg.h>
 	<windows.h>
 
-1757969064 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\game_objects\test.cpp
+1757969064 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\game_objects\test.cpp
 	"../ecs/entity.h"
 	"../utils/print.h"
 	"test.h"
 
-1758157475 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\main.cpp
+1758157475 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\main.cpp
 	<GLUT/glut.h>
 	<GL/glut.h>
 	<stdlib.h>
@@ -431,23 +431,22 @@
 	<GL/glu.h>
 	<stdlib.h>
 
-1758153419 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\main.h
+1758153419 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\main.h
 	<GL/glut.h>
 
-1758153079 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\menu.c
+1758153079 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\menu.c
 	<GL/glut.h>
 	<stdlib.h>
 	"menu.h"
 
-1758154655 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\menu.h
+1758154655 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\menu.h
 
-1758155489 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\menu.cpp
+1758155489 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\menu.cpp
 	<GL/glut.h>
 	"menu.h"
 	"estado.h"
 
-1758155702 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\estado.cpp
+1758155702 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\estado.cpp
 	"estado.h"
 
-1758154761 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computação gráfica\jogo\computer-graphics-game-1\src\estado.h
-
+1758154761 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\estado.h
