@@ -1,69 +1,83 @@
 #include <GL/glut.h>
+#include <GL/glu.h>
+
 #include <math.h>
+#include <time.h>
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
+
 #include "estado.h"
 #include "menu.h"
-
-#define MAX_OBS 64
-#define LANE_X(i) ( (1-i) * 2.5f )
-#define GRAVITY -30.0f
-
-typedef enum { P_RUNNING, P_JUMPING, P_SLIDING } PlayerState;
-
-typedef struct {
-    int lane; // 0..2
-    float x,y,z;
-    float vy;
-    PlayerState state;
-    float width, height, depth;
-} Player;
-
-typedef struct {
-    int active;
-    int lane;
-    float x,y,z;
-    float w,h,d;
-} Obstacle;
+#include "model.h"
+#include "tree.h"
+#include "player.h"
+#include "coin.h"
+#include "hud.h"
+#include "obstacle.h"
 
 Player player;
-Obstacle obsPool[MAX_OBS];
 
-float worldSpeed = 12.0f; // units per second, increases with time
-float spawnTimer = 0.0f;
-float spawnInterval = 1.0f;
+float worldSpeed = 12.0f;
+float distanciaPercorrida = 0.0f;
+static const float fator = 0.1f;
 
-extern void resetGame(); // declara fun��o para menu chamar
+Model treeModel;
+float escalaArvoreDefault = 1.0f;
 
-void endSlide(int value) {
-    player.height = 2.0f;
-    player.state = P_RUNNING;
-}
+extern Model rockModel;
+extern Model logModel;
 
-void resetGame() {
-    player.lane = 1; player.x = LANE_X(1); player.y = 0; player.z = 0;
-    player.vy = 0; player.state = P_RUNNING;
-    player.width = 1.0f; player.height = 2.0f; player.depth = 1.0f;
-    for(int i=0;i<MAX_OBS;i++) obsPool[i].active = 0;
-    worldSpeed = 12.0f;
-    spawnTimer = 0.0f;
-}
+void mostrarEixos(){
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
 
-void spawnObstacle() {
-    for(int i=0;i<MAX_OBS;i++){
-        if(!obsPool[i].active){
-            obsPool[i].active = 1;
-            obsPool[i].lane = rand()%3;
-            obsPool[i].x = LANE_X(obsPool[i].lane);
-            obsPool[i].y = 0;
-            obsPool[i].z = 40.0f + (rand()%20);
-            obsPool[i].w = 1.0f; obsPool[i].h = 2.2f; obsPool[i].d = 1.0f;
-            return;
-        }
+    glLineWidth(2.0f);
+    glBegin(GL_LINES);
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glVertex3f(-10.0f, 0.1f, 0.0f);
+    glVertex3f(10.0f, 0.1f, 0.0f);
+    glEnd();
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+    for(int x = -10; x <= 10; x += 5) {
+        glRasterPos3f(x, 0.2f, 0.0f);
+        char label[10];
+        snprintf(label, 10, "%d", x);
+        for(const char *c = label; *c; ++c) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
     }
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 1.0f, 0.0f);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    glVertex3f(0.0f, 5.0f, 0.0f);
+    glEnd();
+
+    for(int y = 0; y <= 5; y += 1) {
+        glRasterPos3f(0.2f, y, 0.0f);
+        char label[10];
+        snprintf(label, 10, "%d", y);
+        for(const char *c = label; *c; ++c) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
+    }
+
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 1.0f);
+    glVertex3f(0.0f, 0.1f, -20.0f);
+    glVertex3f(0.0f, 0.1f, 20.0f);
+    glEnd();
+
+    for(int z = -20; z <= 20; z += 5) {
+        glRasterPos3f(0.2f, 0.2f, z);
+        char label[10];
+        snprintf(label, 10, "%d", z);
+        for(const char *c = label; *c; ++c) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
+    }
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
 }
 
+// Colisão AABB (mantida como antes)
 int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
                   float bx, float by, float bz, float bw, float bh, float bd) {
     if (fabs(ax - bx) * 2.0f < (aw + bw) &&
@@ -72,47 +86,50 @@ int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
     return 0;
 }
 
+void resetGame() {
+    initPlayer(&player);
+    initObstacleModels();
+    initObstacles();
+    worldSpeed = 12.0f;
+    distanciaPercorrida = 0.0f;
+    initCoins();
+}
+
 void update(float dt) {
     if(modoAtual != MODO_JOGO) return;
 
     worldSpeed += dt * 0.5f;
 
-    player.x = LANE_X(player.lane);
+    updatePlayer(&player, dt);
 
-    if(player.state == P_JUMPING) {
-        player.vy += GRAVITY * dt;
-        player.y += player.vy * dt;
-        if(player.y <= 0.0f) { player.y = 0.0f; player.vy = 0.0f; player.state = P_RUNNING; }
-    }
+    obstacleUpdate(dt);
 
-    for(int i=0;i<MAX_OBS;i++){
-        if(!obsPool[i].active) continue;
-        obsPool[i].z -= worldSpeed * dt;
-        if(obsPool[i].z < -10.0f) obsPool[i].active = 0;
-        else {
-            float ph = player.height, pw = player.width, pd = player.depth;
-            float oby = obsPool[i].y + obsPool[i].h*0.5f;
-            if (aabbCollision(player.x, player.y + ph*0.5f, player.z, pw, ph, pd,
-                              obsPool[i].x, oby, obsPool[i].z, obsPool[i].w, obsPool[i].h, obsPool[i].d)) {
-                modoAtual = MODO_GAMEOVER;
-            }
+    Obstacle* obstacles = getObstacles();
+    int maxObs = getMaxObstacles();
+
+    for(int i = 0; i < maxObs; i++) {
+        if(!obstacles[i].active) continue;
+
+        float ph = player.height, pw = player.width, pd = player.depth;
+
+        float obstCenterX = obstacles[i].x;
+        float obstWidth = obstacles[i].w;
+        float obstHeight = obstacles[i].h;
+        float obstDepth = obstacles[i].d;
+        float obstY = obstacles[i].y + obstHeight * 0.5f;
+
+        if (aabbCollision(
+            player.x, player.y + ph * 0.5f, player.z, pw, ph, pd,
+            obstCenterX, obstY, obstacles[i].z, obstWidth, obstHeight, obstDepth)
+        ) {
+            modoAtual = MODO_GAMEOVER;
         }
     }
 
-    spawnTimer += dt;
-    if(spawnTimer >= spawnInterval) {
-        spawnTimer = 0;
-        spawnObstacle();
-        spawnInterval = 0.8f - fmin(0.5f, worldSpeed * 0.01f);
-    }
-}
+    distanciaPercorrida += worldSpeed * dt * fator;
 
-void drawCube(float x, float y, float z, float sx, float sy, float sz) {
-    glPushMatrix();
-    glTranslatef(x,y+sy*0.5f,z);
-    glScalef(sx,sy,sz);
-    glutSolidCube(1.0f);
-    glPopMatrix();
+    updateTrees(dt, worldSpeed);
+    updateCoins(dt);
 }
 
 void renderScene() {
@@ -122,67 +139,72 @@ void renderScene() {
     }
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
     float camX = player.x;
-    float camY = 3.0f;
-    float camZpos = player.z - 6.0f;
-    gluLookAt(camX, camY, camZpos, player.x, 1.0f, player.z+6.0f, 0,1,0);
+    float camY = 4.0f;
+    float camZ = player.z + 8.0f;
+    gluLookAt(camX, camY, camZ,
+              player.x, 1.0f, player.z - 8.0f,
+              0.0f, 1.0f, 0.0f);
 
-    // Ground
-    for(int i=0;i<60;i++){
-        glPushMatrix();
-        glTranslatef(0, -0.01f, i*5.0f - fmodf((float)time(NULL),5.0f)*0 );
+    GLfloat light_position[] = { player.x + 5.0f, 10.0f, player.z + 5.0f, 1.0f };
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+
+    glDisable(GL_LIGHTING);
+    glColor3f(0.9f, 0.9f, 0.9f);
+    for(int i = -100; i < 100; i++) {
+        float zpos = i * 5.0f;
         glBegin(GL_QUADS);
-        glColor3f(0.2f,0.6f,0.2f);
-        glVertex3f(-10, 0, i*5 - 50);
-        glVertex3f(10, 0, i*5 - 50);
-        glVertex3f(10, 0, i*5 - 49.5);
-        glVertex3f(-10, 0, i*5 - 49.5);
+            glVertex3f(-1.5f, 0.0f, zpos);
+            glVertex3f(6.5f, 0.0f, zpos);
+            glVertex3f(6.5f, 0.0f, zpos - 5.0f);
+            glVertex3f(-1.5f, 0.0f, zpos - 5.0f);
         glEnd();
-        glPopMatrix();
     }
+    glEnable(GL_LIGHTING);
 
-    // Player
-    glColor3f(0.1f,0.4f,0.9f);
-    drawCube(player.x, player.y, player.z, player.width, player.height, player.depth);
+    drawPlayer(&player);
+    drawObstacles();
+    drawCoins3D();
+    drawTrees();
 
-    // Obstacles
-    glColor3f(0.9f,0.2f,0.2f);
-    for(int i=0;i<MAX_OBS;i++){
-        if(!obsPool[i].active) continue;
-        drawCube(obsPool[i].x, obsPool[i].y, obsPool[i].z, obsPool[i].w, obsPool[i].h, obsPool[i].d);
-    }
-
-    // UI - GameOver text
-    if(modoAtual == MODO_GAMEOVER){
+    if(modoAtual == MODO_GAMEOVER) {
         int w = glutGet(GLUT_WINDOW_WIDTH), h = glutGet(GLUT_WINDOW_HEIGHT);
-
         glMatrixMode(GL_PROJECTION);
-        glPushMatrix(); glLoadIdentity();
-        gluOrtho2D(0,w,0,h);
-
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(0, w, 0, h);
         glMatrixMode(GL_MODELVIEW);
-        glPushMatrix(); glLoadIdentity();
-
-        glColor3f(1,1,1);
-        glRasterPos2i(w/2 - 80, h/2);
-        const char *s = "GAME OVER - R to restart";
-        for(const char *c=s; *c; c++) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
-
+        glPushMatrix();
+        glLoadIdentity();
+        glDisable(GL_LIGHTING);
+        glColor3f(1, 1, 1);
+        glRasterPos2i(w / 2 - 80, h / 2);
+        const char *s = "GAME OVER - Press R to return";
+        for(const char *c = s; *c; ++c) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
+        glEnable(GL_LIGHTING);
         glPopMatrix();
         glMatrixMode(GL_PROJECTION);
         glPopMatrix();
         glMatrixMode(GL_MODELVIEW);
     }
+
+    drawDistance(distanciaPercorrida);
+    drawCoinsHUD(getCoinCount());
 
     glutSwapBuffers();
 }
 
 void idleCB() {
-    static float last = 0;
+    static float last = 0.0f;
     float now = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
-    if(last == 0) last = now;
+    if(last == 0.0f) last = now;
     float dt = now - last;
     last = now;
     update(dt);
@@ -194,40 +216,63 @@ void mouseCB(int button, int state, int x, int y) {
 }
 
 void keyboardCB(unsigned char key, int x, int y) {
-    if(key == 27) exit(0); // ESC
-    if(modoAtual == MODO_GAMEOVER && (key=='r'||key=='R')) {
+    if(key == 27) exit(0);
+
+    if(modoAtual == MODO_GAMEOVER && (key == 'r' || key == 'R')) {
         modoAtual = MODO_MENU;
         return;
     }
+
     if(modoAtual != MODO_JOGO) return;
 
-    if(key == 'w' || key == ' ') {
-        if(player.state == P_RUNNING) {
-            player.state = P_JUMPING;
-            player.vy = 12.0f;
-        }
-    } else if(key == 's') {
-        if(player.state == P_RUNNING) {
-            player.state = P_SLIDING;
-            player.height = 1.0f;
-            glutTimerFunc(600, endSlide, 0);
-        }
-    }
+    handlePlayerInput(&player, key);
 }
 
 void specialCB(int key, int x, int y) {
     if(modoAtual != MODO_JOGO) return;
-    if(key == GLUT_KEY_LEFT && player.lane > 0) player.lane--;
-    else if(key == GLUT_KEY_RIGHT && player.lane < 2) player.lane++;
+    handlePlayerSpecial(&player, key);
 }
 
 void reshape(int w, int h) {
-    if(h==0) h=1;
-    glViewport(0,0,w,h);
+    if(h == 0) h = 1;
+    glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60.0, (float)w/(float)h, 0.1, 200.0);
+    gluPerspective(60.0, (float)w / (float)h, 0.1, 200.0);
     glMatrixMode(GL_MODELVIEW);
+}
+
+void initGL() {
+    glClearColor(0.12f, 0.12f, 0.15f, 1.0f);
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    GLfloat light_ambient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    GLfloat light_diffuse[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+    GLfloat light_specular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+    GLfloat light_position[] = { 5.0f, 10.0f, 5.0f, 1.0f };
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+    GLfloat mat_ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
+    GLfloat mat_diffuse[] = { 0.6f, 0.6f, 0.6f, 1.0f };
+    GLfloat mat_specular[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+    GLfloat high_shininess[] = { 50.0f };
+
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, high_shininess);
+
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
 
 int main(int argc, char** argv) {
@@ -235,13 +280,20 @@ int main(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
     glutInitWindowSize(1024, 600);
-    glutCreateWindow("Simple 3D Runner - Prototype");
+    glutCreateWindow("Prototipo");
+    initGL();
+    resetGame();
 
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    if(!loadOBJ("tree.obj", &treeModel)) {
+        fprintf(stderr, "Falha ao carregar modelo de arvore.\n");
+    } else {
+        float alturaTree = treeModel.maxY - treeModel.minY;
+        if (alturaTree > 0.1f) {
+            escalaArvoreDefault = 2.0f / alturaTree;
+        }
+    }
 
-    resetGame(); // inicia jogo
+    initTrees();
 
     glutDisplayFunc(renderScene);
     glutIdleFunc(idleCB);
@@ -251,8 +303,14 @@ int main(int argc, char** argv) {
     glutMouseFunc(mouseCB);
 
     glutMainLoop();
+
+    freeModel(&treeModel);
+    freeModel(&rockModel);
+    freeModel(&logModel);
+
     return 0;
 }
+
 
 
 

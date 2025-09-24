@@ -1,7 +1,9 @@
 {
     "files.associations": {
         "component.h": "c",
-        "print.h": "c"
+        "print.h": "c",
+        "model.h": "c",
+        "coin.h": "c"
     },
     "cmake.ignoreCMakeListsMissing": true
 }
