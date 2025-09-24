@@ -17,20 +17,40 @@ esac
 
 if $DEBUG; then
     print_info "Running binary with debug..."
-    if [ ! -f "./bin/debug/Trabalho" ]; then
-        ./bin/debug/Trabalho
+    BINARY_DIR="./bin/debug"
+    BINARY_PATH="$BINARY_DIR/Trabalho"
+
+    if [ ! -f "$BINARY_PATH" ]; then
+        print_error "Debug binary not found at $BINARY_PATH"
+        exit 1
     fi
-    case $$ in
+
+    # Muda para o diretório do executável antes de executar
+    cd "$BINARY_DIR"
+    ./Trabalho "$@"
+    EXIT_CODE=$?
+
+    case $EXIT_CODE in
         0) print_success "Debug binary exited successfully." ;;
-        *) print_error "Debug binary exited with error. ($$)"; exit 1 ;;
+        *) print_error "Debug binary exited with error. ($EXIT_CODE)"; exit $EXIT_CODE ;;
     esac
 else
     print_info "Running release binary..."
-    if [ ! -f "./bin/release/Trabalho" ]; then
-        ./bin/release/Trabalho
+    BINARY_DIR="./bin/release"
+    BINARY_PATH="$BINARY_DIR/Trabalho"
+
+    if [ ! -f "$BINARY_PATH" ]; then
+        print_error "Release binary not found at $BINARY_PATH"
+        exit 1
     fi
-    case $$ in
+
+    # Muda para o diretório do executável antes de executar
+    cd "$BINARY_DIR"
+    ./Trabalho "$@"
+    EXIT_CODE=$?
+
+    case $EXIT_CODE in
         0) print_success "Binary exited successfully." ;;
-        *) print_error "Binary exited with error. ($$)"; exit 1 ;;
+        *) print_error "Binary exited with error. ($EXIT_CODE)"; exit $EXIT_CODE ;;
     esac
 fi

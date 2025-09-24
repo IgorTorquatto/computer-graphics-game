@@ -34,6 +34,20 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${PROJECT_ROOT}/bin/minsizerel"
 )
 
+# Copiar assets para o diretório de saída do executável
+# Usamos geradores de expressões para obter o diretório de saída correto para a configuração atual
+# Copiar assets se a pasta existir
+if(EXISTS "${PROJECT_ROOT}/assets")
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${PROJECT_ROOT}/assets"
+            "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+        COMMENT "Copiando assets para o diretório do executável"
+    )
+else()
+    message(WARNING "Pasta assets não encontrada em ${PROJECT_ROOT}/assets - pule a cópia")
+endif()
+
 # bibliotecas por plataforma
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE glut GL GLU m)

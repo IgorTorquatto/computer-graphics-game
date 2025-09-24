@@ -85,7 +85,7 @@
         },
         {
             "label": "Build and Run [release]",
-            "command": "${workspaceFolder}/scripts/build.sh",
+            "command": "${workspaceFolder}/scripts/run.sh",
             "type": "shell",
             "args": [
                 "--release"
