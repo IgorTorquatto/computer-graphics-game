@@ -18,7 +18,6 @@
 #include "game/obstacle.h"
 
 
-
 Player player;
 
 float worldSpeed = 12.0f;
