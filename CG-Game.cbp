@@ -23,6 +23,7 @@
 		</Build>
 		<Compiler>
 			<Add directory="$(#glut.include)" />
+			<Add directory="$(PROJECT_DIR)/src" />
 		</Compiler>
 		<Linker>
 			<Add library="freeglut" />
@@ -35,8 +36,46 @@
 		<UnitsGlob directory="src" wildcard="*" recursive="1" id="744811448" addToProject="1">
 			<Option target="Debug" />
 		</UnitsGlob>
-		<Unit filename="src/main.cpp">
+		<Unit filename="src/ecs/component.c">
 			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/ecs/component.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/ecs/entity.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/ecs/entity.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/ecs/system.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/ecs/system.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/game_objects/test.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/game_objects/test.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/utils/basics.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/utils/print.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/utils/print.h">
 			<Option glob="744811448" />
 		</Unit>
 		<Extensions>

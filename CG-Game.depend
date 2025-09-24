@@ -359,8 +359,8 @@
 1512594589 c:\mingw\include\math.h
 	<_mingw.h>
 
-1757975875 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\component.h
-	"stdlib.h"
+1758733727 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\component.h
+	"utils/basics.h"
 
 1757968780 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\component.cpp
 	"component.h"
@@ -383,7 +383,7 @@
 	"stdio.h"
 	"string.h"
 
-1757975610 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\entity.h
+1758733727 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\entity.h
 	"component.h"
 
 1757968780 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\system.h
@@ -404,4 +404,54 @@
 	"../ecs/entity.h"
 	"../utils/print.h"
 	"test.h"
+
+1758733727 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\component.c
+	"component.h"
+	<GL/freeglut.h>
+	<stdbool.h>
+
+1758733727 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\\src\utils\basics.h
+	<stdlib.h>
+	<stdbool.h>
+	<assert.h>
+
+1758733727 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\entity.c
+	<math.h>
+	"component.h"
+	"utils/print.h"
+	"entity.h"
+
+1757968780 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\\src\utils\print.h
+
+1758733727 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\ecs\system.c
+	<GLUT/glut.h>
+	<GL/glut.h>
+	"entity.h"
+	"component.h"
+	"system.h"
+	"stdio.h"
+	"string.h"
+
+1758733727 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\game_objects\test.c
+	"ecs/entity.h"
+	"utils/print.h"
+	"test.h"
+
+1758733727 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\\src\ecs\entity.h
+	"component.h"
+
+1758733727 c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\\src\ecs\component.h
+	"utils/basics.h"
+
+1758733727 source:c:\users\gerso\onedrive\햞ea de trabalho\work\cg-game\src\main.c
+	<GLUT/glut.h>
+	<GL/glut.h>
+	<string.h>
+	<stdio.h>
+	<stdlib.h>
+	<time.h>
+	"ecs/entity.h"
+	"ecs/component.h"
+	"ecs/system.h"
+	"game_objects/test.h"
 
