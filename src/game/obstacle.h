@@ -1,7 +1,6 @@
-#ifndef OBSTACLE_H
-#define OBSTACLE_H
+#pragma once
 
-#include "model.h"
+#include "ecs/components/model.h"
 
 #define MAX_OBSTACLES 64
 #define LANE_WIDTH 2.5f
@@ -33,5 +32,3 @@ void initObstacleModels();
 
 extern Model rockModel;
 extern Model logModel;
-
-#endif

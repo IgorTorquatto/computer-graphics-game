@@ -33,7 +33,8 @@
 
 > Extras
 > - [x] Importação de um objeto.
-> - [ ] Adição de texturas nos objetos. 
+> - [ ] Adição de texturas nos objetos.
+> - [x] Limpeza de memória.
 
 ### Iluminação
 

@@ -1,6 +1,4 @@
-
-#ifndef TREE_H
-#define TREE_H
+#pragma once
 
 typedef struct {
     int active;
@@ -13,5 +11,3 @@ typedef struct {
 void initTrees();
 void updateTrees(float dt, float worldSpeed);
 void drawTrees();
-
-#endif

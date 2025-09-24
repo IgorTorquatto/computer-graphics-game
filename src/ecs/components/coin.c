@@ -1,5 +1,7 @@
 #include "coin.h"
-#include "player.h"
+
+#include "game/player.h"
+
 #include <GL/glut.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,7 +46,7 @@ void spawnCoin() {
     }
 }
 
-/* Atualiza posição e rotação das moedas, e verifica colisões */
+/* Atualiza posiï¿½ï¿½o e rotaï¿½ï¿½o das moedas, e verifica colisï¿½es */
 void updateCoins(float dt) {
     for(int i = 0; i < MAX_COINS; i++) {
         if(!coinPool[i].active) continue;
@@ -57,13 +59,13 @@ void updateCoins(float dt) {
             continue;
         }
 
-        float ph = 2.0f; // altura player padrão (ou obtenha via player.height)
+        float ph = 2.0f; // altura player padrï¿½o (ou obtenha via player.height)
         float pw = 1.0f;
         float pd = 1.0f;
 
         float coinCenterY = coinPool[i].y + coinPool[i].h * 0.5f;
 
-        /* Colisão AABB simples, utilize a função aabbCollision do jogo principal */
+        /* Colisï¿½o AABB simples, utilize a funï¿½ï¿½o aabbCollision do jogo principal */
         extern int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
                                 float bx, float by, float bz, float bw, float bh, float bd);
 
@@ -105,7 +107,7 @@ void drawCoins3D() {
 }
 
 
-/* Retorna o número atual de moedas coletadas */
+/* Retorna o nï¿½mero atual de moedas coletadas */
 int getCoinCount() {
     return coinCount;
 }
