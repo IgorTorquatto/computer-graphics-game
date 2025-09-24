@@ -17,6 +17,35 @@
     typedef float DeltaTime;
 #pragma endregion
 
+#pragma region Interpolation
+    /* Interpolação Linear de `from` para `to` em intervalos `delta` */
+    #define lerp(from, to, delta) ((from) + ((to) - (from)) * (delta))
+
+    /* Smooth interpolation */
+    #define smoothstep(edge0, edge1, x) ((x) <= (edge0) ? 0 : ((x) >= (edge1) ? 1 : ((x) - (edge0)) / ((edge1) - (edge0))))
+
+    /* Cubic interpolation */
+    #define cubicstep(edge0, edge1, x) ((x) <= (edge0) ? 0 : ((x) >= (edge1) ? 1 : ((x) - (edge0)) / ((edge1) - (edge0)) * ((x) - (edge0))))
+
+    /* Spline interpolation */
+    #define splinestep(edge0, edge1, x) ((x) <= (edge0) ? 0 : ((x) >= (edge1) ? 1 : ((x) - (edge0)) / ((edge1) - (edge0)) * ((x) - (edge0)) * ((x) - (edge0))))
+
+    /* See graphics at https://easings.net/ */
+    #pragma Region Easing
+        #define ease_in_quad(x) ((x) * (x))
+        #define ease_in_cubic(x) ((x) * (x) * (x))
+        #define ease_in_sine(x) (1 - cos((x) * M_PI / 2))
+
+        #define ease_out_quad(x) (1 - (1 - (x)) * (1 - (x)))
+        #define ease_out_cubic(x) (1 - pow(1 - (x), 3))
+        #define ease_out_sine(x) (sin((x) * M_PI / 2))
+
+        #define ease_in_out_quad(x) (x < 0.5 ? 2 * x * x : 1 - pow(-2 * x + 2, 2) / 2)
+        #define ease_in_out_sine(x) (-(cos(M_PI * x) - 1) / 2)
+        #define ease_in_out_circle(x) (1 - sqrt(1 - (x) * (x)))
+    #pragma endregion
+#pragma endregion
+
 #define MAX_ENTITIES 256
 #define INVALID_ENTITY MAX_ENTITIES
 

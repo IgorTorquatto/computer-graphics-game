@@ -4,21 +4,21 @@
 #include <GL/gl.h>
 #include "model.h"
 
-// Função auxiliar para contar elementos em arquivo OBJ (vértices e faces)
+// FunÃ§Ã£o auxiliar para contar elementos em arquivo OBJ (vÃ©rtices e faces)
 static void countElements(FILE* file, int* outVertCount, int* outFaceCount) {
     char line[256];
     *outVertCount = 0;
     *outFaceCount = 0;
 
     while(fgets(line, sizeof(line), file)) {
-        // Contar vértices
+        // Contar vÃ©rtices
         if(strncmp(line, "v ", 2) == 0) (*outVertCount)++;
         // Contar faces
         else if(strncmp(line, "f ", 2) == 0) (*outFaceCount)++;
     }
 }
 
-// Função para carregar OBJ simples (vértices + faces triangulares)
+// FunÃ§Ã£o para carregar OBJ simples (vÃ©rtices + faces triangulares)
 int loadOBJ(const char* filename, Model* model) {
     FILE* file = fopen(filename, "r");
     if(!file) {
@@ -58,7 +58,7 @@ int loadOBJ(const char* filename, Model* model) {
                 // Tentar formato com barras: "f 1/1/1 2/2/2 3/3/3"
                 sscanf(line+2, "%d/%*d/%*d %d/%*d/%*d %d/%*d/%*d", &vi[0], &vi[1], &vi[2]);
             }
-            // OBJ é 1-indexado, converter para 0-index
+            // OBJ ï¿½ 1-indexado, converter para 0-index
             model->faces[fIdx++] = vi[0]-1;
             model->faces[fIdx++] = vi[1]-1;
             model->faces[fIdx++] = vi[2]-1;
@@ -66,7 +66,7 @@ int loadOBJ(const char* filename, Model* model) {
     }
     fclose(file);
 
-    // Calcular altura mínima e máxima (eixo Y)
+    // Calcular altura mÃ­nima e mÃ¡xima (eixo Y)
     model->minY = model->vertices[1];
     model->maxY = model->vertices[1];
     for(int i=0; i<model->numVertices; i++) {
@@ -86,7 +86,7 @@ void drawModel(const Model* model) {
         int idx1 = model->faces[i*3 + 1] * 3;
         int idx2 = model->faces[i*3 + 2] * 3;
 
-        // Nessa versão simples não tem normais — pode calcular normais para iluminação após
+        // Nessa versÃ£o simples nÃ£o tem normais ï¿½ pode calcular normais para iluminaÃ§Ã£o apÃ³s
         // Por enquanto, chamamos vertex diretamente
 
         glVertex3f(model->vertices[idx0], model->vertices[idx0+1], model->vertices[idx0+2]);

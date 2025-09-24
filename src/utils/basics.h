@@ -1,5 +1,6 @@
 #pragma once
 
+#include <math.h>
 #include <stdlib.h> // size_t
 #include <stdbool.h> // booleans
 #include <assert.h>

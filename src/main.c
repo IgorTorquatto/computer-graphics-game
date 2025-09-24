@@ -100,7 +100,7 @@ void update(float dt) {
 
     worldSpeed += dt * 0.5f;
 
-    updatePlayer(&player, dt);
+    update_player(&player, dt);
 
     obstacleUpdate(dt);
 

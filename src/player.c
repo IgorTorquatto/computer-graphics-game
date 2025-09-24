@@ -1,11 +1,14 @@
 #include "player.h"
+#include "ecs/component.h"
+
 #include <GL/glut.h>
 
 #include <stdint.h>
 #define LANE_X(i) ((i) * 2.5f)
 #define GRAVITY -30.0f
 
-/* Inicializa o jogador com valores padr„o */
+float const move_speed = 10.0f;
+
 void initPlayer(Player *p) {
     p->lane = 1;
     p->x = LANE_X(1);
@@ -18,9 +21,8 @@ void initPlayer(Player *p) {
     p->depth = 1.0f;
 }
 
-/* Atualiza fÌsica do jogador (pulo, slide, movimentaÁ„o lateral) */
-void updatePlayer(Player *p, float dt) {
-    p->x = LANE_X(p->lane);
+void update_player(Player *p, float dt) {
+    p->x = lerp(p->x, LANE_X(p->lane), ease_out_quad(dt * move_speed));
 
     if (p->state == P_JUMPING) {
         p->vy += GRAVITY * dt;
@@ -31,17 +33,15 @@ void updatePlayer(Player *p, float dt) {
             p->state = P_RUNNING;
         }
     }
-    // Slide (recuperaÁ„o autom·tica feita por timer externo)
+    // Slide (recupera√ß√£o autom√°tica feita por timer externo)
 }
 
-/* FunÁ„o auxiliar para reset do slide do jogador */
 static void endSlide(void *data) {
     Player *p = (Player*)data;
     p->height = 2.0f;
     p->state = P_RUNNING;
 }
 
-/* Entrada por teclado para movimentaÁ„o do jogador */
 void handlePlayerInput(Player *p, unsigned char key) {
     switch (key) {
         case 'w': case 'W': case ' ':
@@ -54,8 +54,8 @@ void handlePlayerInput(Player *p, unsigned char key) {
             if (p->state == P_RUNNING) {
                 p->state = P_SLIDING;
                 p->height = 1.0f;
-                // Timer para retornar ao estado normal apÛs 600ms
-                // Necess·rio passar ponteiro do player via cast para int
+                // Timer para retornar ao estado normal ap√≥s 600ms
+                // Necess√°rio passar ponteiro do player via cast para int
                 glutTimerFunc(600, (void (*)(int))endSlide, (int)(intptr_t)p);
             }
             break;
@@ -72,7 +72,6 @@ void handlePlayerInput(Player *p, unsigned char key) {
     }
 }
 
-/* Entrada por teclas especiais (setas) */
 void handlePlayerSpecial(Player *p, int key) {
     switch (key) {
         case GLUT_KEY_LEFT:
@@ -97,7 +96,6 @@ void handlePlayerSpecial(Player *p, int key) {
     }
 }
 
-/* Desenha o jogador como um cubo colorido */
 void drawPlayer(const Player *p) {
     glColor3f(0.1f, 0.4f, 0.9f);
     glPushMatrix();
