@@ -1,6 +1,7 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 
+
 typedef enum { P_RUNNING, P_JUMPING, P_SLIDING } PlayerState;
 
 typedef struct {

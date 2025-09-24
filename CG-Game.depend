@@ -1,8 +1,16 @@
 # depslib dependency file v1.0
-1743445502 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\main.c
-	<GLUT/glut.h>
+1758740287 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\coin.c
+	"coin.h"
+	"player.h"
 	<GL/glut.h>
 	<stdlib.h>
+	<string.h>
+	<stdio.h>
+	<math.h>
+
+1758740287 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\coin.h
+
+1758742864 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\player.h
 
 1426360528 c:\mingw\include\gl\glut.h
 	"freeglut_std.h"
@@ -336,114 +344,37 @@
 	<stddef.h>
 	<GL/gl.h>
 
-1757968780 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\main.cpp
-	<GLUT/glut.h>
-	<GL/glut.h>
-	<algorithm>
-	<stdio.h>
-	<stdlib.h>
-	<time.h>
-	"ecs/entity.h"
-	"ecs/component.h"
-	"ecs/system.h"
-	"game_objects/test.h"
-
-1757968780 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\entity.cpp
-	<math.h>
-	<algorithm>
-	"component.h"
-	"../utils/print.h"
-	"entity.h"
-	"assert.h"
-
 1512594589 c:\mingw\include\math.h
 	<_mingw.h>
 
-1758733727 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\component.h
-	"utils/basics.h"
+1758740287 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\estado.c
+	"estado.h"
 
-1757968780 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\component.cpp
-	"component.h"
-	<GL/freeglut.h>
-	<stdbool.h>
+1758740287 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\estado.h
 
-1426360528 c:\mingw\include\gl\freeglut.h
-	"freeglut_std.h"
-	"freeglut_ext.h"
-
-1426360528 c:\mingw\include\gl\freeglut_ext.h
-	<stdarg.h>
-
-1757968780 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\system.cpp
-	<GLUT/glut.h>
+1758740287 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\hud.c
+	"hud.h"
 	<GL/glut.h>
-	"entity.h"
-	"component.h"
-	"system.h"
-	"stdio.h"
-	"string.h"
-
-1758733727 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\entity.h
-	"component.h"
-
-1757968780 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\system.h
-
-1757968780 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\utils\print.h
-
-1512594589 c:\mingw\include\assert.h
-	<_mingw.h>
-
-1757968780 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\game_objects\test.h
-
-1757968780 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\utils\print.cpp
+	<string.h>
 	<stdio.h>
-	<stdarg.h>
-	<windows.h>
 
-1757969064 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\game_objects\test.cpp
-	"../ecs/entity.h"
-	"../utils/print.h"
-	"test.h"
+1758740287 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\hud.h
 
-1758733727 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\component.c
-	"component.h"
-	<GL/freeglut.h>
-	<stdbool.h>
-
-1758733727 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\\src\utils\basics.h
-	<stdlib.h>
-	<stdbool.h>
-	<assert.h>
-
-1758733727 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\entity.c
-	<math.h>
-	"component.h"
-	"utils/print.h"
-	"entity.h"
-
-1757968780 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\\src\utils\print.h
-
-1758733727 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\ecs\system.c
-	<GLUT/glut.h>
+1758740287 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\main.c
 	<GL/glut.h>
-	"entity.h"
-	"component.h"
-	"system.h"
-	"stdio.h"
-	"string.h"
-
-1758733727 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\game_objects\test.c
-	"ecs/entity.h"
-	"utils/print.h"
-	"test.h"
-
-1758733727 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\\src\ecs\entity.h
-	"component.h"
-
-1758733727 c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\\src\ecs\component.h
-	"utils/basics.h"
-
-1758733727 source:c:\users\gerso\onedrive\ï¿½rea de trabalho\work\cg-game\src\main.c
+	<GL/glu.h>
+	<math.h>
+	<time.h>
+	<stdio.h>
+	<stdlib.h>
+	"estado.h"
+	"menu.h"
+	"model.h"
+	"tree.h"
+	"player.h"
+	"coin.h"
+	"hud.h"
+	"obstacle.h"
 	<GLUT/glut.h>
 	<GL/glut.h>
 	<string.h>
@@ -455,61 +386,115 @@
 	"ecs/system.h"
 	"game_objects/test.h"
 
-1758157475 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\main.cpp
-	<GLUT/glut.h>
-	<GL/glut.h>
-	<math.h>
-	<stdio.h>
-	<stdlib.h>
-	<GL/glut.h>
-	<math.h>
-	<stdio.h>
-	<stdlib.h>
-	<time.h>
-	"ecs/entity.h"
-	"ecs/component.h"
-	"ecs/system.h"
-	"game_objects/test.h"
+1758740287 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\menu.h
 
-1758154959 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\main.cpp
+1758740287 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\model.h
+
+1758740287 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\tree.h
+
+1758740287 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\obstacle.h
+	"model.h"
+
+1758733727 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\entity.h
+	"component.h"
+
+1758740287 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\component.h
+	"utils/basics.h"
+
+1757968780 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\system.h
+
+1757968780 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\game_objects\test.h
+
+1758740287 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\menu.c
 	<GL/glut.h>
-	<math.h>
-	<stdio.h>
-	<stdlib.h>
-	<time.h>
-	"estado.h"
-	"menu.h"
-
-1426360528 c:\program files\codeblocks\mingw\include\gl\glut.h
-	"freeglut_std.h"
-
-1426360528 c:\program files\codeblocks\mingw\include\gl\freeglut_std.h
-	<windows.h>
-	<EGL/egl.h>
-	<GLES/gl.h>
-	<GLES2/gl2.h>
-	<OpenGL/gl.h>
-	<OpenGL/glu.h>
-	<GL/gl.h>
 	<GL/glu.h>
 	<stdlib.h>
+	<string.h>
+	"menu.h"
+	"estado.h"
 
-1758153419 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\main.h
-	<GL/glut.h>
-
-1758153079 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\menu.c
-	<GL/glut.h>
+1758740287 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\model.c
+	<stdio.h>
 	<stdlib.h>
-	"menu.h"
+	<string.h>
+	<GL/gl.h>
+	"model.h"
 
-1758154655 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\menu.h
-
-1758155489 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\menu.cpp
+1758740287 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\obstacle.c
+	"obstacle.h"
+	<stdlib.h>
 	<GL/glut.h>
-	"menu.h"
-	"estado.h"
+	<math.h>
+	<stdio.h>
+	"model.h"
 
-1758155702 source:c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\estado.cpp
-	"estado.h"
+1758740287 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\tree.c
+	<stdlib.h>
+	<GL/glut.h>
+	"tree.h"
+	"model.h"
 
-1758154761 c:\users\cicer\downloads\[planejamento] ufca\[ufca] 2025.1\computaï¿½ï¿½o grï¿½fica\jogo\computer-graphics-game-1\src\estado.h
+1758734007 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\utils\print.c
+	"basics.h"
+	<stdio.h>
+	<stdarg.h>
+	<windows.h>
+
+1758733727 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\utils\basics.h
+	<stdlib.h>
+	<stdbool.h>
+	<assert.h>
+
+1512594589 c:\mingw\include\assert.h
+	<_mingw.h>
+
+1758733727 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\component.c
+	"component.h"
+	<GL/freeglut.h>
+	<stdbool.h>
+
+1758733727 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\\src\utils\basics.h
+	<stdlib.h>
+	<stdbool.h>
+	<assert.h>
+
+1426360528 c:\mingw\include\gl\freeglut.h
+	"freeglut_std.h"
+	"freeglut_ext.h"
+
+1426360528 c:\mingw\include\gl\freeglut_ext.h
+	<stdarg.h>
+
+1758740287 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\entity.c
+	<math.h>
+	"component.h"
+	"utils/print.h"
+	"entity.h"
+
+1757968780 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\\src\utils\print.h
+
+1758733727 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\ecs\system.c
+	<GLUT/glut.h>
+	<GL/glut.h>
+	"entity.h"
+	"component.h"
+	"system.h"
+	"stdio.h"
+	"string.h"
+
+1758740287 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\game_objects\test.c
+	"ecs/entity.h"
+	"utils/print.h"
+	"test.h"
+
+1758733727 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\\src\ecs\entity.h
+	"component.h"
+
+1758740287 c:\users\gerso\onedrive\Área de trabalho\work\cg-game\\src\ecs\component.h
+	"utils/basics.h"
+
+1758742849 source:c:\users\gerso\onedrive\Área de trabalho\work\cg-game\src\player.c
+	"player.h"
+	<GL/glut.h>
+	<stdint.h>
+
