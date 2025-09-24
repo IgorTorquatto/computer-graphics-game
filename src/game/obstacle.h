@@ -1,5 +1,4 @@
-#ifndef OBSTACLE_H
-#define OBSTACLE_H
+#pragma once
 
 #include "ecs/components/model.h"
 
@@ -33,5 +32,3 @@ void initObstacleModels();
 
 extern Model rockModel;
 extern Model logModel;
-
-#endif
