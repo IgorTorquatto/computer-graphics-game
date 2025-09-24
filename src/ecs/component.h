@@ -67,7 +67,7 @@ typedef struct {
     Color color;
 } Label;
 
-#define label_empty (Label){nullptr, position_zero, color_white}
+#define label_empty (Label){(char *)NULL, position_zero, color_white}
 
 #pragma region Geometry
 
@@ -198,7 +198,7 @@ typedef void(* InputFunction)(InputEvent);
         InputFunction input;
     } GameObject;
 
-    #define game_object_empty (GameObject){geometry_empty, vector_zero, vector_zero, nullptr, nullptr}
+    #define game_object_empty (GameObject){geometry_empty, vector_zero, vector_zero, (ProcessFunction)nullptr, (InputFunction)NULL}
 #pragma endregion
 
 #pragma region Component Arrays

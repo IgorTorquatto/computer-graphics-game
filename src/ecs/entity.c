@@ -39,8 +39,8 @@ EntityId create_label(char *text, Position p)
 void remove_game_object(EntityId id)
 {
     assert(id < game_objects_count);
-    print_warning("Remoção de entidades não é recomendado nesse sistema.\n"
-        "\tA ordem dos elementos é alterada na remoção.");
+    //print_warning("Remoção de entidades não é recomendado nesse sistema.\n"
+    //    "\tA ordem dos elementos é alterada na remoção.");
 
     GeometryId geometry_id = game_objects[id].geometry.id;
     GeometryType type = game_objects[id].geometry.type;
@@ -84,8 +84,8 @@ void remove_game_object(EntityId id)
 void remove_label(EntityId id)
 {
     assert(id < labels_count);
-    print_warning("Remoção de entidades não é recomendado nesse sistema.\n"
-        "\tA ordem dos elementos é alterada na remoção.");
+    //print_warning("Remoção de entidades não é recomendado nesse sistema.\n"
+    //    "\tA ordem dos elementos é alterada na remoção.");
 
     swap(labels[id], labels[--labels_count], Label); // troca com o ultimo e ignora o final
     labels[labels_count] = label_empty; // Reset

@@ -36,7 +36,7 @@ void create_test_object() {
     test_object_id = create_game_object();
 
     if (test_object_id == INVALID_ENTITY) {
-        print_error("Failed to create test object. Out of space.");
+        //print_error("Failed to create test object. Out of space.");
         return;
     }
     EntityId mesh_id = add_mesh(test_object_id);

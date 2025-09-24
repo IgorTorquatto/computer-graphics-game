@@ -36,6 +36,74 @@
 		<UnitsGlob directory="src" wildcard="*" recursive="1" id="744811448" addToProject="1">
 			<Option target="Debug" />
 		</UnitsGlob>
+		<Unit filename="src/estado.c">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/estado.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/menu.c">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/menu.h">
+		<Unit filename="src/ecs/component.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/ecs/component.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/ecs/entity.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/ecs/entity.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/ecs/system.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/ecs/system.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/game_objects/test.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/game_objects/test.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/utils/basics.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/utils/print.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/utils/print.h">
+		<Unit filename="src/estado.c">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/estado.h">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/main.c">
+			<Option compilerVar="CC" />
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/menu.c">
+			<Option glob="744811448" />
+		</Unit>
+		<Unit filename="src/menu.h">
 		<Unit filename="src/ecs/component.c">
 			<Option compilerVar="CC" />
 			<Option glob="744811448" />
