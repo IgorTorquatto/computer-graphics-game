@@ -97,7 +97,7 @@ void drawSolidCubeWithNormals(float size) {
     // Frente
     glNormal3f(0,0,1);
     glVertex3f(-s,-s, s); glVertex3f( s,-s, s); glVertex3f( s, s, s); glVertex3f(-s, s, s);
-    // Tr�s
+    // Trás
     glNormal3f(0,0,-1);
     glVertex3f(-s,-s,-s); glVertex3f(-s, s,-s); glVertex3f( s, s,-s); glVertex3f( s,-s,-s);
     // Direita
