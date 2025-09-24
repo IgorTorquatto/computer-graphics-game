@@ -1,16 +1,17 @@
 # TODO
 
 ## Design/ Arquitetura
-- [x] Esboço/ base do sistema ECS  [@GersonFeDutra](https://github.com/GersonFeDutra).
-- [ ] Esboço do cenário [@GersonFeDutra](https://github.com/GersonFeDutra).
-- [ ] Esboço dos sistemas de jogo
+- [x] Esboço/ base do sistema ECS [@GersonFeDutra](https://github.com/GersonFeDutra).
+- [x] Esboço dos sistemas de jogo [@IgorTorquatto](https://github.com/IgorTorquatto)
+- [ ] Cenário [@IgorTorquatto](https://github.com/IgorTorquatto)
 
 ### Sistemas de jogo
 
-- [ ] Movimentação
-- [ ] Coleta de itens
-- [ ] Colisão e Condição de morte
-- [ ] Loop de jogabilidade
+- [ ] Movimentação [@IgorTorquatto](https://github.com/IgorTorquatto)
+  - [ ] Interpolação [@GersonFeDutra](https://github.com/GersonFeDutra).
+- [x] Coleta de itens [@IgorTorquatto](https://github.com/IgorTorquatto)
+- [x] Colisão e Condição de morte [@IgorTorquatto](https://github.com/IgorTorquatto)
+- [x] Loop de jogabilidade [@IgorTorquatto](https://github.com/IgorTorquatto)
 
 ## Construção da cena
 
@@ -18,14 +19,20 @@
 - [ ] Carregamento de objetos 3D com cores distintas
   - [ ] Personagem
   - [ ] Inimigos / Obstáculos
+    - [ ] Pedras
+      - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
+      - [ ] Texturas / cores
   - [ ] Coletáveis
   - [ ] Cenário
-    - [ ] Piso
+    - [x] Piso [@IgorTorquatto](https://github.com/IgorTorquatto)
+    - [ ] Árvores
+      - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
+      - [ ] Texturas / Cores
     - [ ] Prédios/ Paredes
-- [ ] Ative a remoção de superfícies ocultas.
+- [x] Ative a remoção de superfícies ocultas. [@IgorTorquatto](https://github.com/IgorTorquatto)
 
 > Extras
-> - [ ] Importação de um objeto.
+> - [x] Importação de um objeto.
 > - [ ] Adição de texturas nos objetos. 
 
 ### Iluminação
@@ -40,23 +47,25 @@
 
 ### Camera
 
-- [ ] Uso de câmera para navegação ou visualização da cena. 
-- [ ] Use projeções perspectivas e/ou ortogonais. 
+- [x] Uso de câmera para navegação ou visualização da cena. 
+- [x] Use projeções perspectivas e/ou ortogonais. 
 
 ### Animações
 
 - [ ] Movimento (interativo) do personagem
-- [ ] Movimento dos objetos da cena
-    - [ ] Inimigos
-    - [ ] Coletáveis (ex.: moedas)
+  - [ ] Interpolação [@GersonFeDutra](https://github.com/GersonFeDutra).
+- [x] Movimento dos objetos da cena [@IgorTorquatto](https://github.com/IgorTorquatto)
+    - [x] Inimigos
+    - [x] Coletáveis (ex.: moedas)
 
 ### Elementos de Interface
 
-- [ ] Contador de coletáveis (ex.: número de moedas coletadas, número de mortes)
+- [x] Contador de coletáveis (ex.: número de moedas coletadas, número de mortes)
 
 > Extras
-> - [x] Contador de fps / debug [@GersonFeDutra](https://github.com/GersonFeDutra).
-> - [ ] Menu iniciar
->   - [ ] Botão de começar jogo
->   - [ ] Botão de sair do jogo
+> - [x] Menu iniciar [@IgorTorquatto](https://github.com/IgorTorquatto)
+>   - [x] Botão de começar jogo
+>   - [x] Botão de sair do jogo
 > - [ ] Pausar jogo
+
+<!-- - [x] Contador de fps / debug [@GersonFeDutra](https://github.com/GersonFeDutra). -->
