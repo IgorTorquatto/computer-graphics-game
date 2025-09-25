@@ -1,2 +1,8 @@
 bin/
 *.tmp
+
+# Code::Blocks
+*.depend
+*.layout
+*.workspace
+*.cbTemp
