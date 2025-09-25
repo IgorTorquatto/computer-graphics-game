@@ -15,7 +15,9 @@ Coin coinPool[MAX_COINS];
 static int coinCount = 0;
 static float coinSpawnTimer = 0.0f;
 static float coinSpawnInterval = 1.0f;
-extern float worldSpeed;
+
+extern float worldSpeed; // declarado em main.c ou game.c para velocidade global
+
 extern Player player;
 
 /* Inicializa o pool de moedas */
@@ -66,6 +68,7 @@ void updateCoins(float dt) {
         float coinCenterY = coinPool[i].y + coinPool[i].h * 0.5f;
 
         /* Colisão AABB simples, utilize a função aabbCollision do jogo principal */
+
         extern int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
                                 float bx, float by, float bz, float bw, float bh, float bd);
 
@@ -115,17 +118,18 @@ void drawSolidCubeWithNormals(float size) {
     glEnd();
 }
 
-
 /* Desenha as moedas em 3D na cena */
 void drawCoins3D() {
     glColor3f(1.0f, 0.85f, 0.1f);
     for(int i = 0; i < MAX_COINS; i++) {
         if(!coinPool[i].active) continue;
+
         glPushMatrix();
         glTranslatef(coinPool[i].x, coinPool[i].y + coinPool[i].h * 0.5f, coinPool[i].z);
         glRotatef(coinPool[i].angle, 0.0f, 1.0f, 0.0f);
         glScalef(coinPool[i].w, coinPool[i].h, coinPool[i].d);
         drawSolidCubeWithNormals(1.0f);
+        glutSolidCube(1.0f);
         glPopMatrix();
     }
 }

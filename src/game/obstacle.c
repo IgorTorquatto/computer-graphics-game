@@ -79,7 +79,6 @@ void drawObstacles() {
     }
 }
 
-
 void spawnObstacle() {
     int lanes[3] = {0, 0, 0};
 

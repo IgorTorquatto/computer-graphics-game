@@ -12,6 +12,7 @@ static void countElements(FILE* file, int* outVertCount, int* outFaceCount) {
     *outFaceCount = 0;
 
     while(fgets(line, sizeof(line), file)) {
+
         // Contar vértices
         if(strncmp(line, "v ", 2) == 0) (*outVertCount)++;
         // Contar faces
@@ -19,7 +20,8 @@ static void countElements(FILE* file, int* outVertCount, int* outFaceCount) {
     }
 }
 
-// Fun��o para carregar OBJ simples (vértices + faces triangulares)
+
+// Função para carregar OBJ simples (vértices + faces triangulares)
 int loadOBJ(const char* filename, Model* model) {
     FILE* file = fopen(filename, "r");
     if(!file) {
@@ -33,11 +35,12 @@ int loadOBJ(const char* filename, Model* model) {
     rewind(file);
 
     model->numVertices = vertCount;
-    model->numFaces = 0;  // contar faces válidas
+    model->numFaces = 0;  // contar faces vÃ¡lidas
 
     model->vertices = (float*)malloc(sizeof(float)*3*vertCount);
-    // Alocar o máximo possível: faceCount faces, depois ajustamos numFaces
+    // Alocar o mÃ¡ximo possÃ­vel: faceCount faces, depois ajustamos numFaces
     model->faces = (int*)malloc(sizeof(int)*3*faceCount);
+
 
     if(!model->vertices || !model->faces) {
         fclose(file);
@@ -53,7 +56,6 @@ int loadOBJ(const char* filename, Model* model) {
             model->vertices[vIdx++] = x;
             model->vertices[vIdx++] = y;
             model->vertices[vIdx++] = z;
-
         } else if(strncmp(line, "f ", 2) == 0) {
             int vi[3] = {0,0,0};
             if(sscanf(line+2, "%d %d %d", &vi[0], &vi[1], &vi[2]) < 3) {
@@ -63,12 +65,12 @@ int loadOBJ(const char* filename, Model* model) {
             int v1 = vi[1] - 1;
             int v2 = vi[2] - 1;
 
-            // Validar índices
+            // Validar Ã­ndices
             if (v0 < 0 || v0 >= vertCount ||
                 v1 < 0 || v1 >= vertCount ||
                 v2 < 0 || v2 >= vertCount) {
-                fprintf(stderr, "Face ignorada por índice inválido: %s", line);
-                continue;  // pular essa face inv�lida
+                fprintf(stderr, "Face ignorada por Ã­ndice invÃ¡lido: %s", line);
+                continue;  // pular essa face invï¿½lida
             }
 
             model->faces[fIdx++] = v0;
@@ -102,7 +104,7 @@ int loadOBJ(const char* filename, Model* model) {
         if (vi0 < 0 || vi0 >= model->numVertices ||
             vi1 < 0 || vi1 >= model->numVertices ||
             vi2 < 0 || vi2 >= model->numVertices) {
-            fprintf(stderr, "índice de face inválido em drawModel: face %d\n", i);
+            fprintf(stderr, "Ã­ndice de face invÃ¡lido em drawModel: face %d\n", i);
             continue;
         }
 
@@ -123,6 +125,7 @@ void drawModel(const Model* model) {
         int idx0 = model->faces[i*3] * 3;
         int idx1 = model->faces[i*3 + 1] * 3;
         int idx2 = model->faces[i*3 + 2] * 3;
+
         float v0[3] = { model->vertices[idx0], model->vertices[idx0+1], model->vertices[idx0+2] };
         float v1[3] = { model->vertices[idx1], model->vertices[idx1+1], model->vertices[idx1+2] };
         float v2[3] = { model->vertices[idx2], model->vertices[idx2+1], model->vertices[idx2+2] };
