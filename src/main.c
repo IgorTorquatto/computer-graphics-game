@@ -283,6 +283,7 @@ static int start_game() {
 
     if(!loadOBJ("tree.obj", &treeModel)) {
         print_error("Falha ao carregar modelo de arvore.");
+        exit(EXIT_FAILURE);
     } else {
         float alturaTree = treeModel.maxY - treeModel.minY;
         if (alturaTree > 0.1f) {
