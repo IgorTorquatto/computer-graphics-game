@@ -15,7 +15,9 @@ Coin coinPool[MAX_COINS];
 static int coinCount = 0;
 static float coinSpawnTimer = 0.0f;
 static float coinSpawnInterval = 1.0f;
+
 extern float worldSpeed; // declarado em main.c ou game.c para velocidade global
+
 extern Player player;
 
 /* Inicializa o pool de moedas */
@@ -59,13 +61,14 @@ void updateCoins(float dt) {
             continue;
         }
 
-        float ph = 2.0f; // altura player padr�o (ou obtenha via player.height)
+        float ph = 2.0f; // altura player padrão (ou obtenha via player.height)
         float pw = 1.0f;
         float pd = 1.0f;
 
         float coinCenterY = coinPool[i].y + coinPool[i].h * 0.5f;
 
-        /* Colis�o AABB simples, utilize a fun��o aabbCollision do jogo principal */
+        /* Colisão AABB simples, utilize a função aabbCollision do jogo principal */
+
         extern int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
                                 float bx, float by, float bz, float bw, float bh, float bd);
 
@@ -91,6 +94,30 @@ void updateCoins(float dt) {
     }
 }
 
+void drawSolidCubeWithNormals(float size) {
+    float s = size * 0.5f;
+    glBegin(GL_QUADS);
+    // Frente
+    glNormal3f(0,0,1);
+    glVertex3f(-s,-s, s); glVertex3f( s,-s, s); glVertex3f( s, s, s); glVertex3f(-s, s, s);
+    // Trás
+    glNormal3f(0,0,-1);
+    glVertex3f(-s,-s,-s); glVertex3f(-s, s,-s); glVertex3f( s, s,-s); glVertex3f( s,-s,-s);
+    // Direita
+    glNormal3f(1,0,0);
+    glVertex3f( s,-s,-s); glVertex3f( s, s,-s); glVertex3f( s, s, s); glVertex3f( s,-s, s);
+    // Esquerda
+    glNormal3f(-1,0,0);
+    glVertex3f(-s,-s,-s); glVertex3f(-s,-s, s); glVertex3f(-s, s, s); glVertex3f(-s, s,-s);
+    // Topo
+    glNormal3f(0,1,0);
+    glVertex3f(-s, s,-s); glVertex3f(-s, s, s); glVertex3f( s, s, s); glVertex3f( s, s,-s);
+    // Base
+    glNormal3f(0,-1,0);
+    glVertex3f(-s,-s,-s); glVertex3f( s,-s,-s); glVertex3f( s,-s, s); glVertex3f(-s,-s, s);
+    glEnd();
+}
+
 /* Desenha as moedas em 3D na cena */
 void drawCoins3D() {
     glColor3f(1.0f, 0.85f, 0.1f);
@@ -101,13 +128,14 @@ void drawCoins3D() {
         glTranslatef(coinPool[i].x, coinPool[i].y + coinPool[i].h * 0.5f, coinPool[i].z);
         glRotatef(coinPool[i].angle, 0.0f, 1.0f, 0.0f);
         glScalef(coinPool[i].w, coinPool[i].h, coinPool[i].d);
+        drawSolidCubeWithNormals(1.0f);
         glutSolidCube(1.0f);
         glPopMatrix();
     }
 }
 
 
-/* Retorna o n�mero atual de moedas coletadas */
+/* Retorna o número atual de moedas coletadas */
 int getCoinCount() {
     return coinCount;
 }

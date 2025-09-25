@@ -8,11 +8,12 @@ typedef struct {
     float vy;
     PlayerState state;
     float width, height, depth;
+    float slideTimeRemaining;
 } Player;
 
 void initPlayer(Player *p);
 void updatePlayer(Player *p, float dt);
-static void endSlide(void *data);
+static void endSlide(int value);
 void handlePlayerInput(Player *p, unsigned char key);
 void handlePlayerSpecial(Player *p, int key);
 void drawPlayer(const Player *p);

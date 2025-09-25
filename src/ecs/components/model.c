@@ -3,22 +3,25 @@
 #include <string.h>
 #include <GL/gl.h>
 #include "model.h"
+#include "math.h"
 
-// Função auxiliar para contar elementos em arquivo OBJ (vértices e faces)
+// FunÃ§Ã£o auxiliar para contar elementos em arquivo OBJ (vÃ©rtices e faces)
 static void countElements(FILE* file, int* outVertCount, int* outFaceCount) {
     char line[256];
     *outVertCount = 0;
     *outFaceCount = 0;
 
     while(fgets(line, sizeof(line), file)) {
-        // Contar vértices
+
+        // Contar vÃ©rtices
         if(strncmp(line, "v ", 2) == 0) (*outVertCount)++;
         // Contar faces
         else if(strncmp(line, "f ", 2) == 0) (*outFaceCount)++;
     }
 }
 
-// Função para carregar OBJ simples (vértices + faces triangulares)
+
+// FunÃ§Ã£o para carregar OBJ simples (vÃ©rtices + faces triangulares)
 int loadOBJ(const char* filename, Model* model) {
     FILE* file = fopen(filename, "r");
     if(!file) {
@@ -32,9 +35,12 @@ int loadOBJ(const char* filename, Model* model) {
     rewind(file);
 
     model->numVertices = vertCount;
-    model->numFaces = faceCount;
+    model->numFaces = 0;  // contar faces vÃƒÂ¡lidas
+
     model->vertices = (float*)malloc(sizeof(float)*3*vertCount);
-    model->faces = (int*)malloc(sizeof(int)*3*faceCount); // 3 indices por face
+    // Alocar o mÃƒÂ¡ximo possÃƒÂ­vel: faceCount faces, depois ajustamos numFaces
+    model->faces = (int*)malloc(sizeof(int)*3*faceCount);
+
 
     if(!model->vertices || !model->faces) {
         fclose(file);
@@ -51,22 +57,31 @@ int loadOBJ(const char* filename, Model* model) {
             model->vertices[vIdx++] = y;
             model->vertices[vIdx++] = z;
         } else if(strncmp(line, "f ", 2) == 0) {
-            // Aqui assumimos faces triangulares sem normais ou texturas
-            // Formato comum: f v1 v2 v3 ou f v1/... v2/... v3/...
             int vi[3] = {0,0,0};
             if(sscanf(line+2, "%d %d %d", &vi[0], &vi[1], &vi[2]) < 3) {
-                // Tentar formato com barras: "f 1/1/1 2/2/2 3/3/3"
                 sscanf(line+2, "%d/%*d/%*d %d/%*d/%*d %d/%*d/%*d", &vi[0], &vi[1], &vi[2]);
             }
-            // OBJ é 1-indexado, converter para 0-index
-            model->faces[fIdx++] = vi[0]-1;
-            model->faces[fIdx++] = vi[1]-1;
-            model->faces[fIdx++] = vi[2]-1;
+            int v0 = vi[0] - 1;
+            int v1 = vi[1] - 1;
+            int v2 = vi[2] - 1;
+
+            // Validar ÃƒÂ­ndices
+            if (v0 < 0 || v0 >= vertCount ||
+                v1 < 0 || v1 >= vertCount ||
+                v2 < 0 || v2 >= vertCount) {
+                fprintf(stderr, "Face ignorada por ÃƒÂ­ndice invÃƒÂ¡lido: %s", line);
+                continue;  // pular essa face invÃ¯Â¿Â½lida
+            }
+
+            model->faces[fIdx++] = v0;
+            model->faces[fIdx++] = v1;
+            model->faces[fIdx++] = v2;
+            model->numFaces++;
         }
     }
     fclose(file);
 
-    // Calcular altura mínima e máxima (eixo Y)
+    // Calcular altura mÃ­nima e mÃ¡xima (eixo Y)
     model->minY = model->vertices[1];
     model->maxY = model->vertices[1];
     for(int i=0; i<model->numVertices; i++) {
@@ -79,6 +94,31 @@ int loadOBJ(const char* filename, Model* model) {
 }
 
 // Desenha o modelo usando GL_TRIANGLES
+/*void drawModel(const Model* model) {
+    glBegin(GL_TRIANGLES);
+    for (int i = 0; i < model->numFaces; i++) {
+        int vi0 = model->faces[i * 3];
+        int vi1 = model->faces[i * 3 + 1];
+        int vi2 = model->faces[i * 3 + 2];
+
+        if (vi0 < 0 || vi0 >= model->numVertices ||
+            vi1 < 0 || vi1 >= model->numVertices ||
+            vi2 < 0 || vi2 >= model->numVertices) {
+            fprintf(stderr, "ÃƒÂ­ndice de face invÃƒÂ¡lido em drawModel: face %d\n", i);
+            continue;
+        }
+
+        int idx0 = vi0 * 3;
+        int idx1 = vi1 * 3;
+        int idx2 = vi2 * 3;
+
+        glVertex3f(model->vertices[idx0], model->vertices[idx0 + 1], model->vertices[idx0 + 2]);
+        glVertex3f(model->vertices[idx1], model->vertices[idx1 + 1], model->vertices[idx1 + 2]);
+        glVertex3f(model->vertices[idx2], model->vertices[idx2 + 1], model->vertices[idx2 + 2]);
+    }
+    glEnd();
+}*/
+
 void drawModel(const Model* model) {
     glBegin(GL_TRIANGLES);
     for(int i=0; i < model->numFaces; i++) {
@@ -86,15 +126,59 @@ void drawModel(const Model* model) {
         int idx1 = model->faces[i*3 + 1] * 3;
         int idx2 = model->faces[i*3 + 2] * 3;
 
-        // Nessa versão simples não tem normais — pode calcular normais para iluminação após
-        // Por enquanto, chamamos vertex diretamente
-
-        glVertex3f(model->vertices[idx0], model->vertices[idx0+1], model->vertices[idx0+2]);
-        glVertex3f(model->vertices[idx1], model->vertices[idx1+1], model->vertices[idx1+2]);
-        glVertex3f(model->vertices[idx2], model->vertices[idx2+1], model->vertices[idx2+2]);
+        float v0[3] = { model->vertices[idx0], model->vertices[idx0+1], model->vertices[idx0+2] };
+        float v1[3] = { model->vertices[idx1], model->vertices[idx1+1], model->vertices[idx1+2] };
+        float v2[3] = { model->vertices[idx2], model->vertices[idx2+1], model->vertices[idx2+2] };
+        // Calcula normal
+        float u[3] = { v1[0]-v0[0], v1[1]-v0[1], v1[2]-v0[2] };
+        float v[3] = { v2[0]-v0[0], v2[1]-v0[1], v2[2]-v0[2] };
+        float normal[3] = {
+            u[1]*v[2] - u[2]*v[1],
+            u[2]*v[0] - u[0]*v[2],
+            u[0]*v[1] - u[1]*v[0]
+        };
+        float len = sqrt(normal[0]*normal[0] + normal[1]*normal[1] + normal[2]*normal[2]);
+        if(len > 0.0f) {
+            normal[0] /= len; normal[1] /= len; normal[2] /= len;
+        }
+        glNormal3f(normal[0], normal[1], normal[2]);
+        glVertex3fv(v0);
+        glVertex3fv(v1);
+        glVertex3fv(v2);
     }
     glEnd();
 }
+
+/*
+void drawModel(const Model* model) {
+    glBegin(GL_TRIANGLES);
+    for(int i=0; i < model->numFaces; i++) {
+        int idx0 = model->faces[i*3] * 3;
+        int idx1 = model->faces[i*3 + 1] * 3;
+        int idx2 = model->faces[i*3 + 2] * 3;
+        float v0[3] = { model->vertices[idx0], model->vertices[idx0+1], model->vertices[idx0+2] };
+        float v1[3] = { model->vertices[idx1], model->vertices[idx1+1], model->vertices[idx1+2] };
+        float v2[3] = { model->vertices[idx2], model->vertices[idx2+1], model->vertices[idx2+2] };
+        // Calcula normal
+        float u[3] = { v1[0]-v0[0], v1[1]-v0[1], v1[2]-v0[2] };
+        float v[3] = { v2[0]-v0[0], v2[1]-v0[1], v2[2]-v0[2] };
+        float normal[3] = {
+            u[1]*v[2] - u[2]*v[1],
+            u[2]*v[0] - u[0]*v[2],
+            u[0]*v[1] - u[1]*v[0]
+        };
+        float len = sqrt(normal[0]*normal[0] + normal[1]*normal[1] + normal[2]*normal[2]);
+        if(len > 0.0f) {
+            normal[0] /= len; normal[1] /= len; normal[2] /= len;
+        }
+        glNormal3f(normal[0], normal[1], normal[2]);
+        glVertex3fv(v0);
+        glVertex3fv(v1);
+        glVertex3fv(v2);
+    }
+    glEnd();
+}
+*/
 
 void freeModel(Model* model) {
     if(model->vertices) free(model->vertices);

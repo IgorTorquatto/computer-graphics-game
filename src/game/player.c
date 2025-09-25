@@ -3,9 +3,10 @@
 
 #include <stdint.h>
 #define LANE_X(i) ((i) * 2.5f)
-#define GRAVITY -30.0f
 
-/* Inicializa o jogador com valores padrão */
+/* Inicializa o jogador com valores padrÃ£o */
+#define GRAVITY -25.0f
+
 void initPlayer(Player *p) {
     p->lane = 1;
     p->x = LANE_X(1);
@@ -18,7 +19,8 @@ void initPlayer(Player *p) {
     p->depth = 1.0f;
 }
 
-/* Atualiza física do jogador (pulo, slide, movimentação lateral) */
+
+/* Atualiza fÃ­sica do jogador (pulo, slide, movimentaÃ§Ã£o lateral) */
 void updatePlayer(Player *p, float dt) {
     p->x = LANE_X(p->lane);
 
@@ -30,33 +32,40 @@ void updatePlayer(Player *p, float dt) {
             p->vy = 0.0f;
             p->state = P_RUNNING;
         }
+
+    }else if (p->state == P_SLIDING) {
+        p->slideTimeRemaining -= dt;
+        if (p->slideTimeRemaining <= 0.0f) {
+            p->height = 2.0f;
+            p->state = P_RUNNING;
+            p->slideTimeRemaining = 0.0f;
+        }
     }
-    // Slide (recuperação automática feita por timer externo)
 }
 
-/* Função auxiliar para reset do slide do jogador */
-static void endSlide(void *data) {
-    Player *p = (Player*)data;
+/* FunÃ§Ã£oo auxiliar para reset do slide do jogador */
+static void endSlide(int value) {
+    Player* p = (Player*)(intptr_t)value;
+
     p->height = 2.0f;
     p->state = P_RUNNING;
 }
 
-/* Entrada por teclado para movimentação do jogador */
+
+/* Entrada por teclado para movimentaÃ§Ã£o do jogador */
 void handlePlayerInput(Player *p, unsigned char key) {
     switch (key) {
         case 'w': case 'W': case ' ':
             if (p->state == P_RUNNING) {
                 p->state = P_JUMPING;
-                p->vy = 12.0f;
+                p->vy = 16.0f;
             }
             break;
         case 's': case 'S':
             if (p->state == P_RUNNING) {
                 p->state = P_SLIDING;
                 p->height = 1.0f;
-                // Timer para retornar ao estado normal após 600ms
-                // Necessário passar ponteiro do player via cast para int
-                glutTimerFunc(600, (void (*)(int))endSlide, (int)(intptr_t)p);
+                p->slideTimeRemaining = 0.6f;
             }
             break;
         case 'a': case 'A':
@@ -91,7 +100,7 @@ void handlePlayerSpecial(Player *p, int key) {
             if (p->state == P_RUNNING) {
                 p->state = P_SLIDING;
                 p->height = 1.0f;
-                glutTimerFunc(600, (void (*)(int))endSlide, (int)(intptr_t)p);
+                p->slideTimeRemaining = 0.6f;
             }
             break;
     }

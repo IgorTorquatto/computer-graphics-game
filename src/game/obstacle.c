@@ -66,8 +66,10 @@ void drawObstacles() {
 
         if (obstacles[i].type == OBST_SINGLE) {
             glScalef(escalaRock, escalaRock, escalaRock);
+            glColor3f(0.6f, 0.6f, 0.6f); // cinza
         } else {
             glScalef(escalaLog, escalaLog, escalaLog);
+            glColor3f(0.7f, 0.4f, 0.1f); // marrom
         }
 
         glColor3f(0.8f, 0.7f, 0.5f);  // Cor básica opcional
@@ -129,7 +131,8 @@ void spawnObstacle() {
             }
 
             obstacles[i].y = 0.0f;
-            obstacles[i].h = 2.0f + (float)(rand() % 20) * 0.05f;
+            //obstacles[i].h = 2.0f + (float)(rand() % 20) * 0.05f;
+            obstacles[i].h = 1.2f + (float)(rand() % 10) * 0.03f;
             obstacles[i].d = 1.0f;
             obstacles[i].z = -60.0f - (rand() % 40);
             return;
