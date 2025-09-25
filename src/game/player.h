@@ -11,9 +11,22 @@ typedef struct {
     float slideTimeRemaining;
 } Player;
 
+/* Inicializa o jogador com valores padrão */
 void initPlayer(Player *p);
-void updatePlayer(Player *p, float dt);
-static void endSlide(int value);
+
+/* Atualiza física do jogador (pulo, slide, movimentação lateral) */
+void update_player(Player *p, float dt);
+
+/* Função auxiliar para reset do slide do jogador */
+static void endSlide(void *data);
+
+/* Entrada por teclado para movimentação do jogador */
 void handlePlayerInput(Player *p, unsigned char key);
+
+/* Entrada por teclas especiais (setas) */
 void handlePlayerSpecial(Player *p, int key);
+
+/* Desenha o jogador como um cubo colorido */
 void drawPlayer(const Player *p);
+
+#endif
