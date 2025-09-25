@@ -18,3 +18,4 @@ void updateCoins(float dt);
 void drawCoins3D();
 int getCoinCount();
 void drawSolidCubeWithNormals(float size);
+void initCoinModel();
