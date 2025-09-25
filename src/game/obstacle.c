@@ -162,11 +162,11 @@ void obstacleUpdate(float dt) {
 }
 
 void initObstacleModels() {
-    if (!loadOBJ("rock.obj", &rockModel)) {
+    if (!loadOBJ("rockTriangulado.obj", &rockModel)) {
         fprintf(stderr, "Erro ao carregar rock.obj\n");
     }
 
-    if (!loadOBJ("log.obj", &logModel)) {
+    if (!loadOBJ("logTriangulado.obj", &logModel)) {
         fprintf(stderr, "Erro ao carregar log.obj\n");
     }
 
