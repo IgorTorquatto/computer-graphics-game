@@ -50,15 +50,6 @@ void handlePlayerInput(Player *p, unsigned char key) {
                 p->vy = 16.0f;
             }
             break;
-        /*case 's': case 'S':
-            if (p->state == P_RUNNING) {
-                p->state = P_SLIDING;
-                p->height = 1.0f;
-                // Timer para retornar ao estado normal após 600ms
-                // Necessário passar ponteiro do player via cast para int
-                glutTimerFunc(600, (void (*)(int))endSlide, (int)(intptr_t)p);
-            }
-            break;*/
         case 'a': case 'A':
             if (p->lane > 0) {
                 p->lane--;

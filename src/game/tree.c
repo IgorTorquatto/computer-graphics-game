@@ -54,6 +54,7 @@ void drawTrees() {
 
     for(int i=0; i<MAX_TREES; i++) {
         if(!treesPool[i].active) continue;
+        if (&treeModel == NULL) continue;
 
         glPushMatrix();
         glTranslatef(treesPool[i].x, treesPool[i].y, treesPool[i].z);

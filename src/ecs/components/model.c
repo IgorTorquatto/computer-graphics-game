@@ -93,32 +93,6 @@ int loadOBJ(const char* filename, Model* model) {
     return 1;
 }
 
-// Desenha o modelo usando GL_TRIANGLES
-/*void drawModel(const Model* model) {
-    glBegin(GL_TRIANGLES);
-    for (int i = 0; i < model->numFaces; i++) {
-        int vi0 = model->faces[i * 3];
-        int vi1 = model->faces[i * 3 + 1];
-        int vi2 = model->faces[i * 3 + 2];
-
-        if (vi0 < 0 || vi0 >= model->numVertices ||
-            vi1 < 0 || vi1 >= model->numVertices ||
-            vi2 < 0 || vi2 >= model->numVertices) {
-            fprintf(stderr, "Ã­ndice de face invÃ¡lido em drawModel: face %d\n", i);
-            continue;
-        }
-
-        int idx0 = vi0 * 3;
-        int idx1 = vi1 * 3;
-        int idx2 = vi2 * 3;
-
-        glVertex3f(model->vertices[idx0], model->vertices[idx0 + 1], model->vertices[idx0 + 2]);
-        glVertex3f(model->vertices[idx1], model->vertices[idx1 + 1], model->vertices[idx1 + 2]);
-        glVertex3f(model->vertices[idx2], model->vertices[idx2 + 1], model->vertices[idx2 + 2]);
-    }
-    glEnd();
-}*/
-
 void drawModel(const Model* model) {
     glBegin(GL_TRIANGLES);
     for(int i=0; i < model->numFaces; i++) {
@@ -148,37 +122,6 @@ void drawModel(const Model* model) {
     }
     glEnd();
 }
-
-/*
-void drawModel(const Model* model) {
-    glBegin(GL_TRIANGLES);
-    for(int i=0; i < model->numFaces; i++) {
-        int idx0 = model->faces[i*3] * 3;
-        int idx1 = model->faces[i*3 + 1] * 3;
-        int idx2 = model->faces[i*3 + 2] * 3;
-        float v0[3] = { model->vertices[idx0], model->vertices[idx0+1], model->vertices[idx0+2] };
-        float v1[3] = { model->vertices[idx1], model->vertices[idx1+1], model->vertices[idx1+2] };
-        float v2[3] = { model->vertices[idx2], model->vertices[idx2+1], model->vertices[idx2+2] };
-        // Calcula normal
-        float u[3] = { v1[0]-v0[0], v1[1]-v0[1], v1[2]-v0[2] };
-        float v[3] = { v2[0]-v0[0], v2[1]-v0[1], v2[2]-v0[2] };
-        float normal[3] = {
-            u[1]*v[2] - u[2]*v[1],
-            u[2]*v[0] - u[0]*v[2],
-            u[0]*v[1] - u[1]*v[0]
-        };
-        float len = sqrt(normal[0]*normal[0] + normal[1]*normal[1] + normal[2]*normal[2]);
-        if(len > 0.0f) {
-            normal[0] /= len; normal[1] /= len; normal[2] /= len;
-        }
-        glNormal3f(normal[0], normal[1], normal[2]);
-        glVertex3fv(v0);
-        glVertex3fv(v1);
-        glVertex3fv(v2);
-    }
-    glEnd();
-}
-*/
 
 void freeModel(Model* model) {
     if(model->vertices) free(model->vertices);
