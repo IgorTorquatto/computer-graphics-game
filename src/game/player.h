@@ -1,3 +1,4 @@
+
 #pragma once
 
 typedef enum { P_RUNNING, P_JUMPING, P_SLIDING } PlayerState;
@@ -29,4 +30,4 @@ void handlePlayerSpecial(Player *p, int key);
 /* Desenha o jogador como um cubo colorido */
 void drawPlayer(const Player *p);
 
-#endif
+
