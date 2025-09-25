@@ -57,6 +57,7 @@ void updateObstacles(float dt) {
 void drawObstacles() {
     for (int i = 0; i < MAX_OBSTACLES; i++) {
         if (!obstacles[i].active) continue;
+        if (obstacles[i].model == NULL) continue;
 
         glPushMatrix();
         float drawX = obstacles[i].x;
@@ -85,11 +86,16 @@ void spawnObstacle() {
     for (int i = 0; i < MAX_OBSTACLES; i++) {
         if (!obstacles[i].active) continue;
         if (obstacles[i].z < -58.0f) {
+            // Verifica se lane está no intervalo válido antes de acessar lanes[]
             if (obstacles[i].type == OBST_SINGLE) {
-                lanes[obstacles[i].lane] = 1;
+                if (obstacles[i].lane >= 0 && obstacles[i].lane < 3) {
+                    lanes[obstacles[i].lane] = 1;
+                }
             } else if (obstacles[i].type == OBST_DOUBLE) {
-                lanes[obstacles[i].lane] = 1;
-                lanes[obstacles[i].lane + 1] = 1;
+                if (obstacles[i].lane >= 0 && obstacles[i].lane + 1 < 3) {
+                    lanes[obstacles[i].lane] = 1;
+                    lanes[obstacles[i].lane + 1] = 1;
+                }
             }
         }
     }
@@ -118,6 +124,7 @@ void spawnObstacle() {
                 obstacles[i].model = &rockModel;
             } else {  // Double
                 int duplas[2], nduplas = 0;
+                // Também garantir que os índices para duplas estejam válidos
                 if (!lanes[0] && !lanes[1]) duplas[nduplas++] = 0;
                 if (!lanes[1] && !lanes[2]) duplas[nduplas++] = 1;
                 if (nduplas == 0)
@@ -131,7 +138,6 @@ void spawnObstacle() {
             }
 
             obstacles[i].y = 0.0f;
-            //obstacles[i].h = 2.0f + (float)(rand() % 20) * 0.05f;
             obstacles[i].h = 1.2f + (float)(rand() % 10) * 0.03f;
             obstacles[i].d = 1.0f;
             obstacles[i].z = -60.0f - (rand() % 40);
@@ -139,6 +145,7 @@ void spawnObstacle() {
         }
     }
 }
+
 
 Obstacle* getObstacles() {
     return obstacles;
@@ -164,10 +171,12 @@ void obstacleUpdate(float dt) {
 void initObstacleModels() {
     if (!loadOBJ("rockTriangulado.obj", &rockModel)) {
         fprintf(stderr, "Erro ao carregar rock.obj\n");
+        exit(EXIT_FAILURE);
     }
 
     if (!loadOBJ("logTriangulado.obj", &logModel)) {
         fprintf(stderr, "Erro ao carregar log.obj\n");
+        exit(EXIT_FAILURE);
     }
 
     float alturaLog = logModel.maxY - logModel.minY;
