@@ -21,13 +21,22 @@
   - [ ] Inimigos / Obstáculos
     - [ ] Pedras
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Texturas / cores
+      - [x] Cores / sombreamento
+      - [ ] Texturas
   - [ ] Coletáveis
+    - [x] Moedas [@IgorTorquatto](https://github.com/IgorTorquatto)
+      - [x] Modelo
+      - [x] Cores / sombreamento
   - [ ] Cenário
     - [x] Piso [@IgorTorquatto](https://github.com/IgorTorquatto)
     - [ ] Árvores
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Texturas / Cores
+      - [x] Cores / sombreamento [@IgorTorquatto](https://github.com/IgorTorquatto)
+      - [ ] Texturas
+    - [ ] Pilha de madeira
+      - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
+      - [x] Cores / sombreamento [@IgorTorquatto](https://github.com/IgorTorquatto)
+      - [ ] Texturas
     - [ ] Prédios/ Paredes
 - [x] Ative a remoção de superfícies ocultas. [@IgorTorquatto](https://github.com/IgorTorquatto)
 
@@ -54,6 +63,7 @@
 ### Animações
 
 - [ ] Movimento (interativo) do personagem
+  - [x] Entrada [@IgorTorquatto](https://github.com/IgorTorquatto)
   - [ ] Interpolação [@GersonFeDutra](https://github.com/GersonFeDutra).
 - [x] Movimento dos objetos da cena [@IgorTorquatto](https://github.com/IgorTorquatto)
     - [x] Inimigos
