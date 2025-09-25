@@ -7,7 +7,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <math.h>
-
+#include "ecs/components/model.h"
 
 #define MAX_COINS 128
 
@@ -19,6 +19,9 @@ static float coinSpawnInterval = 1.0f;
 extern float worldSpeed; // declarado em main.c ou game.c para velocidade global
 
 extern Player player;
+
+Model coinModel;
+
 
 /* Inicializa o pool de moedas */
 void initCoins() {
@@ -37,11 +40,11 @@ void spawnCoin() {
             coinPool[i].active = 1;
             coinPool[i].lane = rand() % 3;
             coinPool[i].x = coinPool[i].lane * 2.5f;
-            coinPool[i].y = 0.0f;
+            coinPool[i].y = 0.7f;
             coinPool[i].z = -40.0f - (rand() % 20);
             coinPool[i].w = 0.6f;
-            coinPool[i].h = 0.6f;
-            coinPool[i].d = 0.2f;
+            coinPool[i].h = 0.5f;
+            coinPool[i].d = 0.6f;
             coinPool[i].angle = (float)(rand() % 360);
             break;
         }
@@ -119,7 +122,7 @@ void drawSolidCubeWithNormals(float size) {
 }
 
 /* Desenha as moedas em 3D na cena */
-void drawCoins3D() {
+/*void drawCoins3D() {
     glColor3f(1.0f, 0.85f, 0.1f);
     for(int i = 0; i < MAX_COINS; i++) {
         if(!coinPool[i].active) continue;
@@ -132,10 +135,34 @@ void drawCoins3D() {
         glutSolidCube(1.0f);
         glPopMatrix();
     }
-}
+}*/
 
+void drawCoins3D() {
+    glColor3f(1.0f, 0.85f, 0.1f);
+    for(int i = 0; i < MAX_COINS; i++) {
+        if(!coinPool[i].active) continue;
+
+        glPushMatrix();
+        glTranslatef(coinPool[i].x, coinPool[i].y + coinPool[i].h * 0.5f + 0.1f, coinPool[i].z);
+        // girar a moeda
+        glRotatef(coinPool[i].angle, 0.0f, 1.0f, 0.0f);
+        //  em pé
+        glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+        glScalef(coinPool[i].w, coinPool[i].h, coinPool[i].d);
+        drawModel(&coinModel);
+        glPopMatrix();
+    }
+}
 
 /* Retorna o número atual de moedas coletadas */
 int getCoinCount() {
     return coinCount;
 }
+
+
+void initCoinModel() {
+    if(!loadOBJ("coinTraingulado.obj", &coinModel)) {
+    fprintf(stderr, "Falha ao carregar modelo da moeda.\n");
+    }
+}
+
