@@ -19,6 +19,7 @@ int compareDesc(const void *a, const void *b) {
 }
 
 void ranking_add(float distanciaTotal) {
+    if (distanciaTotal <= 0.0f) return;
     if (rankingCount < MAX_RANKING) {
         rankingList[rankingCount].distanciaTotal = distanciaTotal;
         rankingCount++;
@@ -30,32 +31,92 @@ void ranking_add(float distanciaTotal) {
     qsort(rankingList, rankingCount, sizeof(RankingEntry), compareDesc);
 }
 
+/*void ranking_save() {
+    FILE *file = fopen("ranking.dat", "wb");
+    if(!file) {
+        perror("Erro ao abrir ranking.dat para salvar");
+        return;
+    }
+    if(fwrite(&rankingCount, sizeof(int), 1, file) != 1) {
+        perror("Erro ao salvar rankingCount");
+    }
+    if(fwrite(rankingList, sizeof(RankingEntry), rankingCount, file) != (size_t)rankingCount) {
+        perror("Erro ao salvar rankingList");
+    }
+    fclose(file);
+}*/
 void ranking_save() {
     FILE *file = fopen("ranking.dat", "wb");
-    if(!file) return;
-    fwrite(&rankingCount, sizeof(int), 1, file);
-    fwrite(rankingList, sizeof(RankingEntry), rankingCount, file);
+    if (!file) {
+        perror("Erro ao abrir ranking.dat para salvar");
+        return;
+    }
+    if (fwrite(&rankingCount, sizeof(int), 1, file) != 1) {
+        perror("Erro ao salvar rankingCount");
+    }
+    if (fwrite(rankingList, sizeof(RankingEntry), rankingCount, file) != (size_t)rankingCount) {
+        perror("Erro ao salvar rankingList");
+    }
     fclose(file);
+    printf("Ranking salvo com %d entradas.\n", rankingCount);
 }
 
+
+
 void ranking_load() {
+    printf("ranking_load called.\n");
+    // Limpar lista antes de tentar carregar
+    ranking_init();
+
     FILE *file = fopen("ranking.dat", "rb");
     if(!file) {
+        // Arquivo não existe, lista mantém zerada
+        return;
+    }
+
+    if (fread(&rankingCount, sizeof(int), 1, file) != 1) {
+        fclose(file);
         ranking_init();
         return;
     }
-    fread(&rankingCount, sizeof(int), 1, file);
-    fread(rankingList, sizeof(RankingEntry), rankingCount, file);
+
+    if (rankingCount > MAX_RANKING || rankingCount < 0) {
+        fclose(file);
+        ranking_init();
+        return;
+    }
+
+    if (fread(rankingList, sizeof(RankingEntry), rankingCount, file) != (size_t)rankingCount) {
+        fclose(file);
+        ranking_init();
+        return;
+    }
+
     fclose(file);
 }
 
 void ranking_draw(int windowWidth, int windowHeight) {
+    //printf("ranking_draw called. rankingCount = %d\n", rankingCount); debug
+
     int yStart = windowHeight / 2 + 80;
     char buffer[128];
-    for(int i=0; i<rankingCount; i++) {
-        snprintf(buffer, sizeof(buffer), "%d. Distancia: %.1f metros", i+1, rankingList[i].distanciaTotal);
-        int x = (windowWidth - getTextWidth(buffer, GLUT_BITMAP_HELVETICA_18)) / 2;
-        drawText(buffer, x, yStart - i*30, GLUT_BITMAP_HELVETICA_18,
-                 1.0f, 1.0f, 1.0f, windowHeight);
+
+    if(rankingCount == 0) {
+        // Caso sem entradas no ranking
+        const char *msg = "Jogue para aparecer no ranking";
+        int x = (windowWidth - getTextWidth(msg, GLUT_BITMAP_HELVETICA_18)) / 2;
+        drawText(msg, x, yStart, GLUT_BITMAP_HELVETICA_18, 1.0f, 1.0f, 1.0f, windowHeight);
+    } else {
+        for(int i=0; i<rankingCount; i++) {
+            snprintf(buffer, sizeof(buffer), "%d. Distancia: %.1f metros", i+1, rankingList[i].distanciaTotal);
+            int x = (windowWidth - getTextWidth(buffer, GLUT_BITMAP_HELVETICA_18)) / 2;
+            drawText(buffer, x, yStart - i*30, GLUT_BITMAP_HELVETICA_18,
+                     1.0f, 1.0f, 1.0f, windowHeight);
+        }
     }
 }
+
+int ranking_getCount() {
+    return rankingCount;
+}
+

@@ -18,6 +18,7 @@
 #include "game/obstacle.h"
 
 #include "ecs/systems/ranking.h"
+#include <direct.h>
 
 Player player;
 
@@ -173,7 +174,9 @@ void update(float dt) {
             player.x, player.y + ph * 0.5f, player.z, pw, ph, pd,
             obstCenterX, obstY, obstacles[i].z, obstWidth, obstHeight, obstDepth)
         ) {
-            ranking_add(calcularDistanciaTotal());
+            float finalScore = calcularDistanciaTotal();
+            printf("Adicionando score: %.2f\n", finalScore);
+            ranking_add(finalScore);
             ranking_save();
             modoAtual = MODO_GAMEOVER;
         }
@@ -193,13 +196,23 @@ void renderScene() {
     }
 
     if(modoAtual == MODO_RANKING) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
 
     glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
     glLoadIdentity();
 
-    drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
     ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
 
     glutSwapBuffers();
     return;
@@ -269,6 +282,13 @@ void mouseCB(int button, int state, int x, int y) {
 }
 
 void keyboardCB(unsigned char key, int x, int y) {
+    if(key == 'p') {
+        ranking_add(42.0f); // pontuação teste para salvar
+        ranking_save();
+        printf("Ranking manual salvo pela tecla 'p'\n");
+        return;
+    }
+
     if(key == 27) { // ESC
         if(modoAtual == MODO_RANKING) {
             modoAtual = MODO_MENU;
@@ -346,7 +366,6 @@ void initGL() {
 
 
 static int start_game() {
-    ranking_load();
     resetGame();
 
     if(!loadOBJ("tree.obj", &treeModel)) {
@@ -371,7 +390,15 @@ static int start_game() {
 }
 
 int main(int argc, char** argv) {
+    //para debug excluir depois
+    char cwd[1024];
+    if (_getcwd(cwd, sizeof(cwd)) != NULL) {
+        printf("diretorio atual: %s\n", cwd);
+    } else {
+        perror("erro ao obter diretorio atual");
+    }
     srand((unsigned)time(NULL));
+    //até aqui
 
     int window_size[2] = {1024, 600};
 
@@ -381,6 +408,11 @@ int main(int argc, char** argv) {
     glutInitWindowSize(window_size[0], window_size[1]);
     glutCreateWindow("Trabalho CG");
     initGL();
+
+    ranking_load();
+    if (ranking_getCount() == 0) {
+        ranking_save();
+    }
 
     start_game(); // game content created here
 
