@@ -3,7 +3,7 @@
 ## Design/ Arquitetura
 - [x] Esboço/ base do sistema ECS [@GersonFeDutra](https://github.com/GersonFeDutra).
 - [x] Esboço dos sistemas de jogo [@IgorTorquatto](https://github.com/IgorTorquatto)
-- [ ] Cenário [@IgorTorquatto](https://github.com/IgorTorquatto)
+- [ ] Cenário [@IgorTorquatto](https://github.com/IgorTorquatto) 
 
 ### Sistemas de jogo
 
@@ -86,7 +86,8 @@
 
 ## Funcionalidades extras
 
-- [ ] Música [@GersonFeDutra](https://github.com/GersonFeDutra).
-- [ ] Efeitos sonoros [@GersonFeDutra](https://github.com/GersonFeDutra).
+- [ ] Sonorização [@GersonFeDutra](https://github.com/GersonFeDutra).
+  - [x] Música
+  - [ ] Efeitos sonoros
 
 <!-- - [x] Contador de fps / debug [@GersonFeDutra](https://github.com/GersonFeDutra). -->
