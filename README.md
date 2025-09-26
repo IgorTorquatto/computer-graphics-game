@@ -29,12 +29,12 @@ linguagem C, integrando elementos visuais, animação e interatividade em suas i
     >   - [ ] Ambiente (para a cena);
     >   - [ ] Especular;
     >   - [ ] Difusa.
-    > - [x] Uso de câmera para navegação ou visualização da cena. 
-    > - [x] Use projeções perspectivas e/ou ortogonais. 
-    > - [x] Ative a remoção de superfícies ocultas.
+    > - [ ] Uso de câmera para navegação ou visualização da cena. 
+    > - [ ] Use projeções perspectivas e/ou ortogonais. 
+    > - [ ] Ative a remoção de superfícies ocultas.
  
     > b) Pontos extras (cada item vale 0,5 ponto extra):
-    > - [x] Importação de um objeto.
+    > - [ ] Importação de um objeto.
     > - [ ] Adição de texturas nos objetos. 
     > - [ ] Implementação da projeção da sombra dos objetos. 
 2. Demonstração do jogo. 
@@ -100,7 +100,7 @@ estáticas (libs) e dinâmicas (bin)
     <details> <summary>Arch [pacman]</summary>
 
     ```bash
-    sudo pacman -Syu freeglut glu mesa sdl2 sdl2_mixer
+    sudo pacman -Syu freeglut glu mesa
     ```
     </details>
 
@@ -108,56 +108,23 @@ estáticas (libs) e dinâmicas (bin)
 
     ```bash
     sudo apt update
-    sudo apt install freeglut3 freeglut3-dev mesa-utils mesa-common-dev libglu1-mesa-dev libsdl2-dev libsdl2-mixer-dev
+    sudo apt install freeglut3 freeglut3-dev mesa-utils mesa-common-dev libglu1-mesa-dev
     ```
     </details>
 
     <details> <summary>Outros: [compile source]</summary>
 
     ```bash
-    # Instala compilador, make, autoconf, pkg-config
-    ```
-
-    ```bash
-    # Ubuntu/Debian
-    sudo apt install build-essential cmake git autoconf automake libtool \
-            pkg-config libasound2-dev libpulse-dev libudev-dev \
-            libdbus-1-dev libx11-dev libxext-dev \
-            libxrandr-dev libxi-dev libgl1-mesa-dev \
-            libogg-dev libvorbis-dev libflac-dev \
-            libxcursor-dev libjpeg-dev libpng-dev
-    ```
-    ```bash
+    sudo apt install build-essential cmake git   # (Debian-like)
     # ou
-    # (Arch-like)
-    sudo dnf install gcc gcc-c++ make autoconf automake libtool pkgconfig git   # Fedora
-    ```
-    ```bash
-    # ou
-    sudo pacman -S base-devel git cmake
-    ```
-
-    ```bash
-    # Clone e compile do código fonte:
-
-    # FreeGLUT
+    sudo pacman -S base-devel git cmake          # (Arch-like)
+    
+    # Clone e compile FreeGLUT do código fonte:
     git clone https://github.com/FreeGLUTProject/freeglut
     cd freeglut
     cmake .
     make -j$(nproc)
     sudo make install
-
-    # SDL2
-    git clone https://github.com/libsdl-org/SDL.git SDL2
-    cd SDL2
-    git checkout release-2.26.7  # ou a última release estável
-    cd ..
-
-    # SDL2_mixer
-    git clone https://github.com/libsdl-org/SDL_mixer.git SDL2_mixer
-    cd SDL2_mixer
-    git checkout release-2.6.3   # ou a última release estável
-    cd ..
     ```
     </details>
 2. Instale o CMake. (Opcional, mas recomendado):

@@ -210,7 +210,7 @@ void system_process(DeltaTime delta)
         set_label_color(label_id, color_black);
         first = false;
     }
-    snprintf(text, (sizeof(template_string) / sizeof(char)), "△t: %4.0fms\t" "fps:%5.0f", delta * _ms, fps);
+    snprintf(text, (sizeof(template_string) / sizeof(char)), "△t: %4.0fms\t" "fps:%5.0f", delta * ms, fps);
 
     // Process velocity
     for (int e = 0; e < game_objects_count; e++)

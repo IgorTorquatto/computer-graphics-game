@@ -86,8 +86,7 @@
 
 ## Funcionalidades extras
 
-- [ ] Sonorização [@GersonFeDutra](https://github.com/GersonFeDutra).
-  - [x] Música
-  - [ ] Efeitos sonoros
+- [ ] Música [@GersonFeDutra](https://github.com/GersonFeDutra).
+- [ ] Efeitos sonoros [@GersonFeDutra](https://github.com/GersonFeDutra).
 
 <!-- - [x] Contador de fps / debug [@GersonFeDutra](https://github.com/GersonFeDutra). -->
