@@ -29,8 +29,8 @@
 				<ExtraCommands>
 					<Add before='xcopy /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\release\&quot;' />
 					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)assets\audio\music\*.mp3&quot; &quot;bin\release\&quot;' />
-					<Add before='xcopy /Y /D &quot;C:\SDL2\bin\SDL2.dll&quot; &quot;bin\release\&quot;' />
-					<Add before='xcopy /Y /D &quot;C:\SDL2_mixer\bin\SDL2_mixer.dll&quot; &quot;bin\release\&quot;' />
+					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2\bin\SDL2.dll&quot; &quot;bin\release\&quot;' />
+					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2_mixer\bin\SDL2_mixer.dll&quot; &quot;bin\release\&quot;' />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
