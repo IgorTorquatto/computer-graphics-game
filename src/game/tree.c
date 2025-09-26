@@ -66,33 +66,10 @@ void updateTrees(float dt, float worldSpeed) {
 }
 
 void updateBushes(float dt, float worldSpeed) {
-    // Spawna bushes junto com as árvores, usando deslocamento lateral de 0.5f
-    static float bushSpawnTimer = 0.0f;
-    bushSpawnTimer += dt;
-    if (bushSpawnTimer > 2.5f) {
-        bushSpawnTimer = 0.0f;
-        for (int i = 0; i < MAX_TREES; i++) {
-            if (treesPool[i].active) {
-                // Procura um bush inativo para spawnar ao lado desta árvore
-                for (int j = 0; j < MAX_BUSHES; j++) {
-                    if (!bushesPool[j].active) {
-                        bushesPool[j].active = 1;
-                        float deslocamento = (treesPool[i].x < 0) ? 0.5f : -0.5f;
-                        bushesPool[j].x = treesPool[i].x + deslocamento;
-                        bushesPool[j].y = treesPool[i].y;
-                        bushesPool[j].z = treesPool[i].z;
-                        bushesPool[j].escala = 1.0f + ((float)(rand() % 100) / 100.0f) * 0.7f;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    // Atualiza posição dos bushes
-    for (int i = 0; i < MAX_BUSHES; i++) {
-        if (bushesPool[i].active) {
+    for(int i=0; i<MAX_BUSHES; i++) {
+        if(bushesPool[i].active) {
             bushesPool[i].z += worldSpeed * dt;
-            if (bushesPool[i].z > 10.0f) {
+            if(bushesPool[i].z > 10.0f) {
                 bushesPool[i].active = 0;
             }
         }
