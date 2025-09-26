@@ -1,9 +1,13 @@
+// Open GL
 #include <GL/glut.h>
 #include <GL/glu.h>
-
+// SDL2
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+// STL
+//#include <locale.h>
 #include <math.h>
 #include <time.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -27,8 +31,6 @@ static const float fator = 0.1f;
 Model treeModel;
 float escalaArvoreDefault = 1.0f;
 
-extern Model rockModel;
-extern Model logModel;
 
 void mostrarEixos(){
     glDisable(GL_LIGHTING);
@@ -95,6 +97,8 @@ void resetGame() {
     worldSpeed = 12.0f;
     distanciaPercorrida = 0.0f;
     initCoins();
+
+    audio_bus_stop_music();
 }
 
 void update(float dt) {
@@ -140,6 +144,7 @@ void renderScene() {
         return;
     }
 
+#pragma region Render Game
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_MODELVIEW);
@@ -157,7 +162,6 @@ void renderScene() {
 
     //glEnable(GL_COLOR_MATERIAL);
     //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
 
     glDisable(GL_LIGHTING);
     glColor3f(0.9f, 0.9f, 0.9f);
@@ -202,6 +206,7 @@ void renderScene() {
     drawCoinsHUD(getCoinCount());
 
     glutSwapBuffers();
+#pragma endregion
 }
 
 void idleCB() {
@@ -247,54 +252,61 @@ void reshape(int w, int h) {
 
 void initGL() {
     glClearColor(0.12f, 0.12f, 0.15f, 1.0f);
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
 
-#pragma region Anti-Aliasing // MSAA
-    glEnable(GLUT_MULTISAMPLE);
-    // Smoothing -> Modo antigo de anti-alias do opengl
-    //glEnable(GL_BLEND);
-    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    //glEnable(GL_LINE_SMOOTH);
-    //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    //glEnable(GL_POLYGON_SMOOTH);
-    //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-#pragma endregion
+    #pragma region Enable Culling
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+    #pragma endregion
 
-    // Configuração da luz
-    GLfloat light_ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
-    GLfloat light_diffuse[]  = { 0.9f, 0.9f, 0.9f, 1.0f };
-    GLfloat light_specular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-    GLfloat light_position[] = { 5.0f, 10.0f, 5.0f, 1.0f };
-    glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    #pragma region Enable Lighting
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+    #pragma endregion
 
-    // Material: especular e brilho
-    GLfloat mat_specular[]  = { 0.3f, 0.3f, 0.3f, 1.0f };
-    GLfloat mat_shininess[] = { 16.0f };
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
-    glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
+    #pragma region Anti-Aliasing // MSAA
+        glEnable(GLUT_MULTISAMPLE);
+        // Smoothing -> Modo antigo de anti-alias do opengl
+        //glEnable(GL_BLEND);
+        //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        //glEnable(GL_LINE_SMOOTH);
+        //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+        //glEnable(GL_POLYGON_SMOOTH);
+        //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+    #pragma endregion
 
-    // ESSENCIAL: Ativar uso de cor como material ambiente e difuso
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    glEnable(GL_NORMALIZE);
+    #pragma region Light Setup
+        GLfloat light_ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
+        GLfloat light_diffuse[]  = { 0.9f, 0.9f, 0.9f, 1.0f };
+        GLfloat light_specular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
+        GLfloat light_position[] = { 5.0f, 10.0f, 5.0f, 1.0f };
+        glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    #pragma endregion
 
+    #pragma region Material Setup // especular e brilho
+        GLfloat mat_specular[]  = { 0.3f, 0.3f, 0.3f, 1.0f };
+        GLfloat mat_shininess[] = { 16.0f };
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
+
+        // ESSENCIAL: Ativar uso de cor como material ambiente e difuso
+        glEnable(GL_COLOR_MATERIAL);
+        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        glEnable(GL_NORMALIZE);
+    #pragma endregion
 }
 
 
-static int start_game() {
+static int game_run() {
     resetGame();
 
     if(!loadOBJ("tree.obj", &treeModel)) {
-        print_error("Falha ao carregar modelo de arvore.");
-        exit(EXIT_FAILURE);
+        print_error("Falha ao carregar modelo de árvore.");
+        return EXIT_FAILURE;
     } else {
         float alturaTree = treeModel.maxY - treeModel.minY;
         if (alturaTree > 0.1f) {
@@ -305,37 +317,73 @@ static int start_game() {
     initCoinModel();
     initCoins();
     initTrees();
+
+    return EXIT_SUCCESS;
 }
 
 
 int main(int argc, char** argv) {
     srand((unsigned)time(NULL));
+    //setlocale(LC_ALL, "pt_BR.UTF-8");
 
+    int err; // error code
     int window_size[2] = {1024, 600};
 
-    // Glut Init
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
-    glutInitWindowSize(window_size[0], window_size[1]);
-    glutCreateWindow("Trabalho CG");
-    initGL();
+    #pragma region GLUT Init
+        glutInit(&argc, argv);
+        glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
+        glutInitWindowSize(window_size[0], window_size[1]);
+        glutCreateWindow("Trabalho CG");
+        initGL();
+    #pragma endregion
 
-    start_game(); // game content created here
+    #pragma region SDL2 Init
+        err = SDL_Init(SDL_INIT_AUDIO);
+        if (err != EXIT_SUCCESS) {
+            print_error("SDL initialization failed: %s", SDL_GetError());
+            return err;
+        }
 
-    // Event Bindings
-    glutDisplayFunc(renderScene);
-    glutIdleFunc(idleCB);
-    glutKeyboardFunc(keyboardCB);
-    glutSpecialFunc(specialCB);
-    glutReshapeFunc(reshape);
-    glutMouseFunc(mouseCB);
+        // TODO -> Suporte para WAV
+        // Inicializa SDL_mixer com suporte a MP3
+        int flags = MIX_INIT_MP3;
+        if ((Mix_Init(flags) & flags) != flags) {
+            print_error("SDL Mixer initialization failed: %s\n", Mix_GetError());
+            SDL_Quit();
+            return EXIT_FAILURE;
+        }
+
+        if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+            print_error("SDL Failed to load Audio device: %s\n", Mix_GetError());
+            SDL_Quit();
+            return EXIT_FAILURE;
+        }
+        audio_bus_init();
+    #pragma endregion
+
+    err = game_run(); // game content created here
+    if (err != EXIT_SUCCESS)
+        return err;
+
+    #pragma region Event Bindings
+        glutDisplayFunc(renderScene);
+        glutIdleFunc(idleCB);
+        glutKeyboardFunc(keyboardCB);
+        glutSpecialFunc(specialCB);
+        glutReshapeFunc(reshape);
+        glutMouseFunc(mouseCB);
+    #pragma endregion
 
     glutMainLoop();
 
-    // Clear memory
-    freeModel(&treeModel);
-    freeModel(&rockModel);
-    freeModel(&logModel);
+    #pragma region Free Memory
+        freeModel(&treeModel);
+        freeModel(&rockModel);
+        freeModel(&logModel);
+        audio_bus_close();
+        Mix_Quit();
+        SDL_Quit();
+    #pragma endregion
 
     return 0;
 }

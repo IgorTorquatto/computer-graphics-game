@@ -4,7 +4,10 @@
         "print.h": "c",
         "model.h": "c",
         "coin.h": "c",
-        "basics.h": "c"
+        "basics.h": "c",
+        "music_bus.h": "c",
+        "sdl.h": "c",
+        "sdl_mixer.h": "c"
     },
     "cmake.ignoreCMakeListsMissing": true
 }
