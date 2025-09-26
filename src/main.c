@@ -20,6 +20,10 @@
 #include "game/player.h"
 #include "game/obstacle.h"
 
+#include "ecs/systems/ranking.h"
+#if defined(_WIN32) || defined(_WIN64)
+    #include <direct.h>
+#endif
 
 Player player;
 
@@ -28,65 +32,113 @@ float distanciaPercorrida = 0.0f;
 static const float fator = 0.1f;
 
 Model treeModel;
+Model bushModel;
+
 float escalaArvoreDefault = 1.0f;
 
 
-void mostrarEixos(){
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
-
-    glLineWidth(2.0f);
-    glBegin(GL_LINES);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    glVertex3f(-10.0f, 0.1f, 0.0f);
-    glVertex3f(10.0f, 0.1f, 0.0f);
-    glEnd();
-
-    glColor3f(1.0f, 1.0f, 1.0f);
-    for(int x = -10; x <= 10; x += 5) {
-        glRasterPos3f(x, 0.2f, 0.0f);
-        char label[10];
-        snprintf(label, 10, "%d", x);
-        for(const char *c = label; *c; ++c) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
-    }
-
-    glBegin(GL_LINES);
-    glColor3f(0.0f, 1.0f, 0.0f);
-    glVertex3f(0.0f, 0.0f, 0.0f);
-    glVertex3f(0.0f, 5.0f, 0.0f);
-    glEnd();
-
-    for(int y = 0; y <= 5; y += 1) {
-        glRasterPos3f(0.2f, y, 0.0f);
-        char label[10];
-        snprintf(label, 10, "%d", y);
-        for(const char *c = label; *c; ++c) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
-    }
-
-    glBegin(GL_LINES);
-    glColor3f(0.0f, 0.0f, 1.0f);
-    glVertex3f(0.0f, 0.1f, -20.0f);
-    glVertex3f(0.0f, 0.1f, 20.0f);
-    glEnd();
-
-    for(int z = -20; z <= 20; z += 5) {
-        glRasterPos3f(0.2f, 0.2f, z);
-        char label[10];
-        snprintf(label, 10, "%d", z);
-        for(const char *c = label; *c; ++c) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12, *c);
-    }
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
+float distanciaTotal = 0.0f;
+float calcularDistanciaTotal() {
+    int moedas = getCoinCount();
+    int bonusPorGrupo = moedas / 10;  // grupos de 10 moedas
+    float percentualBonus = 0.05f;    // 5% por grupo de 10 moedas
+    float bonus = distanciaPercorrida * percentualBonus * bonusPorGrupo;
+    return distanciaPercorrida + bonus;
 }
 
-// Colisão AABB (mantida como antes)
+int getTextWidth(const char *text, void *font) {
+    int width = 0;
+    for (; *text; ++text) width += glutBitmapWidth(font, *text);
+    return width;
+}
+
+GLboolean validarRasterPos(int x, int y) {
+    GLint viewport[4];
+    glGetIntegerv(GL_VIEWPORT, viewport);
+    return (x >= viewport[0] && x < viewport[0]+viewport[2]
+        && y >= viewport[1] && y < viewport[1]+viewport[3]);
+}
+
+void drawText(const char *text, int x, int y, void *font, float r, float g, float b, int windowHeight) {
+    int invertedY = windowHeight - y;
+
+    // Desenha contorno preto
+    glColor3f(0,0,0);
+    int offsets[8][2] = {
+        {-1,-1},{0,-1},{1,-1},
+        {-1,0},       {1,0},
+        {-1,1},{0,1},{1,1}};
+    for(int i=0;i<8;i++){
+        int ox = x + offsets[i][0];
+        int oy = invertedY + offsets[i][1];
+        if(!validarRasterPos(ox, oy)) continue;
+        glRasterPos2i(ox, oy);
+        for(const char *c = text; *c; c++) glutBitmapCharacter(font, *c);
+    }
+    glFlush();
+
+    // Desenha texto colorido
+    if(!validarRasterPos(x, invertedY)) return;
+    glColor3f(r, g, b);
+    glRasterPos2i(x, invertedY);
+    for(const char *c = text; *c; c++) glutBitmapCharacter(font, *c);
+}
+
+void drawGameOverHUD() {
+    int w = glutGet(GLUT_WINDOW_WIDTH);
+    int h = glutGet(GLUT_WINDOW_HEIGHT);
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, w, h, 0);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    glDisable(GL_LIGHTING);
+
+    float distanciaFinal = calcularDistanciaTotal();
+    char buffer[128];
+    int x;
+
+    snprintf(buffer, sizeof(buffer), "Game over! R para voltar ao Menu");
+    x = (w - getTextWidth(buffer, GLUT_BITMAP_TIMES_ROMAN_24)) / 2;
+    drawText(buffer, x, h/2 + 80, GLUT_BITMAP_TIMES_ROMAN_24, 1, 0, 0, h);
+
+    snprintf(buffer, sizeof(buffer), "Moedas coletadas: %d", getCoinCount());
+    x = (w - getTextWidth(buffer, GLUT_BITMAP_TIMES_ROMAN_24)) / 2;
+    drawText(buffer, x, h/2 + 40, GLUT_BITMAP_TIMES_ROMAN_24, 1, 1, 0, h);
+
+    snprintf(buffer, sizeof(buffer), "Distancia total com bonus: %.1f metros", distanciaFinal);
+    x = (w - getTextWidth(buffer, GLUT_BITMAP_TIMES_ROMAN_24)) / 2;
+    drawText(buffer, x, h/2 + 10, GLUT_BITMAP_TIMES_ROMAN_24, 1, 1, 1, h);
+
+    glEnable(GL_LIGHTING);
+
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+}
+
+// Colisão AABB
 int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
                   float bx, float by, float bz, float bw, float bh, float bd) {
     if (fabs(ax - bx) * 2.0f < (aw + bw) &&
         fabs(ay - by) * 2.0f < (ah + bh) &&
         fabs(az - bz) * 2.0f < (ad + bd)) return 1;
     return 0;
+}
+
+void drawRankingTitle(int ww, int wh) {
+    char title[] = "Ranking - Distancias";
+    int x = (ww - getTextWidth(title, GLUT_BITMAP_HELVETICA_18)) / 2;
+    drawText(title, x, wh/2 + 120, GLUT_BITMAP_HELVETICA_18, 1, 1, 1, wh);
+
+    char info[] = "Pressione ESC para voltar";
+    x = (ww - getTextWidth(info, GLUT_BITMAP_HELVETICA_12)) / 2;
+    drawText(info, x, wh/2 - 150, GLUT_BITMAP_HELVETICA_12, 1, 1, 1, wh);
 }
 
 void resetGame() {
@@ -127,6 +179,10 @@ void update(float dt) {
             player.x, player.y + ph * 0.5f, player.z, pw, ph, pd,
             obstCenterX, obstY, obstacles[i].z, obstWidth, obstHeight, obstDepth)
         ) {
+            float finalScore = calcularDistanciaTotal();
+            printf("Adicionando score: %.2f\n", finalScore);
+            ranking_add(finalScore);
+            ranking_save();
             modoAtual = MODO_GAMEOVER;
         }
     }
@@ -134,6 +190,7 @@ void update(float dt) {
     distanciaPercorrida += worldSpeed * dt * fator;
 
     updateTrees(dt, worldSpeed);
+    updateBushes(dt, worldSpeed);
     updateCoins(dt);
 }
 
@@ -142,6 +199,30 @@ void renderScene() {
         desenhaMenu();
         return;
     }
+
+    if(modoAtual == MODO_RANKING) {
+       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+
+    ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+
+    glutSwapBuffers();
+    return;
+    }
+
 
 #pragma region Render Game
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -179,26 +260,10 @@ void renderScene() {
     drawObstacles();
     drawCoins3D();
     drawTrees();
+    drawBushes();
 
     if(modoAtual == MODO_GAMEOVER) {
-        int w = glutGet(GLUT_WINDOW_WIDTH), h = glutGet(GLUT_WINDOW_HEIGHT);
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        gluOrtho2D(0, w, 0, h);
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
-        glDisable(GL_LIGHTING);
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glRasterPos2i(w / 2 - 80, h / 2);
-        const char *s = "Game over! R para reiniciar";
-        for(const char *c = s; *c; ++c) glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *c);
-        glEnable(GL_LIGHTING);
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
+        drawGameOverHUD();
     }
 
     drawDistance(distanciaPercorrida);
@@ -223,7 +288,20 @@ void mouseCB(int button, int state, int x, int y) {
 }
 
 void keyboardCB(unsigned char key, int x, int y) {
-    if(key == 27) exit(0);
+    if(key == 'p') {
+        ranking_add(42.0f); // pontuação teste para salvar
+        ranking_save();
+        printf("Ranking manual salvo pela tecla 'p'\n");
+        return;
+    }
+
+    if(key == 27) { // ESC
+        if(modoAtual == MODO_RANKING) {
+            modoAtual = MODO_MENU;
+            return;
+        }
+        exit(0);
+    }
 
     if(modoAtual == MODO_GAMEOVER && (key == 'r' || key == 'R')) {
         modoAtual = MODO_MENU;
@@ -313,17 +391,31 @@ static int game_run() {
         }
     }
 
+    if(!loadOBJ("bush.obj", &bushModel)) {
+        print_error("Falha ao carregar modelo de arvore.");
+        exit(EXIT_FAILURE);
+    }
+
     initCoinModel();
     initCoins();
     initTrees();
-
+    initBushes();
     return EXIT_SUCCESS;
 }
 
-
 int main(int argc, char** argv) {
+    //para debug excluir depois
+#if defined(_WIN32) || defined(_WIN64)
+    char cwd[1024];
+    if (_getcwd(cwd, sizeof(cwd)) != NULL) {
+        printf("diretorio atual: %s\n", cwd);
+    } else {
+        perror("erro ao obter diretorio atual");
+    }
+#endif
     srand((unsigned)time(NULL));
     //setlocale(LC_ALL, "pt_BR.UTF-8");
+    //até aqui
 
     int err; // error code
     int window_size[2] = {1024, 600};
@@ -358,6 +450,11 @@ int main(int argc, char** argv) {
         }
         audio_bus_init();
     #pragma endregion
+
+    ranking_load();
+    if (ranking_getCount() == 0) {
+        ranking_save();
+    }
 
     err = game_run(); // game content created here
     if (err != EXIT_SUCCESS)

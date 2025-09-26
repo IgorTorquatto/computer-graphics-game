@@ -114,6 +114,11 @@
 			<Option glob="2161621352" />
 		</Unit>
 		<Unit filename="src/ecs/systems/music_bus.h">
+		<Unit filename="src/ecs/systems/ranking.c">
+			<Option compilerVar="CC" />
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/ecs/systems/ranking.h">
 			<Option glob="2161621352" />
 		</Unit>
 		<Unit filename="src/game/obstacle.c">

@@ -45,8 +45,11 @@ void desenhaMenu() {
 
     // Posições centralizadas dos botões
     int bx = (ww - LARGURA_BOTAO) / 2;
-    int by_play = wh / 2 + 40;
-    int by_exit = wh / 2 - 40;
+    int gap = 80;
+    int by_play = wh / 2 + gap;
+    int by_ranking = wh / 2;
+    int by_exit = wh / 2 - gap;
+
 
     // Projeção 2D temporária
     glMatrixMode(GL_PROJECTION);
@@ -67,6 +70,7 @@ void desenhaMenu() {
 
     // Botões
     desenhaBotaoCoord(bx, by_play, LARGURA_BOTAO, ALTURA_BOTAO, "JOGAR");
+    desenhaBotaoCoord(bx, by_ranking, LARGURA_BOTAO, ALTURA_BOTAO, "RANKING");
     desenhaBotaoCoord(bx, by_exit, LARGURA_BOTAO, ALTURA_BOTAO, "SAIR");
 
     // Restaura matrizes
@@ -90,8 +94,11 @@ void cliqueMenu(int button, int state, int x, int y) {
     int my = wh - y; // converte para coordenadas bottom-left
 
     int bx = (ww - LARGURA_BOTAO) / 2;
-    int by_play = wh / 2 + 40;
-    int by_exit = wh / 2 - 40;
+    int gap = 80;
+    int by_play = wh / 2 + gap;
+    int by_ranking = wh / 2;
+    int by_exit = wh / 2 - gap;
+
 
     // Jogar
     if (x >= bx && x <= bx + LARGURA_BOTAO &&
@@ -99,6 +106,13 @@ void cliqueMenu(int button, int state, int x, int y) {
         modoAtual = MODO_JOGO;
         resetGame(); // inicia o jogo imediatamente
         audio_bus_play_music();
+        return;
+    }
+
+    // Ranking
+    if (x >= bx && x <= bx + LARGURA_BOTAO &&
+        my >= by_ranking && my <= by_ranking + ALTURA_BOTAO) {
+        modoAtual = MODO_RANKING; // novo estado para mostrar ranking
         return;
     }
 
