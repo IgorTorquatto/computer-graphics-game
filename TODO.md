@@ -7,8 +7,10 @@
 
 ### Sistemas de jogo
 
-- [ ] Movimentação [@IgorTorquatto](https://github.com/IgorTorquatto)
-  - [ ] Interpolação [@GersonFeDutra](https://github.com/GersonFeDutra).
+- [x] Movimentação [@IgorTorquatto](https://github.com/IgorTorquatto)
+  - [x] Interpolação [@GersonFeDutra](https://github.com/GersonFeDutra).
+  - [x] Entrada [@IgorTorquatto](https://github.com/IgorTorquatto).
+  - [x] Pulo [@IgorTorquatto](https://github.com/IgorTorquatto).
 - [x] Coleta de itens [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Colisão e Condição de morte [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Loop de jogabilidade [@IgorTorquatto](https://github.com/IgorTorquatto)
@@ -39,6 +41,7 @@
       - [ ] Texturas
     - [ ] Prédios/ Paredes
 - [x] Ative a remoção de superfícies ocultas. [@IgorTorquatto](https://github.com/IgorTorquatto)
+- [x] Anti-aliasing (MSAA) [@GersonFeDutra](https://github.com/GersonFeDutra)
 
 > Extras
 > - [x] Importação de um objeto.
@@ -62,21 +65,28 @@
 
 ### Animações
 
-- [ ] Movimento (interativo) do personagem
-  - [x] Entrada [@IgorTorquatto](https://github.com/IgorTorquatto)
-  - [ ] Interpolação [@GersonFeDutra](https://github.com/GersonFeDutra).
-- [x] Movimento dos objetos da cena [@IgorTorquatto](https://github.com/IgorTorquatto)
-    - [x] Inimigos
-    - [x] Coletáveis (ex.: moedas)
+> Extras
+> - [ ] Movimento (interativo) do personagem
+>   - [x] Entrada [@IgorTorquatto](https://github.com/IgorTorquatto)
+>   - [x] Interpolação [@GersonFeDutra](https://github.com/GersonFeDutra).
+>   - [ ] Animação
+> - [x] Movimento dos objetos da cena [@IgorTorquatto](https://github.com/IgorTorquatto)
+>     - [x] Inimigos
+>     - [x] Coletáveis (ex.: moedas)
 
 ### Elementos de Interface
 
+- [x] Menu iniciar [@IgorTorquatto](https://github.com/IgorTorquatto)
+  - [x] Botão de começar jogo
+  - [x] Botão de sair do jogo
 - [x] Contador de coletáveis (ex.: número de moedas coletadas, número de mortes)
 
 > Extras
-> - [x] Menu iniciar [@IgorTorquatto](https://github.com/IgorTorquatto)
->   - [x] Botão de começar jogo
->   - [x] Botão de sair do jogo
 > - [ ] Pausar jogo
+
+## Funcionalidades extras
+
+- [ ] Música [@GersonFeDutra](https://github.com/GersonFeDutra).
+- [ ] Efeitos sonoros [@GersonFeDutra](https://github.com/GersonFeDutra).
 
 <!-- - [x] Contador de fps / debug [@GersonFeDutra](https://github.com/GersonFeDutra). -->

@@ -258,6 +258,17 @@ void initGL() {
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
 
+#pragma region Anti-Aliasing // MSAA
+    glEnable(GLUT_MULTISAMPLE);
+    // Smoothing -> Modo antigo de anti-alias do opengl
+    //glEnable(GL_BLEND);
+    //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    //glEnable(GL_LINE_SMOOTH);
+    //glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    //glEnable(GL_POLYGON_SMOOTH);
+    //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
+#pragma endregion
+
     // Configuração da luz
     GLfloat light_ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
     GLfloat light_diffuse[]  = { 0.9f, 0.9f, 0.9f, 1.0f };
@@ -310,10 +321,12 @@ static int start_game() {
 int main(int argc, char** argv) {
     srand((unsigned)time(NULL));
 
+    int window_size[2] = {1024, 600};
+
     // Glut Init
     glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH);
-    glutInitWindowSize(1024, 600);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
+    glutInitWindowSize(window_size[0], window_size[1]);
     glutCreateWindow("Trabalho CG");
     initGL();
 
@@ -336,4 +349,3 @@ int main(int argc, char** argv) {
 
     return 0;
 }
-
