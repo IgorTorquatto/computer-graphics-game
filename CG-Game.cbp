@@ -36,7 +36,6 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-std=c11" />
 			<Add directory="$(#glut.include)" />
 			<Add directory="$(PROJECT_DIR)/dependencies/SDL2/include/SDL2" />
 			<Add directory="$(PROJECT_DIR)/dependencies/SDL2_mixer/include/SDL2" />
@@ -56,125 +55,71 @@
 			<Add directory="$(PROJECT_DIR)/dependencies/SDL2/lib" />
 			<Add directory="$(PROJECT_DIR)/dependencies/SDL2_mixer/lib" />
 		</Linker>
-		<UnitsGlob directory="src" wildcard="" recursive="1" id="2161621352" addToProject="1">
-			<Option target="Debug" />
-			<Option target="Release" />
-		</UnitsGlob>
 		<Unit filename="src/ecs/component.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/ecs/component.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/ecs/component.h" />
 		<Unit filename="src/ecs/components/coin.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/ecs/components/coin.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/ecs/components/coin.h" />
 		<Unit filename="src/ecs/components/model.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/ecs/components/model.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/ecs/components/model.h" />
 		<Unit filename="src/ecs/entity.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/ecs/entity.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/ecs/entity.h" />
 		<Unit filename="src/ecs/system.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/ecs/system.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/ecs/system.h" />
 		<Unit filename="src/ecs/systems/hud.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/ecs/systems/hud.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/ecs/systems/hud.h" />
 		<Unit filename="src/ecs/systems/menu.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/ecs/systems/menu.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/ecs/systems/menu.h" />
 		<Unit filename="src/ecs/systems/music_bus.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/ecs/systems/music_bus.h">
+		<Unit filename="src/ecs/systems/music_bus.h" />
 		<Unit filename="src/ecs/systems/ranking.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/ecs/systems/ranking.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/ecs/systems/ranking.h" />
 		<Unit filename="src/game/obstacle.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/game/obstacle.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/game/obstacle.h" />
 		<Unit filename="src/game/player.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/game/player.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/game/player.h" />
 		<Unit filename="src/game/state.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/game/state.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/game/state.h" />
 		<Unit filename="src/game/tree.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/game/tree.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/game/tree.h" />
 		<Unit filename="src/game_objects/test.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/game_objects/test.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/game_objects/test.h" />
 		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/stb_image.h">
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/utils/basics.h">
-			<Option glob="2161621352" />
-		</Unit>
+		<Unit filename="src/stb_image.h" />
+		<Unit filename="src/utils/basics.h" />
 		<Unit filename="src/utils/print.c">
 			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/utils/print.h">
-			<Option glob="2161621352" />
-		</Unit>
-		<Extensions>
-			<lib_finder disable_auto="1" />
-		</Extensions>
+		<Unit filename="src/utils/print.h" />
+		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
