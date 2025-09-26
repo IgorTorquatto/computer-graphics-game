@@ -19,28 +19,14 @@ file(GLOB_RECURSE SOURCES
 
 if(NOT SOURCES)
     message(FATAL_ERROR "Nenhum arquivo .c ou .cpp encontrado em src/")
-    return()
 endif()
 
 include_directories("${PROJECT_ROOT}/src")
 
-# Detectar arquitetura 32/64 bits
-if (CMAKE_SIZEOF_VOID_P EQUAL 8)
-    set(ARCHITECTURE "64-bit")
-    add_compile_definitions(IS_64BIT=1)
-else()
-    set(ARCHITECTURE "32-bit")
-    add_compile_definitions(IS_32BIT=1)
-endif()
-
-message(STATUS "Plataforma: ${CMAKE_SYSTEM_NAME}")
-message(STATUS "Processador: ${CMAKE_SYSTEM_PROCESSOR}")
-message(STATUS "Arquitetura detectada: ${ARCHITECTURE}")
-
-# Cria executável
+# cria executável
 add_executable(${PROJECT_NAME} ${SOURCES})
 
-# Define diretórios de saída específicos por configuração
+# define diretórios de saída específicos por configuração
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG   "${PROJECT_ROOT}/bin/debug"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${PROJECT_ROOT}/bin/release"
@@ -49,6 +35,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 # Copiar assets para o diretório de saída do executável
+# Usamos geradores de expressões para obter o diretório de saída correto para a configuração atual
+# Copiar assets se a pasta existir
 if(EXISTS "${PROJECT_ROOT}/assets")
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy_directory
@@ -56,38 +44,11 @@ if(EXISTS "${PROJECT_ROOT}/assets")
             "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
         COMMENT "Copiando assets para o diretório do executável"
     )
-    if(EXISTS "${PROJECT_ROOT}/assets/audio/music")
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_directory
-                "${PROJECT_ROOT}/assets/audio/music"
-                "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
-            COMMENT "Copiando assets de audio para o diretório do executável"
-        )
-    else()
-        message(WARNING "Pasta assets/audio/music não encontrada em ${PROJECT_ROOT}/assets - pule a cópia")
-    endif()
 else()
     message(WARNING "Pasta assets não encontrada em ${PROJECT_ROOT}/assets - pule a cópia")
 endif()
 
-# --- Encontrar SDL2 e SDL2_mixer ---
-find_package(SDL2 REQUIRED)
-find_package(SDL2_mixer REQUIRED)
-
-if(SDL2_FOUND AND SDL2_MIXER_FOUND)
-    include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES})
-else()
-    # fallback via pkg-config (Linux)
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(SDL2 REQUIRED sdl2)
-    pkg_check_modules(SDL2_MIXER REQUIRED SDL2_mixer)
-
-    include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_MIXER_INCLUDE_DIRS})
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${SDL2_LIBRARIES} ${SDL2_MIXER_LIBRARIES})
-endif()
-
-# --- Link padrão por plataforma ---
+# bibliotecas por plataforma
 if(WIN32)
     target_link_libraries(${PROJECT_NAME} PRIVATE glut GL GLU m)
 elseif(APPLE)
@@ -96,13 +57,3 @@ elseif(APPLE)
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE glut GL GLU m)
 endif()
-
-# --- Clean custom target ---
-add_custom_target(clean-all
-    COMMAND ${CMAKE_COMMAND} -E rm -rf
-        "${PROJECT_ROOT}/bin/debug"
-        "${PROJECT_ROOT}/bin/release"
-        "${PROJECT_ROOT}/bin/relwithdebinfo"
-        "${PROJECT_ROOT}/bin/minsizerel"
-    COMMENT "Removendo todos os diretórios de build e binários"
-)

@@ -2,7 +2,6 @@
 
 #include "ecs/systems/menu.h"
 #include "ecs/systems/hud.h"
-#include "ecs/systems/music_bus.h"
 
 // Diferença de tempo em segundos
 typedef float DeltaTime;

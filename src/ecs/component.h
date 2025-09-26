@@ -14,7 +14,7 @@
     #define rad_to_deg(radians) ((float)(radians) * 180 / M_PI)
     #define deg_to_rad(degrees) ((float)(degrees) * M_PI / 180)
 
-    #define _ms (1.0e3)
+    #define ms (1e3) // milliseconds
 
     typedef float Angle;
 

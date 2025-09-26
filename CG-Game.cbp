@@ -13,10 +13,7 @@
 				<Option type="1" />
 				<Option compiler="gcc-mingw32" />
 				<ExtraCommands>
-					<Add before='xcopy /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\debug\&quot;' />
-					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)assets\audio\music\*.mp3&quot; &quot;bin\debug\&quot;' />
-					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2\bin\SDL2.dll&quot; &quot;bin\debug\&quot;' />
-					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2_mixer\bin\SDL2_mixer.dll&quot; &quot;bin\debug\&quot;' />
+					<Add before='xcopy /Y /E /I /D &quot;$(PROJECT_DIR)assets&quot; &quot;bin\debug&quot;' />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -27,10 +24,7 @@
 				<Option type="0" />
 				<Option compiler="gcc-mingw32" />
 				<ExtraCommands>
-					<Add before='xcopy /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\release\&quot;' />
-					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)assets\audio\music\*.mp3&quot; &quot;bin\release\&quot;' />
-					<Add before='xcopy /Y /D &quot;C:\SDL2\bin\SDL2.dll&quot; &quot;bin\release\&quot;' />
-					<Add before='xcopy /Y /D &quot;C:\SDL2_mixer\bin\SDL2_mixer.dll&quot; &quot;bin\release\&quot;' />
+					<Add before='xcopy /Y /E /I /D &quot;$(PROJECT_DIR)assets&quot; &quot;bin\release&quot;' />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -38,23 +32,15 @@
 		<Compiler>
 			<Add option="-std=c11" />
 			<Add directory="$(#glut.include)" />
-			<Add directory="$(PROJECT_DIR)/dependencies/SDL2/include/SDL2" />
-			<Add directory="$(PROJECT_DIR)/dependencies/SDL2_mixer/include/SDL2" />
 			<Add directory="$(PROJECT_DIR)/src" />
 		</Compiler>
 		<Linker>
-			<Add library="mingw32" />
-			<Add library="SDL2main" />
-			<Add library="SDL2" />
-			<Add library="SDL2_mixer" />
 			<Add library="freeglut" />
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="winmm" />
 			<Add library="gdi32" />
 			<Add directory="$(#glut.lib)" />
-			<Add directory="$(PROJECT_DIR)/dependencies/SDL2/lib" />
-			<Add directory="$(PROJECT_DIR)/dependencies/SDL2_mixer/lib" />
 		</Linker>
 		<UnitsGlob directory="src" wildcard="" recursive="1" id="2161621352" addToProject="1">
 			<Option target="Debug" />
@@ -109,11 +95,6 @@
 		<Unit filename="src/ecs/systems/menu.h">
 			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/ecs/systems/music_bus.c">
-			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/ecs/systems/music_bus.h">
 		<Unit filename="src/ecs/systems/ranking.c">
 			<Option compilerVar="CC" />
 			<Option glob="2161621352" />
@@ -174,7 +155,7 @@
 			<Option glob="2161621352" />
 		</Unit>
 		<Extensions>
-			<lib_finder disable_auto="1" />
+			<editor_config active="1" use_tabs="0" tab_indents="1" tab_width="4" indent="4" eol_mode="2" />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
