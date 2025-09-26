@@ -12,5 +12,7 @@ void ranking_add(float distanciaTotal);
 void ranking_save();
 void ranking_load();
 void ranking_draw(int windowWidth, int windowHeight);
+int ranking_getCount();
+
 
 #endif
