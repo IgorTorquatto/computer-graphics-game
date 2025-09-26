@@ -44,6 +44,16 @@ if(EXISTS "${PROJECT_ROOT}/assets")
             "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
         COMMENT "Copiando assets para o diretório do executável"
     )
+    if(EXISTS "${PROJECT_ROOT}/assets/textures")
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_directory
+                "${PROJECT_ROOT}/assets/textures/"
+                "$<TARGET_FILE_DIR:${PROJECT_NAME}>"
+            COMMENT "Copiando assets para o diretório do executável"
+        )
+    else()
+        message(WARNING "Pasta assets/textures não encontrada em ${PROJECT_ROOT}/assets - pule a cópia")
+    endif()
 else()
     message(WARNING "Pasta assets não encontrada em ${PROJECT_ROOT}/assets - pule a cópia")
 endif()

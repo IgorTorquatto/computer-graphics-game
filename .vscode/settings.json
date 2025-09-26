@@ -4,7 +4,9 @@
         "print.h": "c",
         "model.h": "c",
         "coin.h": "c",
-        "basics.h": "c"
+        "basics.h": "c",
+        "stb_image.h": "c",
+        "ranking.h": "c"
     },
     "cmake.ignoreCMakeListsMissing": true
 }

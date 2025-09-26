@@ -3,11 +3,13 @@
 
 #include <math.h>
 #include <time.h>
-
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "utils/print.h"
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 #include "ecs/component.h" // model
 #include "ecs/system.h" // menu
@@ -18,7 +20,9 @@
 #include "game/obstacle.h"
 
 #include "ecs/systems/ranking.h"
-#include <direct.h>
+#if defined(_WIN32) || defined(_WIN64)
+    #include <direct.h>
+#endif
 
 Player player;
 
@@ -33,6 +37,8 @@ float escalaArvoreDefault = 1.0f;
 
 extern Model rockModel;
 extern Model logModel;
+
+GLuint texture;
 
 float distanciaTotal = 0.0f;
 float calcularDistanciaTotal() {
@@ -198,58 +204,69 @@ void renderScene() {
     if(modoAtual == MODO_RANKING) {
        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
 
-    ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+        ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
 
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
 
-    glutSwapBuffers();
-    return;
+        glutSwapBuffers();
+        return;
     }
-
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    float camX = player.x;
-    float camY = 4.0f;
-    float camZ = player.z + 8.0f;
-    gluLookAt(camX, camY, camZ,
-              player.x, 1.0f, player.z - 8.0f,
-              0.0f, 1.0f, 0.0f);
-
-    GLfloat light_position[] = { player.x + 5.0f, 10.0f, player.z + 5.0f, 1.0f };
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
-    //glEnable(GL_COLOR_MATERIAL);
-    //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    #pragma region Camera
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
 
 
-    glDisable(GL_LIGHTING);
-    glColor3f(0.9f, 0.9f, 0.9f);
-    for(int i = -100; i < 100; i++) {
-        float zpos = i * 5.0f;
-        glBegin(GL_QUADS);
-            glVertex3f(-1.5f, 0.0f, zpos);
-            glVertex3f(6.5f, 0.0f, zpos);
-            glVertex3f(6.5f, 0.0f, zpos - 5.0f);
-            glVertex3f(-1.5f, 0.0f, zpos - 5.0f);
-        glEnd();
-    }
-    glEnable(GL_LIGHTING);
+        float camX = player.x;
+        float camY = 4.0f;
+        float camZ = player.z + 8.0f;
+        gluLookAt(camX, camY, camZ,
+                player.x, 1.0f, player.z - 8.0f,
+                0.0f, 1.0f, 0.0f);
+    #pragma endregion
+
+    #pragma region Light
+        GLfloat light_position[] = { player.x + 5.0f, 10.0f, player.z + 5.0f, 1.0f };
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+        //glEnable(GL_COLOR_MATERIAL);
+        //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
+        glDisable(GL_LIGHTING);
+    #pragma endregion
+
+   #pragma Region Floor
+        glEnable(GL_TEXTURE_2D);
+
+        glColor3f(1.0f, 1.0f, 1.0f);
+        //glColor3f(0.9f, 0.9f, 0.9f);
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        for(int i = -100; i < 100; i++) {
+            float zpos = i * 5.0f;
+            glBegin(GL_QUADS);
+                glTexCoord2f(0.0f, 0.0f); glVertex3f(-1.5f, 0.0f, zpos);
+                glTexCoord2f(1.0f, 0.0f); glVertex3f(6.5f, 0.0f, zpos);
+                glTexCoord2f(1.0f, 1.0f); glVertex3f(6.5f, 0.0f, zpos - 5.0f);
+                glTexCoord2f(0.0f, 1.0f); glVertex3f(-1.5f, 0.0f, zpos - 5.0f);
+            glEnd();
+        }
+        glEnable(GL_LIGHTING);
+    #pragma endregion
 
     drawPlayer(&player);
     drawObstacles();
@@ -361,8 +378,8 @@ void initGL() {
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_NORMALIZE);
-
 }
+
 
 
 static int start_game() {
@@ -387,9 +404,102 @@ static int start_game() {
     initCoins();
     initTrees();
     initBushes();
+
+//     #pragma region Textures
+//         int width, height, channels;
+//         unsigned char *image = stbi_load("stone_tiles.png", &width, &height, &channels, 0);
+//         if (!image) {
+//             print_error("Erro ao carregar a textura %s\n", stbi_failure_reason());
+//             return EXIT_FAILURE;
+//         }
+// 
+//         glGenTextures(1, &texture);
+//         glBindTexture(GL_TEXTURE_2D, texture);
+// 
+//         GLenum format = (channels == 3) ? GL_RGB : (channels == 4) ? GL_RGBA : 0;
+//         if(!format) {
+//             printf("Formato inválido: %d canais\n", channels);
+//             stbi_image_free(image);
+//             return EXIT_FAILURE;
+//             //exit(EXIT_FAILURE);
+//         }
+// 
+//         // Verificar erros
+//         int error = glGetError();
+//         if (error != GL_NO_ERROR) {
+//             print_error("Erro ao criar a textura %d\n", error);
+//             print_error("Erro ao criar a textura %s\n", gluErrorString(error));
+//             return EXIT_FAILURE;
+//         }
+// 
+//         // Configura filtros
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+// 
+//         // Carrega a imagem na memória da GPU
+//         if(channels == 3)
+//             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+//         else if(channels == 4)
+//             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+// 
+//         // WATCH
+//         stbi_image_free(image); // libera RAM
+//     #pragma endregion
+
+    return EXIT_SUCCESS;
+}
+
+
+int load_textures() {
+    int width, height, channels;
+    unsigned char *image = stbi_load("shadow.png", &width, &height, &channels, 0);
+    if (!image) {
+        print_error("Erro ao carregar a textura: %s\n", stbi_failure_reason());
+        return 0;
+    }
+
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+
+    // Configurar parâmetros da textura
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    GLenum internal_format, format;
+    switch(channels) {
+        case 3: 
+            internal_format = GL_RGB;
+            format = GL_RGB;
+            break;
+        case 4: 
+            internal_format = GL_RGBA;
+            format = GL_RGBA;
+            break;
+        default:
+            print_error("Formato inválido: %d canais\n", channels);
+            stbi_image_free(image);
+            return 0;
+    }
+
+    glTexImage2D(GL_TEXTURE_2D, 0, internal_format, width, height, 0, format, GL_UNSIGNED_BYTE, image);
+
+    // Verificar erro APÓS todas as operações OpenGL
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR) {
+        print_error("Erro OpenGL: %s (0x%x)\n", gluErrorString(error), error);
+        stbi_image_free(image);
+        return 0;
+    }
+
+    stbi_image_free(image);
+    return 1;
 }
 
 int main(int argc, char** argv) {
+#if defined(_WIN32) || defined(_WIN64)
     //para debug excluir depois
     char cwd[1024];
     if (_getcwd(cwd, sizeof(cwd)) != NULL) {
@@ -397,8 +507,9 @@ int main(int argc, char** argv) {
     } else {
         perror("erro ao obter diretorio atual");
     }
-    srand((unsigned)time(NULL));
+#endif
     //até aqui
+    srand((unsigned)time(NULL));
 
     int window_size[2] = {1024, 600};
 
@@ -409,12 +520,15 @@ int main(int argc, char** argv) {
     glutCreateWindow("Trabalho CG");
     initGL();
 
+    // AGORA carregar texturas
+    if (!load_textures()) {
+        return EXIT_FAILURE;
+    }
+
     ranking_load();
     if (ranking_getCount() == 0) {
         ranking_save();
     }
-
-    start_game(); // game content created here
 
     // Event Bindings
     glutDisplayFunc(renderScene);
@@ -423,6 +537,10 @@ int main(int argc, char** argv) {
     glutSpecialFunc(specialCB);
     glutReshapeFunc(reshape);
     glutMouseFunc(mouseCB);
+
+    int err = start_game(); // game content created here
+    if (err != EXIT_SUCCESS)
+        return err;
 
     glutMainLoop();
 

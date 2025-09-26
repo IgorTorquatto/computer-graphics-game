@@ -14,6 +14,7 @@
 - [x] Coleta de itens [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Colisão e Condição de morte [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Loop de jogabilidade [@IgorTorquatto](https://github.com/IgorTorquatto)
+- [ ] Ranking [@marclobo01](https://github.com/marclobo01)
 
 ## Construção da cena
 
@@ -79,14 +80,18 @@
 - [x] Menu iniciar [@IgorTorquatto](https://github.com/IgorTorquatto)
   - [x] Botão de começar jogo
   - [x] Botão de sair do jogo
-- [x] Contador de coletáveis (ex.: número de moedas coletadas, número de mortes)
+- [ ] HUD [@IgorTorquatto](https://github.com/IgorTorquatto)
+  - [x] Contador de coletáveis (ex.: número de moedas coletadas, número de mortes)
+  - [x] Distância percorrida
+- [ ] Game Over [@marclobo01](https://github.com/marclobo01)
 
 > Extras
 > - [ ] Pausar jogo
+> - [ ] Ranking [@marclobo01](https://github.com/marclobo01)
 
 ## Funcionalidades extras
 
-- [ ] Música [@GersonFeDutra](https://github.com/GersonFeDutra).
+- [x] Música [@GersonFeDutra](https://github.com/GersonFeDutra).
 - [ ] Efeitos sonoros [@GersonFeDutra](https://github.com/GersonFeDutra).
 
 <!-- - [x] Contador de fps / debug [@GersonFeDutra](https://github.com/GersonFeDutra). -->

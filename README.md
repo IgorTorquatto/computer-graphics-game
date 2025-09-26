@@ -20,21 +20,20 @@ Federal do Cariri (UFCA).
 ## Objetivos
 
 1. Este trabalho tem como objetivo aplicar os conceitos e técnicas de computação 
-gráfica para desenvolver um jogo interativo utilizando a API OpenGL e a 
-linguagem C, integrando elementos visuais, animação e interatividade em suas implementações. 
+gráfica para desenvolver um jogo interativo utilizando a API OpenGL e a linguagem C, integrando elementos visuais, animação e interatividade em suas implementações. 
     > a) Desenvolva algum jogo interativo de sua escolha (não é necessário que seja conhecido. [Exemplo](https://www.youtube.com/watch?v=y2PS-YD625k). O jogo 
     deve incluir, no mínimo, os seguintes requisitos:
-    > - [ ] Carregamento de objetos 3D com cores distintas.
+    > - [x] Carregamento de objetos 3D com cores distintas.
     > - [ ] Adicione as iluminações na cena:
     >   - [ ] Ambiente (para a cena);
-    >   - [ ] Especular;
+    >   - [x] Especular;
     >   - [ ] Difusa.
-    > - [ ] Uso de câmera para navegação ou visualização da cena. 
-    > - [ ] Use projeções perspectivas e/ou ortogonais. 
-    > - [ ] Ative a remoção de superfícies ocultas.
+    > - [x] Uso de câmera para navegação ou visualização da cena. 
+    > - [x] Use projeções perspectivas e/ou ortogonais. 
+    > - [x] Ative a remoção de superfícies ocultas.
  
     > b) Pontos extras (cada item vale 0,5 ponto extra):
-    > - [ ] Importação de um objeto.
+    > - [x] Importação de um objeto.
     > - [ ] Adição de texturas nos objetos. 
     > - [ ] Implementação da projeção da sombra dos objetos. 
 2. Demonstração do jogo. 

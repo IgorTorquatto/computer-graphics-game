@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <GL/glut.h>
 
+#include "utils/print.h"
+
 extern int getTextWidth(const char *text, void *font);
 extern void drawText(const char *text, int x, int y, void *font, float r, float g, float b, int windowHeight);
 
@@ -26,7 +28,7 @@ void ranking_add(float distanciaTotal) {
     } else if (distanciaTotal > rankingList[rankingCount - 1].distanciaTotal) {
         rankingList[rankingCount - 1].distanciaTotal = distanciaTotal;
     } else {
-        return; // não entrou no ranking
+        return; // nï¿½o entrou no ranking
     }
     qsort(rankingList, rankingCount, sizeof(RankingEntry), compareDesc);
 }
@@ -64,13 +66,13 @@ void ranking_save() {
 
 
 void ranking_load() {
-    printf("ranking_load called.\n");
+    print_info("ranking_load called.\n");
     // Limpar lista antes de tentar carregar
     ranking_init();
 
     FILE *file = fopen("ranking.dat", "rb");
     if(!file) {
-        // Arquivo não existe, lista mantém zerada
+        // Arquivo nï¿½o existe, lista mantï¿½m zerada
         return;
     }
 
@@ -119,4 +121,3 @@ void ranking_draw(int windowWidth, int windowHeight) {
 int ranking_getCount() {
     return rankingCount;
 }
-
