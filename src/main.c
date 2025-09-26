@@ -25,6 +25,8 @@ float distanciaPercorrida = 0.0f;
 static const float fator = 0.1f;
 
 Model treeModel;
+Model bushModel;
+
 float escalaArvoreDefault = 1.0f;
 
 extern Model rockModel;
@@ -131,6 +133,7 @@ void update(float dt) {
     distanciaPercorrida += worldSpeed * dt * fator;
 
     updateTrees(dt, worldSpeed);
+    updateBushes(dt, worldSpeed);
     updateCoins(dt);
 }
 
@@ -176,6 +179,7 @@ void renderScene() {
     drawObstacles();
     drawCoins3D();
     drawTrees();
+    drawBushes();
 
     if(modoAtual == MODO_GAMEOVER) {
         int w = glutGet(GLUT_WINDOW_WIDTH), h = glutGet(GLUT_WINDOW_HEIGHT);
@@ -291,9 +295,15 @@ static int start_game() {
         }
     }
 
+    if(!loadOBJ("bush.obj", &bushModel)) {
+        print_error("Falha ao carregar modelo de arvore.");
+        exit(EXIT_FAILURE);
+    }
+
     initCoinModel();
     initCoins();
     initTrees();
+    initBushes();
 }
 
 

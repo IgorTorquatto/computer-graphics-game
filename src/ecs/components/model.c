@@ -12,14 +12,10 @@ static void countElements(FILE* file, int* outVertCount, int* outFaceCount) {
     *outFaceCount = 0;
 
     while(fgets(line, sizeof(line), file)) {
-
-        // Contar vértices
         if(strncmp(line, "v ", 2) == 0) (*outVertCount)++;
-        // Contar faces
         else if(strncmp(line, "f ", 2) == 0) (*outFaceCount)++;
     }
 }
-
 
 // Função para carregar OBJ simples (vértices + faces triangulares)
 int loadOBJ(const char* filename, Model* model) {
@@ -35,12 +31,9 @@ int loadOBJ(const char* filename, Model* model) {
     rewind(file);
 
     model->numVertices = vertCount;
-    model->numFaces = 0;  // contar faces vÃ¡lidas
-
+    model->numFaces = 0;
     model->vertices = (float*)malloc(sizeof(float)*3*vertCount);
-    // Alocar o mÃ¡ximo possÃ­vel: faceCount faces, depois ajustamos numFaces
     model->faces = (int*)malloc(sizeof(int)*3*faceCount);
-
 
     if(!model->vertices || !model->faces) {
         fclose(file);
@@ -58,21 +51,28 @@ int loadOBJ(const char* filename, Model* model) {
             model->vertices[vIdx++] = z;
         } else if(strncmp(line, "f ", 2) == 0) {
             int vi[3] = {0,0,0};
-            if(sscanf(line+2, "%d %d %d", &vi[0], &vi[1], &vi[2]) < 3) {
-                sscanf(line+2, "%d/%*d/%*d %d/%*d/%*d %d/%*d/%*d", &vi[0], &vi[1], &vi[2]);
+            // Tenta todos os formatos conhecidos de face
+            if (sscanf(line+2, "%d %d %d", &vi[0], &vi[1], &vi[2]) == 3) {
+                // f v v v
+            } else if (sscanf(line+2, "%d//%*d %d//%*d %d//%*d", &vi[0], &vi[1], &vi[2]) == 3) {
+                // f v//vn v//vn v//vn (bush)
+            } else if (sscanf(line+2, "%d/%*d/%*d %d/%*d/%*d %d/%*d/%*d", &vi[0], &vi[1], &vi[2]) == 3) {
+                // f v/vt/vn v/vt/vn v/vt/vn (tree)
+            } else if (sscanf(line+2, "%d/%*d %d/%*d %d/%*d", &vi[0], &vi[1], &vi[2]) == 3) {
+                // f v/vt v/vt v/vt
+            } else {
+                // formato não suportado
+                continue;
             }
             int v0 = vi[0] - 1;
             int v1 = vi[1] - 1;
             int v2 = vi[2] - 1;
-
-            // Validar Ã­ndices
             if (v0 < 0 || v0 >= vertCount ||
                 v1 < 0 || v1 >= vertCount ||
                 v2 < 0 || v2 >= vertCount) {
-                fprintf(stderr, "Face ignorada por Ã­ndice invÃ¡lido: %s", line);
-                continue;  // pular essa face invï¿½lida
+                fprintf(stderr, "Face ignorada por índice inválido: %s", line);
+                continue;
             }
-
             model->faces[fIdx++] = v0;
             model->faces[fIdx++] = v1;
             model->faces[fIdx++] = v2;
