@@ -15,8 +15,8 @@
 				<ExtraCommands>
 					<Add before='xcopy /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\debug\&quot;' />
 					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)assets\audio\music\*.mp3&quot; &quot;bin\debug\&quot;' />
-					<Add before='xcopy /Y /D &quot;C:\SDL2\bin\SDL2.dll&quot; &quot;bin\debug\&quot;' />
-					<Add before='xcopy /Y /D &quot;C:\SDL2_mixer\bin\SDL2_mixer.dll&quot; &quot;bin\debug\&quot;' />
+					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2\bin\SDL2.dll&quot; &quot;bin\debug\&quot;' />
+					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2_mixer\bin\SDL2_mixer.dll&quot; &quot;bin\debug\&quot;' />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -38,8 +38,8 @@
 		<Compiler>
 			<Add option="-std=c11" />
 			<Add directory="$(#glut.include)" />
-			<Add directory="$(#sdl2.include)/SDL2" />
-			<Add directory="$(#sdl2_mixer.include)/SDL2" />
+			<Add directory="$(PROJECT_DIR)/dependencies/SDL2/include/SDL2" />
+			<Add directory="$(PROJECT_DIR)/dependencies/SDL2_mixer/include/SDL2" />
 			<Add directory="$(PROJECT_DIR)/src" />
 		</Compiler>
 		<Linker>
@@ -53,8 +53,8 @@
 			<Add library="winmm" />
 			<Add library="gdi32" />
 			<Add directory="$(#glut.lib)" />
-			<Add directory="$(#sdl2.lib)" />
-			<Add directory="$(#sdl2_mixer.lib)" />
+			<Add directory="$(PROJECT_DIR)/dependencies/SDL2/lib" />
+			<Add directory="$(PROJECT_DIR)/dependencies/SDL2_mixer/lib" />
 		</Linker>
 		<UnitsGlob directory="src" wildcard="" recursive="1" id="2161621352" addToProject="1">
 			<Option target="Debug" />
