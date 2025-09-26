@@ -17,6 +17,7 @@
 #include "game/player.h"
 #include "game/obstacle.h"
 
+#include "ecs/systems/ranking.h"
 
 Player player;
 
@@ -97,7 +98,7 @@ void drawGameOverHUD() {
     char buffer[128];
     int x;
 
-    snprintf(buffer, sizeof(buffer), "Game over! R para reiniciar");
+    snprintf(buffer, sizeof(buffer), "Game over! R para voltar ao Menu");
     x = (w - getTextWidth(buffer, GLUT_BITMAP_TIMES_ROMAN_24)) / 2;
     drawText(buffer, x, h/2 + 80, GLUT_BITMAP_TIMES_ROMAN_24, 1, 0, 0, h);
 
@@ -124,6 +125,16 @@ int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
         fabs(ay - by) * 2.0f < (ah + bh) &&
         fabs(az - bz) * 2.0f < (ad + bd)) return 1;
     return 0;
+}
+
+void drawRankingTitle(int ww, int wh) {
+    char title[] = "Ranking - Distancias";
+    int x = (ww - getTextWidth(title, GLUT_BITMAP_HELVETICA_18)) / 2;
+    drawText(title, x, wh/2 + 120, GLUT_BITMAP_HELVETICA_18, 1, 1, 1, wh);
+
+    char info[] = "Pressione ESC para voltar";
+    x = (ww - getTextWidth(info, GLUT_BITMAP_HELVETICA_12)) / 2;
+    drawText(info, x, wh/2 - 150, GLUT_BITMAP_HELVETICA_12, 1, 1, 1, wh);
 }
 
 void resetGame() {
@@ -162,6 +173,8 @@ void update(float dt) {
             player.x, player.y + ph * 0.5f, player.z, pw, ph, pd,
             obstCenterX, obstY, obstacles[i].z, obstWidth, obstHeight, obstDepth)
         ) {
+            ranking_add(calcularDistanciaTotal());
+            ranking_save();
             modoAtual = MODO_GAMEOVER;
         }
     }
@@ -178,6 +191,20 @@ void renderScene() {
         desenhaMenu();
         return;
     }
+
+    if(modoAtual == MODO_RANKING) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+    ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+
+    glutSwapBuffers();
+    return;
+    }
+
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -242,7 +269,13 @@ void mouseCB(int button, int state, int x, int y) {
 }
 
 void keyboardCB(unsigned char key, int x, int y) {
-    if(key == 27) exit(0);
+    if(key == 27) { // ESC
+        if(modoAtual == MODO_RANKING) {
+            modoAtual = MODO_MENU;
+            return;
+        }
+        exit(0);
+    }
 
     if(modoAtual == MODO_GAMEOVER && (key == 'r' || key == 'R')) {
         modoAtual = MODO_MENU;
@@ -313,6 +346,7 @@ void initGL() {
 
 
 static int start_game() {
+    ranking_load();
     resetGame();
 
     if(!loadOBJ("tree.obj", &treeModel)) {
