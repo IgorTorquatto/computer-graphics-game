@@ -18,14 +18,27 @@ SRC_RELEASE="$BIN/release"
 OUT="Trabalho"
 
 DEBUG=false
+CLEAN=false
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -d|--debug) DEBUG=true; shift ;;
+    -c|--clean) CLEAN=true; shift ;;
     --) shift; break ;;
     -*) print_error "Opção desconhecida: $1"; exit 1 ;;
     *) break ;;
   esac
 done
+
+if $CLEAN; then
+  print_info "Limpando os arquivos de build."
+  rm -rf bin/*
+  # if command -v cmake &> /dev/null; then
+  #   cmake --build "$BIN" --target clean-all
+  # else
+  #   rm -rf "$SRC_DEBUG" "$SRC_RELEASE"
+  # fi
+  exit 0
+fi
 
 if $DEBUG; then
   print_info "Modo DEBUG ativado."
