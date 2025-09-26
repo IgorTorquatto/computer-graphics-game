@@ -1,11 +1,10 @@
 // Open GL
 #include <GL/glut.h>
 #include <GL/glu.h>
-// SDL2
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
 // STL
+
 //#include <locale.h>
+
 #include <math.h>
 #include <time.h>
 #include <stdio.h>
@@ -343,7 +342,6 @@ int main(int argc, char** argv) {
             print_error("SDL initialization failed: %s", SDL_GetError());
             return err;
         }
-
         // TODO -> Suporte para WAV
         // Inicializa SDL_mixer com suporte a MP3
         int flags = MIX_INIT_MP3;

@@ -1,7 +1,13 @@
 #pragma once
 
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_mixer.h>
+// SDL2
+#ifdef _WIN32 // Setup horrível do code::blocks com mingw2-32bits
+    #include <SDL.h>
+    #include <SDL_mixer.h>
+#else
+    #include <SDL2/SDL.h>
+    #include <SDL2/SDL_mixer.h>
+#endif
 
 extern Mix_Music *music;
 

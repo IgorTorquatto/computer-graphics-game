@@ -13,7 +13,10 @@
 				<Option type="1" />
 				<Option compiler="gcc-mingw32" />
 				<ExtraCommands>
-					<Add before='xcopy /Y /E /I /D &quot;$(PROJECT_DIR)assets&quot; &quot;bin\debug&quot;' />
+					<Add before='xcopy /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\debug\&quot;' />
+					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)assets\audio\music\*.mp3&quot; &quot;bin\debug\&quot;' />
+					<Add before='xcopy /Y /D &quot;C:\SDL2\bin\SDL2.dll&quot; &quot;bin\debug\&quot;' />
+					<Add before='xcopy /Y /D &quot;C:\SDL2_mixer\bin\SDL2_mixer.dll&quot; &quot;bin\debug\&quot;' />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -24,7 +27,10 @@
 				<Option type="0" />
 				<Option compiler="gcc-mingw32" />
 				<ExtraCommands>
-					<Add before='xcopy /Y /E /I /D &quot;$(PROJECT_DIR)assets&quot; &quot;bin\release&quot;' />
+					<Add before='xcopy /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\release\&quot;' />
+					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)assets\audio\music\*.mp3&quot; &quot;bin\release\&quot;' />
+					<Add before='xcopy /Y /D &quot;C:\SDL2\bin\SDL2.dll&quot; &quot;bin\release\&quot;' />
+					<Add before='xcopy /Y /D &quot;C:\SDL2_mixer\bin\SDL2_mixer.dll&quot; &quot;bin\release\&quot;' />
 					<Mode after="always" />
 				</ExtraCommands>
 			</Target>
@@ -32,32 +38,47 @@
 		<Compiler>
 			<Add option="-std=c11" />
 			<Add directory="$(#glut.include)" />
+			<Add directory="$(#sdl2.include)/SDL2" />
+			<Add directory="$(#sdl2_mixer.include)/SDL2" />
 			<Add directory="$(PROJECT_DIR)/src" />
 		</Compiler>
 		<Linker>
+			<Add library="mingw32" />
+			<Add library="SDL2main" />
+			<Add library="SDL2" />
+			<Add library="SDL2_mixer" />
 			<Add library="freeglut" />
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="winmm" />
 			<Add library="gdi32" />
 			<Add directory="$(#glut.lib)" />
+			<Add directory="$(#sdl2.lib)" />
+			<Add directory="$(#sdl2_mixer.lib)" />
 		</Linker>
 		<UnitsGlob directory="src" wildcard="" recursive="1" id="2161621352" addToProject="1">
 			<Option target="Debug" />
 			<Option target="Release" />
 		</UnitsGlob>
-		<Unit filename="src/coin.c">
-			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/coin.h">
-			<Option glob="2161621352" />
-		</Unit>
 		<Unit filename="src/ecs/component.c">
 			<Option compilerVar="CC" />
 			<Option glob="2161621352" />
 		</Unit>
 		<Unit filename="src/ecs/component.h">
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/ecs/components/coin.c">
+			<Option compilerVar="CC" />
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/ecs/components/coin.h">
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/ecs/components/model.c">
+			<Option compilerVar="CC" />
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/ecs/components/model.h">
 			<Option glob="2161621352" />
 		</Unit>
 		<Unit filename="src/ecs/entity.c">
@@ -74,11 +95,53 @@
 		<Unit filename="src/ecs/system.h">
 			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/estado.c">
+		<Unit filename="src/ecs/systems/hud.c">
 			<Option compilerVar="CC" />
 			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/estado.h">
+		<Unit filename="src/ecs/systems/hud.h">
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/ecs/systems/menu.c">
+			<Option compilerVar="CC" />
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/ecs/systems/menu.h">
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/ecs/systems/music_bus.c">
+			<Option compilerVar="CC" />
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/ecs/systems/music_bus.h">
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/game/obstacle.c">
+			<Option compilerVar="CC" />
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/game/obstacle.h">
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/game/player.c">
+			<Option compilerVar="CC" />
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/game/player.h">
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/game/state.c">
+			<Option compilerVar="CC" />
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/game/state.h">
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/game/tree.c">
+			<Option compilerVar="CC" />
+			<Option glob="2161621352" />
+		</Unit>
+		<Unit filename="src/game/tree.h">
 			<Option glob="2161621352" />
 		</Unit>
 		<Unit filename="src/game_objects/test.c">
@@ -88,53 +151,11 @@
 		<Unit filename="src/game_objects/test.h">
 			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/hud.c">
-			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/hud.h">
-			<Option glob="2161621352" />
-		</Unit>
 		<Unit filename="src/main.c">
 			<Option compilerVar="CC" />
 			<Option glob="2161621352" />
 		</Unit>
-		<Unit filename="src/menu.c">
-			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/menu.h">
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/model.c">
-			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/model.h">
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/obstacle.c">
-			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/obstacle.h">
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/player.c">
-			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/player.h">
-			<Option glob="2161621352" />
-		</Unit>
 		<Unit filename="src/stb_image.h">
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/tree.c">
-			<Option compilerVar="CC" />
-			<Option glob="2161621352" />
-		</Unit>
-		<Unit filename="src/tree.h">
 			<Option glob="2161621352" />
 		</Unit>
 		<Unit filename="src/utils/basics.h">
@@ -148,7 +169,7 @@
 			<Option glob="2161621352" />
 		</Unit>
 		<Extensions>
-			<editor_config active="1" use_tabs="0" tab_indents="1" tab_width="4" indent="4" eol_mode="2" />
+			<lib_finder disable_auto="1" />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
