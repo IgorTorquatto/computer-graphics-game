@@ -31,20 +31,6 @@ void ranking_add(float distanciaTotal) {
     qsort(rankingList, rankingCount, sizeof(RankingEntry), compareDesc);
 }
 
-/*void ranking_save() {
-    FILE *file = fopen("ranking.dat", "wb");
-    if(!file) {
-        perror("Erro ao abrir ranking.dat para salvar");
-        return;
-    }
-    if(fwrite(&rankingCount, sizeof(int), 1, file) != 1) {
-        perror("Erro ao salvar rankingCount");
-    }
-    if(fwrite(rankingList, sizeof(RankingEntry), rankingCount, file) != (size_t)rankingCount) {
-        perror("Erro ao salvar rankingList");
-    }
-    fclose(file);
-}*/
 void ranking_save() {
     FILE *file = fopen("ranking.dat", "wb");
     if (!file) {
@@ -108,7 +94,7 @@ void ranking_draw(int windowWidth, int windowHeight) {
         drawText(msg, x, yStart, GLUT_BITMAP_HELVETICA_18, 1.0f, 1.0f, 1.0f, windowHeight);
     } else {
         for(int i=0; i<rankingCount; i++) {
-            snprintf(buffer, sizeof(buffer), "%d. Distancia: %.1f metros", i+1, rankingList[i].distanciaTotal);
+            snprintf(buffer, sizeof(buffer), "%d. score: %.1f metros", i+1, rankingList[i].distanciaTotal);
             int x = (windowWidth - getTextWidth(buffer, GLUT_BITMAP_HELVETICA_18)) / 2;
             drawText(buffer, x, yStart - i*30, GLUT_BITMAP_HELVETICA_18,
                      1.0f, 1.0f, 1.0f, windowHeight);
