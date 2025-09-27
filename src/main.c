@@ -59,7 +59,7 @@ GLboolean validarRasterPos(int x, int y) {
         && y >= viewport[1] && y < viewport[1]+viewport[3]);
 }
 
-void drawText(const char *text, int x, int y, void *font, float r, float g, float b, int windowHeight) {
+/*void drawText(const char *text, int x, int y, void *font, float r, float g, float b, int windowHeight) {
     int invertedY = windowHeight - y;
 
     // Desenha contorno preto
@@ -82,11 +82,31 @@ void drawText(const char *text, int x, int y, void *font, float r, float g, floa
     glColor3f(r, g, b);
     glRasterPos2i(x, invertedY);
     for(const char *c = text; *c; c++) glutBitmapCharacter(font, *c);
+}*/
+void drawText(const char *text, int x, int y, void *font, float r, float g, float b, int windowHeight) {
+    int invertedY = windowHeight - y;
+
+    glDisable(GL_LIGHTING);
+
+    glColor3f(0,0,0);
+    int offsets[4][2] = {{-1,0}, {1,0}, {0,-1}, {0,1}};
+    for (int i = 0; i < 4; i++) {
+        glRasterPos2i(x + offsets[i][0], invertedY + offsets[i][1]);
+        for(const char *c = text; *c; c++) glutBitmapCharacter(font, *c);
+    }
+
+    glColor3f(r, g, b);
+    glRasterPos2i(x, invertedY);
+    for(const char *c = text; *c; c++) glutBitmapCharacter(font, *c);
+
+    // Não reabilite iluminação aqui
 }
+
 
 void drawGameOverHUD() {
     int w = glutGet(GLUT_WINDOW_WIDTH);
     int h = glutGet(GLUT_WINDOW_HEIGHT);
+
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -97,12 +117,29 @@ void drawGameOverHUD() {
     glLoadIdentity();
 
     glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+
+    glColor3f(1.0f, 1.0f, 1.0f);
+
+    int rectWidth = w / 2;
+    int rectHeight = 150;
+    int rectX = (w - rectWidth) / 2;
+    int rectY = (h - rectHeight) / 2;
+
+    glBegin(GL_QUADS);
+        glVertex2i(rectX, rectY);
+        glVertex2i(rectX + rectWidth, rectY);
+        glVertex2i(rectX + rectWidth, rectY + rectHeight);
+        glVertex2i(rectX, rectY + rectHeight);
+    glEnd();
+
+    glFlush();
 
     float distanciaFinal = calcularDistanciaTotal();
     char buffer[128];
     int x;
 
-    snprintf(buffer, sizeof(buffer), "Game over! R para voltar ao Menu");
+    snprintf(buffer, sizeof(buffer), "Game over! M para voltar ao Menu");
     x = (w - getTextWidth(buffer, GLUT_BITMAP_TIMES_ROMAN_24)) / 2;
     drawText(buffer, x, h/2 + 80, GLUT_BITMAP_TIMES_ROMAN_24, 1, 0, 0, h);
 
@@ -114,8 +151,10 @@ void drawGameOverHUD() {
     x = (w - getTextWidth(buffer, GLUT_BITMAP_TIMES_ROMAN_24)) / 2;
     drawText(buffer, x, h/2 + 10, GLUT_BITMAP_TIMES_ROMAN_24, 1, 1, 1, h);
 
+    glEnable(GL_DEPTH_TEST);
     glEnable(GL_LIGHTING);
 
+    // Restaura matrizes
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
@@ -138,7 +177,7 @@ void drawRankingTitle(int ww, int wh) {
 
     char info[] = "Pressione ESC para voltar";
     x = (ww - getTextWidth(info, GLUT_BITMAP_HELVETICA_12)) / 2;
-    drawText(info, x, wh/2 - 150, GLUT_BITMAP_HELVETICA_12, 1, 1, 1, wh);
+    drawText(info, x, 30, GLUT_BITMAP_HELVETICA_12, 1, 1, 1, wh);
 }
 
 void resetGame() {
@@ -200,8 +239,8 @@ void renderScene() {
         return;
     }
 
-    if(modoAtual == MODO_RANKING) {
-       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+ if(modoAtual == MODO_RANKING) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -212,7 +251,16 @@ void renderScene() {
     glPushMatrix();
     glLoadIdentity();
 
+    // DESABILITA ILUMINAÇÃO E DEPTH TEST PARA TEXTO 2D
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+
+    drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
     ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+
+    // REABILITA APÓS DESENHO
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
 
     glPopMatrix();
     glMatrixMode(GL_PROJECTION);
@@ -221,7 +269,9 @@ void renderScene() {
 
     glutSwapBuffers();
     return;
-    }
+}
+
+
 
 
 #pragma region Render Game
@@ -264,6 +314,8 @@ void renderScene() {
 
     if(modoAtual == MODO_GAMEOVER) {
         drawGameOverHUD();
+        glutSwapBuffers();
+        return;
     }
 
     drawDistance(distanciaPercorrida);
@@ -303,7 +355,7 @@ void keyboardCB(unsigned char key, int x, int y) {
         exit(0);
     }
 
-    if(modoAtual == MODO_GAMEOVER && (key == 'r' || key == 'R')) {
+    if(modoAtual == MODO_GAMEOVER && (key == 'm' || key == 'M')) {
         modoAtual = MODO_MENU;
         return;
     }
