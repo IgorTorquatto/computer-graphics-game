@@ -6,6 +6,7 @@
 
 #include "menu.h"
 #include "game/state.h"
+#include "ecs/systems/music_bus.h"
 
 #define LARGURA_BOTAO 240
 #define ALTURA_BOTAO 60
@@ -103,7 +104,8 @@ void cliqueMenu(int button, int state, int x, int y) {
     if (x >= bx && x <= bx + LARGURA_BOTAO &&
         my >= by_play && my <= by_play + ALTURA_BOTAO) {
         modoAtual = MODO_JOGO;
-        resetGame();
+        resetGame(); // inicia o jogo imediatamente
+        audio_bus_play_music();
         return;
     }
 
