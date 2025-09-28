@@ -61,7 +61,9 @@ foram resolvidos.
 
 ## Instalação
 
-### Code Blocks
+### Windows
+
+#### Code Blocks
 
 1) Baixar o [MinGW](https://www.mingw-w64.org) ou [Link Direto](https://drive.google.com/drive/folders/1-rRkvCay8gRyIh5ZZNpYVvOQPz1Z_82q?usp=drive_link) -  Windows 10+.<br>
 É um ambiente de desenvolvimento que dá suporte ao compilador GCC em sistemas Windows.
@@ -83,6 +85,36 @@ estáticas (libs) e dinâmicas (bin)
     5) Os arquivos da pasta “bin” para “<MINGW_HOME>\bin”
 3) Baixar e instalar o CodeBlocks [versão sem MinGW](http://www.codeblocks.org), caso goste de usar uma IDE para compilar seus programas em C.
 4) Importe o arquivo [CG-Paint.cdb](./CG-Paint.cdb)
+
+#### MSYS2
+
+1) Baixe e instale o programa no [site oficial](https://www.msys2.org/).
+2) No terminal do ambiente UCRT64 instale os pacotes:
+    ```bash
+    pacman -S cmake mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb \
+            mingw-w64-ucrt-x86_64-mesa mingw-w64-ucrt-x86_64-freeglut \
+            mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-SDL2_mixer
+    ```
+
+> [!TIP]
+> **Configurando o ambiente no VSCode**
+> 
+> 1. Abra as configurações do VSCode (Ctrl + ,) e procure por "Terminal".
+> 2. Clique em "Edit in settings.json" para abrir o arquivo de configuração.
+> 3. Adicione ou modifique a seguinte configuração para definir o terminal do MSYS2 como o terminal padrão:
+>   ```json
+>   "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe"
+>   ```
+> 4. Torne os scripts de build executáveis:
+>   ```bash
+>   chmod +x scripts/*
+>   ```
+> 4. Siga as instruções na [seção abaixo](#vs-code).
+> _Se o atalho `F5` não funcionar, tente executar o comando de build no UCRT64 diretamente:
+>    ```bash
+>    ./scripts/build.sh
+>    ./scripts/run.sh
+>    ```
 
 ### VS Code
 
