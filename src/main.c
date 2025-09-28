@@ -188,7 +188,7 @@ void resetGame() {
     distanciaPercorrida = 0.0f;
     initCoins();
 
-    audio_bus_stop_music();
+    //audio_bus_stop_music();
 }
 
 void update(float dt) {
@@ -480,7 +480,7 @@ int main(int argc, char** argv) {
         initGL();
     #pragma endregion
 
-    #pragma region SDL2 Init
+   /* #pragma region SDL2 Init
         err = SDL_Init(SDL_INIT_AUDIO);
         if (err != EXIT_SUCCESS) {
             print_error("SDL initialization failed: %s", SDL_GetError());
@@ -501,7 +501,7 @@ int main(int argc, char** argv) {
             return EXIT_FAILURE;
         }
         audio_bus_init();
-    #pragma endregion
+    #pragma endregion*/
 
     ranking_load();
     if (ranking_getCount() == 0) {
@@ -527,9 +527,9 @@ int main(int argc, char** argv) {
         freeModel(&treeModel);
         freeModel(&rockModel);
         freeModel(&logModel);
-        audio_bus_close();
-        Mix_Quit();
-        SDL_Quit();
+      //  audio_bus_close();
+       // Mix_Quit();
+       // SDL_Quit();
     #pragma endregion
 
     return 0;
