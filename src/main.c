@@ -35,9 +35,8 @@ Model treeModel;
 Model bushModel;
 
 float escalaArvoreDefault = 1.0f;
-
-
 float distanciaTotal = 0.0f;
+
 float calcularDistanciaTotal() {
     int moedas = getCoinCount();
     int bonusPorGrupo = moedas / 10;  // grupos de 10 moedas
@@ -59,30 +58,6 @@ GLboolean validarRasterPos(int x, int y) {
         && y >= viewport[1] && y < viewport[1]+viewport[3]);
 }
 
-/*void drawText(const char *text, int x, int y, void *font, float r, float g, float b, int windowHeight) {
-    int invertedY = windowHeight - y;
-
-    // Desenha contorno preto
-    glColor3f(0,0,0);
-    int offsets[8][2] = {
-        {-1,-1},{0,-1},{1,-1},
-        {-1,0},       {1,0},
-        {-1,1},{0,1},{1,1}};
-    for(int i=0;i<8;i++){
-        int ox = x + offsets[i][0];
-        int oy = invertedY + offsets[i][1];
-        if(!validarRasterPos(ox, oy)) continue;
-        glRasterPos2i(ox, oy);
-        for(const char *c = text; *c; c++) glutBitmapCharacter(font, *c);
-    }
-    glFlush();
-
-    // Desenha texto colorido
-    if(!validarRasterPos(x, invertedY)) return;
-    glColor3f(r, g, b);
-    glRasterPos2i(x, invertedY);
-    for(const char *c = text; *c; c++) glutBitmapCharacter(font, *c);
-}*/
 void drawText(const char *text, int x, int y, void *font, float r, float g, float b, int windowHeight) {
     int invertedY = windowHeight - y;
 
