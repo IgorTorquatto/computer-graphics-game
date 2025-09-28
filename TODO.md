@@ -24,7 +24,7 @@
     - [ ] Pedras
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
       - [x] Cores / sombreamento
-      - [ ] Texturas
+      - [ ] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
   - [ ] Coletáveis
     - [x] Moedas [@IgorTorquatto](https://github.com/IgorTorquatto)
       - [x] Modelo
@@ -34,18 +34,18 @@
     - [ ] Árvores
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
       - [x] Cores / sombreamento [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Texturas
+      - [ ] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
     - [ ] Pilha de madeira
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
       - [x] Cores / sombreamento [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Texturas
+      - [ ] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
     - [ ] Prédios/ Paredes
 - [x] Ative a remoção de superfícies ocultas. [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Anti-aliasing (MSAA) [@GersonFeDutra](https://github.com/GersonFeDutra)
 
 > Extras
 > - [x] Importação de um objeto.
-> - [ ] Adição de texturas nos objetos.
+> - [ ] Adição de texturas nos objetos. [@GersonFeDutra](https://github.com/GersonFeDutra)
 > - [x] Limpeza de memória.
 
 ### Iluminação
@@ -87,7 +87,9 @@
 ## Funcionalidades extras
 
 - [ ] Sonorização [@GersonFeDutra](https://github.com/GersonFeDutra).
+  - [x] Importar biblioteca [STL2]
   - [x] Música
   - [ ] Efeitos sonoros
+  - [ ] Menu de áudio
 
 <!-- - [x] Contador de fps / debug [@GersonFeDutra](https://github.com/GersonFeDutra). -->

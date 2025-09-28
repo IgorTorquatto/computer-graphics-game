@@ -219,7 +219,7 @@ void update(float dt) {
             obstCenterX, obstY, obstacles[i].z, obstWidth, obstHeight, obstDepth)
         ) {
             float finalScore = calcularDistanciaTotal();
-            printf("Adicionando score: %.2f\n", finalScore);
+            print_info("Adicionando score: %.2f", finalScore);
             ranking_add(finalScore);
             ranking_save();
             modoAtual = MODO_GAMEOVER;
@@ -239,39 +239,37 @@ void renderScene() {
         return;
     }
 
- if(modoAtual == MODO_RANKING) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(modoAtual == MODO_RANKING) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
 
-    // DESABILITA ILUMINAÇÃO E DEPTH TEST PARA TEXTO 2D
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
+        // DESABILITA ILUMINAÇÃO E DEPTH TEST PARA TEXTO 2D
+        glDisable(GL_LIGHTING);
+        glDisable(GL_DEPTH_TEST);
 
-    drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-    ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+        drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+        ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
 
-    // REABILITA APÓS DESENHO
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
+        // REABILITA APÓS DESENHO
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_LIGHTING);
 
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
 
-    glutSwapBuffers();
-    return;
-}
-
-
+        glutSwapBuffers();
+        return;
+    }
 
 
 #pragma region Render Game
@@ -343,7 +341,7 @@ void keyboardCB(unsigned char key, int x, int y) {
     if(key == 'p') {
         ranking_add(42.0f); // pontuação teste para salvar
         ranking_save();
-        printf("Ranking manual salvo pela tecla 'p'\n");
+        print_info("Ranking manual salvo pela tecla 'p'");
         return;
     }
 
@@ -460,7 +458,7 @@ int main(int argc, char** argv) {
 #if defined(_WIN32) || defined(_WIN64)
     char cwd[1024];
     if (_getcwd(cwd, sizeof(cwd)) != NULL) {
-        printf("diretorio atual: %s\n", cwd);
+        print_info("diretorio atual: %s", cwd);
     } else {
         perror("erro ao obter diretorio atual");
     }
