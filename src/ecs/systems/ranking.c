@@ -94,7 +94,7 @@ void ranking_draw(int windowWidth, int windowHeight) {
         drawText(msg, x, yStart, GLUT_BITMAP_HELVETICA_18, 1.0f, 1.0f, 1.0f, windowHeight);
     } else {
         for(int i=0; i<rankingCount; i++) {
-            snprintf(buffer, sizeof(buffer), "%d. score: %.1f metros", i+1, rankingList[i].distanciaTotal);
+            snprintf(buffer, sizeof(buffer), "%d. Score: %.1f metros", i+1, rankingList[i].distanciaTotal);
             int x = (windowWidth - getTextWidth(buffer, GLUT_BITMAP_HELVETICA_18)) / 2;
             drawText(buffer, x, yStart - i*30, GLUT_BITMAP_HELVETICA_18,
                      1.0f, 1.0f, 1.0f, windowHeight);
