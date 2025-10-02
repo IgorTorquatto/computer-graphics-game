@@ -10,7 +10,19 @@
     typedef struct {
         char name[MATERIAL_MAX_NAME];
         GLuint texture_id; // 0 se sem textura
+
+        // propriedades do material (valores no intervalo [0,1])
+        ColorRgb ambient;   // Ka
+        ColorRgb diffuse;   // Kd
+        ColorRgb specular;  // Ks
+        float shininess; // Ns -> convertido para [0..128] usado por GL
+        float opacity;   // d (0..1), 1 = opaco
+        int illum;       // modelo illum (opcional)
+        bool is_alpha_enabled;
     } Material;
+
+    #define material_default (Material){{'\0'}, 0, rgb_gray(0.2f), \
+            rgb_gray(0.8f), rgb_black, 0.0f, 1.0f, 2, false}
 
     typedef struct {
         int vertex[3]; // índices dos vértices, 3 por face (triângulos)

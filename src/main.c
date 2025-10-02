@@ -384,11 +384,6 @@ void initGL() {
         glCullFace(GL_BACK);
     #pragma endregion
 
-    #pragma region Enable Lighting
-        glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
-    #pragma endregion
-
     #pragma region Anti-Aliasing // MSAA
         glEnable(GLUT_MULTISAMPLE);
         // Smoothing -> Modo antigo de anti-alias do opengl
@@ -400,7 +395,10 @@ void initGL() {
         //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     #pragma endregion
 
-    #pragma region Light Setup
+    #pragma region Enable Lighting
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+
         GLfloat light_ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
         GLfloat light_diffuse[]  = { 0.9f, 0.9f, 0.9f, 1.0f };
         GLfloat light_specular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
@@ -417,9 +415,13 @@ void initGL() {
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
         glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
 
-        // ESSENCIAL: Ativar uso de cor como material ambiente e difuso
-        glEnable(GL_COLOR_MATERIAL);
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        // Ativar uso de cor como material ambiente e difuso
+        //glEnable(GL_COLOR_MATERIAL);
+
+        // desabilitar color material para garantir que glMaterial tenha efeito
+        glDisable(GL_COLOR_MATERIAL);
+
+        // normalização automática (útil se houver escalas)
         glEnable(GL_NORMALIZE);
     #pragma endregion
 }

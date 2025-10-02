@@ -86,13 +86,17 @@ void drawObstacles() {
 
         if (obstacles[i].type == OBST_SINGLE) {
             glScalef(escalaRock, escalaRock, escalaRock);
-            glColor3f(0.6f, 0.6f, 0.6f); // cinza
+            // usa a textura do material do modelo
+            //glColor3f(0.6f, 0.6f, 0.6f); // cinza
+
         } else {
             glScalef(escalaLog, escalaLog, escalaLog);
-            glColor3f(0.7f, 0.4f, 0.1f); // marrom
+            // usa a textura do material do modelo
+            //glColor3f(0.7f, 0.4f, 0.1f); // marrom
         }
 
-        glColor3f(0.8f, 0.7f, 0.5f);  // Cor básica opcional
+        //glColor3f(0.8f, 0.7f, 0.5f);  // Cor básica opcional
+        //glColor3f(1.0f, 1.0f, 1.0f); // Carrega branco para resetar multiplicação na iluminação
         draw_model(obstacles[i].model);
 
         glPopMatrix();

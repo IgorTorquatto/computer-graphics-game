@@ -1,3 +1,6 @@
+#pragma region STL
+    #include <string.h>
+#pragma endregion
 #pragma region Libs
     #include <GL/glut.h>
 #pragma endregion
@@ -33,6 +36,13 @@ void initTrees() {
         float alturaTree = treeModel.max.y - treeModel.min.y;
         if (alturaTree > 0.1f)
             escalaArvoreDefault = 2.0f / alturaTree;
+        for (Material* mat = treeModel.materials; mat < treeModel.materials + treeModel.materials_count; mat++)
+            // nome do material que possui transparência
+            if (strcmp(mat->name, "polySurface1SG1") == 0) {
+                mat->is_alpha_enabled = true;
+                break;
+            }
+
         print_success("Modelo " MODEL_PATH_TREE " carregado com sucesso!");
         model_not_loaded &= ~TREE; // mark as loaded
     } else

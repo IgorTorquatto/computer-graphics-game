@@ -145,7 +145,8 @@ void drawCoins3D() {
     if (!is_coin_model_loaded)
         return;
 
-    glColor3f(1.0f, 0.85f, 0.1f);
+    // Usaremos as cores do material importado
+    //glColor3f(1.0f, 0.85f, 0.1f);
     for(int i = 0; i < MAX_COINS; i++) {
         if(!coinPool[i].active)
             continue;

@@ -160,7 +160,7 @@ static int material_find(const char* name, Material* materials, size_t n) {
 
 /**
  * @brief Adiciona material (sem textura ainda).
- * @cond assume materials_ptr != NULL
+ * @cond assume que os ponteiros são != NULL
  * 
  * @param name Nome do material.
  * @param file Ponteiro para o arquivo MTL.
@@ -173,13 +173,14 @@ static int material_find(const char* name, Material* materials, size_t n) {
 static int material_add(const char* name, FILE* file, Material** materials_ptr, size_t* n_ptr, size_t* capacity) {
     size_t n = *n_ptr;
     ensure_material_capacity(1, file, materials_ptr, n, capacity, "materials");
-    (*materials_ptr)[n].texture_id = 0;
-    (*materials_ptr)[n].name[0] = '\0';
 
+    Material *m = &(*materials_ptr)[n];
+    *m = material_default;
+    m->texture_id = 0;
     if (name)
-        strncpy((*materials_ptr)[n].name, name, MAX_MAT_NAME-1);
+        strncpy(m->name, name, MAX_MAT_NAME - 1);
+    m->name[MAX_MAT_NAME-1] = '\0';
 
-    (*materials_ptr)[n].name[MAX_MAT_NAME-1] = '\0';
     *n_ptr = n + 1; /* incrementa o contador */
 
     return (int)n;  /* retorna índice válido */
@@ -256,12 +257,80 @@ static void load_mtl(const char *mtl_fullpath, Material **materials_ptr, size_t*
         if (sscanf(line, "newmtl %511s", token) == 1) {
             int idx = material_find(token, *materials_ptr, *n_ptr);
             if (idx < 0)
+                // assegura texture_id=0 por padrão
                 idx = material_add(token, file, materials_ptr, n_ptr, capacity);
             current_material = idx;
-
-            // assegura texture_id=0 por padrão
-            (*materials_ptr)[current_material].texture_id = 0;
             continue;
+        }
+        #pragma endregion
+
+        if (current_material < 0)
+            continue; // sem material ativo ainda
+
+        Material* mat_ptr = (*materials_ptr) + current_material;
+
+        #pragma region Colors
+        // Ka (ambient)
+        if (sscanf(line, "Ka %f %f %f",
+                &mat_ptr->ambient.r,
+                &mat_ptr->ambient.g,
+                &mat_ptr->ambient.b) == 3) {
+            continue;
+        }
+
+        // Kd (diffuse)
+        if (sscanf(line, "Kd %f %f %f",
+                &mat_ptr->diffuse.r,
+                &mat_ptr->diffuse.g,
+                &mat_ptr->diffuse.b) == 3) {
+            continue;
+        }
+
+        // Ks (specular)
+        if (sscanf(line, "Ks %f %f %f",
+                &mat_ptr->specular.r,
+                &mat_ptr->specular.g,
+                &mat_ptr->specular.b) == 3) {
+            continue;
+        }
+
+        // Ns (shininess) - convertendo para faixa [0..128] do OpenGL
+        {
+            float ns;
+            if (sscanf(line, "Ns %f", &ns) == 1) {
+                // muitos exporters usam 0..1000; mapear proporcionalmente para [0..128]
+                if (ns > 128.0f) ns = (ns / 1000.0f) * 128.0f;
+                if (ns < 0.0f) ns = 0.0f;
+                if (ns > 128.0f) ns = 128.0f;
+                mat_ptr->shininess = ns;
+                continue;
+            }
+        }
+
+        // d (opacity) ou Tr (transparency) -- Tr é 1-d em alguns exporters
+        {
+            float d;
+            if (sscanf(line, "d %f", &d) == 1) {
+                mat_ptr->opacity = d;
+                mat_ptr->is_alpha_enabled = mat_ptr->opacity < 1.0f;
+                continue;
+            }
+            if (sscanf(line, "Tr %f", &d) == 1) {
+                // alguns MTLs usam Tr = 1 -> fully transparent; outros o inverso. 
+                // Convenção comum: Tr = 1 - d. Tentamos adotar Tr como transparência direta:
+                mat_ptr->opacity = 1.0f - d;
+                mat_ptr->is_alpha_enabled = mat_ptr->opacity < 1.0f;
+                continue;
+            }
+        }
+
+        // illum (illumination model)
+        {
+            int illum;
+            if (sscanf(line, "illum %d", &illum) == 1) {
+                mat_ptr->illum = illum;
+                continue;
+            }
         }
         #pragma endregion
 
@@ -283,6 +352,7 @@ static void load_mtl(const char *mtl_fullpath, Material **materials_ptr, size_t*
             #pragma endregion
 
             // 2. Resolver caminho: construir possíveis full paths para tentar:
+            // se absoluto usa direto; senão resolve relativo a base_dir
             #pragma region Candidate Paths
                 char candidate[DEFAULT_CAPACITY] = {0};
                 char name_only[MAX_MAT_NAME] = {0};
@@ -293,6 +363,7 @@ static void load_mtl(const char *mtl_fullpath, Material **materials_ptr, size_t*
                 } else {
                     path_join(base_dir, sep, tex_name_raw, candidate, sizeof(candidate));
                 }// normalize separators in tex_name_raw a bit
+
                 char tex_tmp[512];
                 strncpy(tex_tmp, tex_name_raw, sizeof(tex_tmp)-1); tex_tmp[sizeof(tex_tmp)-1]=0;
                 trim_and_strip_quotes(tex_tmp);
@@ -368,7 +439,7 @@ static void load_mtl(const char *mtl_fullpath, Material **materials_ptr, size_t*
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
                 stbi_image_free(data);
 
-                print_success("[MTL] textura carregada com sucesso: %s "
+                print_success("[MTL] Textura carregada com sucesso: %s "
                         " -> texture_id=%u (width=%d height=%d)\n",
                         candidate, (unsigned)texture_id, width, height);
             #pragma endregion
@@ -684,8 +755,6 @@ void draw_model(const Model* model)
     Material* materials = model->materials;
     Face* faces = model->faces;
 
-    glColor3f(1, 1, 1); // garante que a textura não seja multiplicada por cor preta ou modulação
-
     // Bind da textura principal (use o certo por material)
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_NORMALIZE);
@@ -695,16 +764,74 @@ void draw_model(const Model* model)
         int material_id = face->material_id;
         // se mudou o material -> terminar batch e iniciar novo
         if (material_id != last_mat) {
-            if (last_mat != -2) {
+            if (last_mat != -2)
                 glEnd(); // finaliza batch anterior
-            }
+
+        #pragma region New Batch
             // iniciar novo batch
-            glBindTexture(GL_TEXTURE_2D,
-                    (material_id >= 0 && material_id < (int)materials_count)
-                      ? materials[material_id].texture_id : 0);
+            Material *mat = (material_id >=0 && material_id < (int)materials_count) ? &materials[material_id] : NULL;
+
+            if (mat) {
+                #pragma region Texture
+                // se tiver textura, bind; se não, desabilita textura
+                if (mat->texture_id != 0) {
+                    glEnable(GL_TEXTURE_2D);
+                    glBindTexture(GL_TEXTURE_2D, mat->texture_id);
+                    // definir env mode: GL_MODULATE (default) permite iluminação + textura,
+                    // se preferir mostrar textura sem modulação use GL_REPLACE
+                    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+
+                    // Se a textura deve aparecer com brilho correto, é comum usar diffuse branco:
+                    GLfloat diff[4] = {1.0f, 1.0f, 1.0f, mat->opacity};
+                    GLfloat amb[4]  = {mat->ambient.r, mat->ambient.g, mat->ambient.b, mat->opacity};
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff);
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, amb);
+
+                } else {
+                    // sem textura: usar cores do material
+                    GLfloat diff[4] = { mat->diffuse.r, mat->diffuse.g, mat->diffuse.b, mat->opacity };
+                    GLfloat amb[4]  = { mat->ambient.r, mat->ambient.g, mat->ambient.b, mat->opacity };
+                    GLfloat spec[4] = { mat->specular.r, mat->specular.g, mat->specular.b, mat->opacity };
+                    glDisable(GL_TEXTURE_2D);
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diff);
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, amb);
+                    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec);
+                    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, mat->shininess);
+                }
+                #pragma endregion // Texture
+
+                // habilitar blending (se já não habilitado)
+                // a ativação é manual ou decorre da transparência do material
+                #pragma region Alpha Blending
+                if (mat->is_alpha_enabled) {
+                    glEnable(GL_BLEND);
+                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                    // e possivelmente desabilitar depth write para folhas (mais complexo)
+                } else {
+                    glDisable(GL_BLEND);
+                }
+                #pragma endregion // Alpha Blending
+            }
+            else {
+                #pragma region Fallback
+                // Material nulo
+                glDisable(GL_TEXTURE_2D);
+                GLfloat diffDefault[4] = {1,1,1,1};
+                glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffDefault);
+                glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, diffDefault);
+                glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, diffDefault);
+                glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, 0.0f);
+                #pragma endregion
+            }
+
             glBegin(GL_TRIANGLES);
+        #pragma endregion // New Batch
+
             last_mat = material_id;
         }
+
+        //fprintf(stderr, "GL states: LIGHTING=%d LIGHT0=%d COLOR_MATERIAL=%d TEX2D=%d CULL=%d\n",
+        //        lighting, light0, colormat, tex2d, cull);
 
         // desenha a face i (3 vértices)
         for (int j = 0; j < 3; j++) {

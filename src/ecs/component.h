@@ -103,8 +103,18 @@ typedef EntityId GeometryId; // Entities of type Geometry
     #define color_magenta (Color){1.0f, 0.0f, 1.0f, 1.0f}
     #define color_yellow  (Color){1.0f, 1.0f, 0.0f, 1.0f}
     #define color_cyan    (Color){0.0f, 1.0f, 1.0f, 1.0f}
+    #define color_gray(v) (Color){v, v, v, 1.0f}
+
+    typedef struct {
+        float r, g, b;
+    } ColorRgb;
+
+    #define rgb_black (ColorRgb){0.0f, 0.0f, 0.0f}
+    #define rgb_white (ColorRgb){1.0f, 1.0f, 1.0f}
+    #define rgb_gray(v) (ColorRgb){v, v, v}
 
     // === Casting ===
+    // works with both Color and ColorRgb
     #define color_as_gl_float_ptr(c) (GLfloat*)(&c.r)
 
     typedef struct {
