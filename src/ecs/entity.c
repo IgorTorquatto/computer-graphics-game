@@ -1,6 +1,5 @@
 #include <math.h> // para sin, cos
 
-#include "component.h"
 #include "utils/print.h"
 #include "entity.h"
 

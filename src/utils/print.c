@@ -41,6 +41,7 @@
         va_end(args);
         RESET_CLI();
         fputc('\n', stderr);
+        fflush(stderr);
     }
 
     void print_error(const char *msg, ...) {
@@ -53,6 +54,7 @@
         va_end(args);
         RESET_CLI();
         fputc('\n', stderr);
+        fflush(stderr);
     }
 
     void print_info(const char *msg, ...) {
@@ -65,6 +67,7 @@
         va_end(args);
         RESET_CLI();
         fputc('\n', stderr);
+        fflush(stderr);
     }
 
     void print_success(const char *msg, ...) {
@@ -77,6 +80,7 @@
         va_end(args);
         RESET_CLI();
         fputc('\n', stderr);
+        fflush(stderr);
     }
 
 #elif defined(__APPLE__) || defined(__MACH__) || defined(__linux__) \
@@ -92,10 +96,11 @@
         fprintf(stderr, YELLOW);
         fprintf(stderr, "[WARNING]: ");
         va_start(args, msg);
-        vprintf(msg, args);
+        vfprintf(stderr, msg, args);
         va_end(args);
         fprintf(stderr, RESET);
         fputc('\n', stderr);
+        fflush(stderr);
     }
 
     void print_error(const char *msg, ...) {
@@ -103,10 +108,11 @@
         fprintf(stderr, RED);
         fprintf(stderr, "[ERROR]: ");
         va_start(args, msg);
-        vprintf(msg, args);
+        vfprintf(stderr, msg, args);
         va_end(args);
         fprintf(stderr, RESET);
         fputc('\n', stderr);
+        fflush(stderr);
     }
 
     void print_info(const char *msg, ...) {
@@ -114,10 +120,11 @@
         fprintf(stderr, BLUE);
         fprintf(stderr, "[INFO]: ");
         va_start(args, msg);
-        vprintf(msg, args);
+        vfprintf(stderr, msg, args);
         va_end(args);
         fprintf(stderr, RESET);
         fputc('\n', stderr);
+        fflush(stderr);
     }
 
     void print_success(const char *msg, ...) {
@@ -125,11 +132,13 @@
         fprintf(stderr, GREEN);
         fprintf(stderr, "[SUCCESS]: ");
         va_start(args, msg);
-        vprintf(msg, args);
+        vfprintf(stderr, msg, args);
         va_end(args);
         fprintf(stderr, RESET);
         fputc('\n', stderr);
+        fflush(stderr);
     }
 #else
-	static_assert(false, "Sistema operacional desconhecido");
+    // C does not support this call
+	//static_assert(false, "Sistema operacional desconhecido");
 #endif

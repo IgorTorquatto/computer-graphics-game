@@ -1,29 +1,36 @@
+#pragma region STL
+    #include <string.h>
+#pragma endregion
+#pragma region Libs
+    #include <GL/glut.h>
+#pragma endregion
+#pragma region Local Includes
+    #include "utils/basics.h" // math, bool, stdlib
+    #include "utils/print.h"
+    #pragma region Dependencies
+        #include "ecs/components/model.h"
+        #include "game/player.h"
+    #pragma endregion
+#pragma endregion
 #include "coin.h"
-
-#include "game/player.h"
-
-#include <GL/glut.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdio.h>
-#include <math.h>
-#include "ecs/components/model.h"
 
 #define MAX_COINS 128
 
-Coin coinPool[MAX_COINS];
-static int coinCount = 0;
-static float coinSpawnTimer = 0.0f;
-static float coinSpawnInterval = 1.0f;
+#pragma region Locals
+    Coin coinPool[MAX_COINS];
+    static int coinCount = 0;
+    static float coinSpawnTimer = 0.0f;
+    static float coinSpawnInterval = 1.0f;
 
-extern float worldSpeed; // declarado em main.c ou game.c para velocidade global
+    static bool is_coin_model_loaded = false;
+    static Model coinModel;
+#pragma endregion
 
-extern Player player;
+#pragma region Globals
+    extern float worldSpeed; // declarado em main.c ou game.c para velocidade global
+    extern Player player;
+#pragma endregion
 
-Model coinModel;
-
-
-/* Inicializa o pool de moedas */
 void initCoins() {
     for(int i = 0; i < MAX_COINS; i++) {
         coinPool[i].active = 0;
@@ -33,7 +40,6 @@ void initCoins() {
     coinSpawnInterval = 0.45f;
 }
 
-/* Spawn de uma nova moeda em faixa randomizada */
 void spawnCoin() {
     for(int i = 0; i < MAX_COINS; i++) {
         if(!coinPool[i].active) {
@@ -51,7 +57,6 @@ void spawnCoin() {
     }
 }
 
-/* Atualiza posi��o e rota��o das moedas, e verifica colis�es */
 void updateCoins(float dt) {
     for(int i = 0; i < MAX_COINS; i++) {
         if(!coinPool[i].active) continue;
@@ -121,7 +126,6 @@ void drawSolidCubeWithNormals(float size) {
     glEnd();
 }
 
-/* Desenha as moedas em 3D na cena */
 /*void drawCoins3D() {
     glColor3f(1.0f, 0.85f, 0.1f);
     for(int i = 0; i < MAX_COINS; i++) {
@@ -138,9 +142,13 @@ void drawSolidCubeWithNormals(float size) {
 }*/
 
 void drawCoins3D() {
+    if (!is_coin_model_loaded)
+        return;
+
     glColor3f(1.0f, 0.85f, 0.1f);
     for(int i = 0; i < MAX_COINS; i++) {
-        if(!coinPool[i].active) continue;
+        if(!coinPool[i].active)
+            continue;
 
         glPushMatrix();
         glTranslatef(coinPool[i].x, coinPool[i].y + coinPool[i].h * 0.5f + 0.1f, coinPool[i].z);
@@ -149,20 +157,27 @@ void drawCoins3D() {
         //  em pé
         glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
         glScalef(coinPool[i].w, coinPool[i].h, coinPool[i].d);
-        drawModel(&coinModel);
+        draw_model(&coinModel);
         glPopMatrix();
     }
 }
 
-/* Retorna o número atual de moedas coletadas */
-int getCoinCount() {
+int getCoinCount()
+{
     return coinCount;
 }
 
-
-void initCoinModel() {
-    if(!loadOBJ("coinTraingulado.obj", &coinModel)) {
-    fprintf(stderr, "Falha ao carregar modelo da moeda.\n");
+void initCoinModel()
+{
+    if(load_obj(MODEL_PATH_COIN, &coinModel)) {
+        print_success("Modelo " MODEL_PATH_COIN " carregado com sucesso!");
+        is_coin_model_loaded = true;
     }
+    else
+        print_error("Falha ao carregar modelo " MODEL_PATH_COIN "!");
 }
 
+void free_coin_model()
+{
+    free_model(&coinModel);
+}

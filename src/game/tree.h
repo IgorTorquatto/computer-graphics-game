@@ -2,6 +2,9 @@
 
 #include "ecs/components/model.h"
 
+#define MODEL_PATH_TREE "models/tree/Tree.obj"
+#define MODEL_PATH_BUSH "models/bush/Bush.obj"
+
 typedef struct {
     int active;
     float x, y, z;
@@ -24,3 +27,6 @@ void drawTrees();
 void initBushes();
 void updateBushes(float dt, float worldSpeed);
 void drawBushes();
+
+void free_bush_model();
+void free_tree_model();

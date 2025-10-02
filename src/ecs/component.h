@@ -2,10 +2,6 @@
 
 #include "utils/basics.h"
 
-#include "components/model.h"
-#include "components/coin.h"
-
-
 #ifndef M_PI
     #define M_PI 3.14159265358979323846
 #endif
@@ -65,33 +61,55 @@ typedef EntityId GeometryId; // Entities of type Geometry
 
     typedef Position Vector;
     typedef Vector Velocity;
+    typedef Vector Vec3; // alias
+
+    typedef struct {
+        float u, v;
+    } Vec2;
+
+    typedef struct {
+        float min, max;
+    } Range;
 
     #define vector_sum(v, u) (Vector){(v).x + (u).x, (v).y + (u).y, (v).z + (u).z}
     #define vector_sub(v, u) (Vector){(v).x - (u).x, (v).y - (u).y, (v).z - (u).z}
     #define vector_mul(v, scalar) (Vector){(v).x * (scalar), (v).y * (scalar), (v).z * (scalar)}
     #define vector_div(v, scalar) (Vector){(v).x / (scalar), (v).y / (scalar), (v).z / (scalar)}
 
+    // === Casting ===
+    #define vec3_as_gl_float_ptr(v) (GLfloat*)(&v.x)
+
     // === Vector Constants ===
-    #define vector_zero  (Vector)(position_zero)
-    #define vector_one   (Vector){1.0f, 1.0f, 1.0f}
-    #define vector_up    (Vector){0.0f, 1.0f, 0.0f}
-    #define vector_down  (Vector){0.0f, -1.0f, 0.0f}
-    #define vector_right (Vector){1.0f, 0.0f, 0.0f}
-    #define vector_left  (Vector){-1.0f, 0.0f, 0.0f}
+    #define vector_zero    (Vector)(position_zero)
+    #define vector_one     (Vector){1.0f, 1.0f, 1.0f}
+    #define vector_up      (Vector){0.0f, 1.0f, 0.0f}
+    #define vector_down    (Vector){0.0f, -1.0f, 0.0f}
+    #define vector_right   (Vector){1.0f, 0.0f, 0.0f}
+    #define vector_left    (Vector){-1.0f, 0.0f, 0.0f}
+    #define vector_inf     (Vector){INFINITY, INFINITY, INFINITY}
+    #define vector_neg_inf (Vector){-INFINITY, -INFINITY, -INFINITY}
 
     typedef struct {
-        float r, g, b;
+        float r, g, b, a;
     } Color;
 
     // === Color Constants ===
-    #define color_black   (Color){0.0f, 0.0f, 0.0f}
-    #define color_white   (Color){1.0f, 1.0f, 1.0f}
-    #define color_red     (Color){1.0f, 0.0f, 0.0f}
-    #define color_green   (Color){0.0f, 1.0f, 0.0f}
-    #define color_blue    (Color){0.0f, 0.0f, 1.0f}
-    #define color_magenta (Color){1.0f, 0.0f, 1.0f}
-    #define color_yellow  (Color){1.0f, 1.0f, 0.0f}
-    #define color_cyan    (Color){0.0f, 1.0f, 1.0f}
+    #define transparent   (Color){0.0f, 0.0f, 0.0f, 0.0f}
+    #define color_black   (Color){0.0f, 0.0f, 0.0f, 1.0f}
+    #define color_white   (Color){1.0f, 1.0f, 1.0f, 1.0f}
+    #define color_red     (Color){1.0f, 0.0f, 0.0f, 1.0f}
+    #define color_green   (Color){0.0f, 1.0f, 0.0f, 1.0f}
+    #define color_blue    (Color){0.0f, 0.0f, 1.0f, 1.0f}
+    #define color_magenta (Color){1.0f, 0.0f, 1.0f, 1.0f}
+    #define color_yellow  (Color){1.0f, 1.0f, 0.0f, 1.0f}
+    #define color_cyan    (Color){0.0f, 1.0f, 1.0f, 1.0f}
+
+    // === Casting ===
+    #define color_as_gl_float_ptr(c) (GLfloat*)(&c.r)
+
+    typedef struct {
+        float u, v;
+    } TextureCoord;
 #pragma endregion
 
 typedef struct {

@@ -1,5 +1,7 @@
 #include "player.h"
-#include "ecs/component.h"
+
+#include "ecs/components/model.h"
+#include "ecs/components/coin.h"
 
 #include <GL/glut.h>
 

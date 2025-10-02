@@ -12,7 +12,7 @@
 
 #include "utils/print.h"
 
-#include "ecs/component.h" // model
+#include "ecs/components/coin.h"
 #include "ecs/system.h" // menu
 
 #include "game/state.h"
@@ -30,9 +30,6 @@ Player player;
 float worldSpeed = 12.0f;
 float distanciaPercorrida = 0.0f;
 static const float fator = 0.1f;
-
-Model treeModel;
-Model bushModel;
 
 float escalaArvoreDefault = 1.0f;
 
@@ -182,7 +179,7 @@ void drawRankingTitle(int ww, int wh) {
 
 void resetGame() {
     initPlayer(&player);
-    initObstacleModels();
+    initObstacles();
     initObstacles();
     worldSpeed = 12.0f;
     distanciaPercorrida = 0.0f;
@@ -428,39 +425,24 @@ void initGL() {
 }
 
 
-static int game_run() {
+static void game_run() {
     resetGame();
-
-    if(!loadOBJ("tree.obj", &treeModel)) {
-        print_error("Falha ao carregar modelo de árvore.");
-        return EXIT_FAILURE;
-    } else {
-        float alturaTree = treeModel.maxY - treeModel.minY;
-        if (alturaTree > 0.1f) {
-            escalaArvoreDefault = 2.0f / alturaTree;
-        }
-    }
-
-    if(!loadOBJ("bush.obj", &bushModel)) {
-        print_error("Falha ao carregar modelo de arvore.");
-        exit(EXIT_FAILURE);
-    }
-
     initCoinModel();
     initCoins();
     initTrees();
     initBushes();
-    return EXIT_SUCCESS;
+    init_rock_model();
+    init_logs_model();
 }
 
 int main(int argc, char** argv) {
-    //para debug excluir depois
+    // DEBUG ->  excluir depois [@GersonFeDutra: ainda usando?]
 #if defined(_WIN32) || defined(_WIN64)
     char cwd[1024];
     if (_getcwd(cwd, sizeof(cwd)) != NULL) {
-        print_info("diretorio atual: %s", cwd);
+        print_info("diretório atual: %s", cwd);
     } else {
-        perror("erro ao obter diretorio atual");
+        perror("erro ao obter diretório atual");
     }
 #endif
     srand((unsigned)time(NULL));
@@ -506,9 +488,7 @@ int main(int argc, char** argv) {
         ranking_save();
     }
 
-    err = game_run(); // game content created here
-    if (err != EXIT_SUCCESS)
-        return err;
+    game_run(); // game content created here
 
     #pragma region Event Bindings
         glutDisplayFunc(renderScene);
@@ -522,9 +502,11 @@ int main(int argc, char** argv) {
     glutMainLoop();
 
     #pragma region Free Memory
-        freeModel(&treeModel);
-        freeModel(&rockModel);
-        freeModel(&logModel);
+        free_rock_model();
+        free_logs_model();
+        free_coin_model();
+        free_tree_model();
+        free_bush_model();
         audio_bus_close();
         Mix_Quit();
         SDL_Quit();
