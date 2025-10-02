@@ -1,6 +1,7 @@
 #include "component.h"
 
-#include <GL/freeglut.h>
+//#include <GL/freeglut.h>
+#include <GL/glut.h>
 #include <stdbool.h>
 
 // === Component Arrays ===

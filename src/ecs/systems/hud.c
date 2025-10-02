@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 
-/* Função para desenhar a distância percorrida */
+/* FunÃ§Ã£o para desenhar a distÃ¢ncia percorrida */
 void drawDistance(float distanciaPercorrida) {
     int w = glutGet(GLUT_WINDOW_WIDTH);
     int h = glutGet(GLUT_WINDOW_HEIGHT);
@@ -38,7 +38,7 @@ void drawDistance(float distanciaPercorrida) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-/* Função para desenhar o contador de moedas (opcional duplicado, pode chamar de coin.c) */
+/* Funï¿½ï¿½o para desenhar o contador de moedas (opcional duplicado, pode chamar de coin.c) */
 void drawCoinsHUD(int coinCount) {
     int w = glutGet(GLUT_WINDOW_WIDTH);
     int h = glutGet(GLUT_WINDOW_HEIGHT);

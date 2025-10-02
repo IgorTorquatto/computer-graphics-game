@@ -46,7 +46,6 @@
 			<Add library="SDL2main" />
 			<Add library="SDL2" />
 			<Add library="SDL2_mixer" />
-			<Add library="freeglut" />
 			<Add library="opengl32" />
 			<Add library="glu32" />
 			<Add library="winmm" />

@@ -3,8 +3,8 @@
     #include <string.h>
 #pragma endregion
 #pragma region Libs
-    #include <GL/freeglut.h>
-    #include <GL/gl.h>
+    //#include <GL/freeglut.h>
+    #include <GL/glut.h>
 
     #define STB_IMAGE_IMPLEMENTATION
     #include <stb_image.h>
