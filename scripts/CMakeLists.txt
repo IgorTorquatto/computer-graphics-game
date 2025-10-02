@@ -23,6 +23,7 @@ if(NOT SOURCES)
 endif()
 
 include_directories("${PROJECT_ROOT}/src")
+include_directories("${PROJECT_ROOT}/dependencies")
 
 # Detectar arquitetura 32/64 bits
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
