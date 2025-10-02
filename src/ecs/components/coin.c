@@ -27,7 +27,7 @@
 #pragma endregion
 
 #pragma region Globals
-    extern float worldSpeed; // declarado em main.c ou game.c para velocidade global
+    extern float world_speed; // declarado em main.c ou game.c para velocidade global
     extern Player player;
 #pragma endregion
 
@@ -61,7 +61,7 @@ void updateCoins(float dt) {
     for(int i = 0; i < MAX_COINS; i++) {
         if(!coinPool[i].active) continue;
 
-        coinPool[i].z += worldSpeed * dt;
+        coinPool[i].z += world_speed * dt;
         coinPool[i].angle += 180.0f * dt;
 
         if(coinPool[i].z > 10.0f) {
@@ -97,7 +97,7 @@ void updateCoins(float dt) {
         spawnCoin();
         /* Intervalo diminui conforme velocidade do jogo */
         float minInt = 0.7f;
-        coinSpawnInterval = 1.0f - fminf(0.4f, worldSpeed * 0.005f);
+        coinSpawnInterval = 1.0f - fminf(0.4f, world_speed * 0.005f);
         if(coinSpawnInterval < minInt) coinSpawnInterval = minInt;
     }
 }

@@ -61,7 +61,7 @@ void initBushes() {
         print_error("Falha ao carregar modelo " MODEL_PATH_BUSH "!");
 }
 
-void updateTrees(float dt, float worldSpeed) {
+void updateTrees(float dt, float world_speed) {
     static float spawnTimer = 0.0f;
     spawnTimer += dt;
 
@@ -95,7 +95,7 @@ void updateTrees(float dt, float worldSpeed) {
 
     for(int i = 0; i < MAX_TREES; i++) {
         if(treesPool[i].active) {
-            treesPool[i].z += worldSpeed * dt;
+            treesPool[i].z += world_speed * dt;
             if(treesPool[i].z > 10.0f) {
                 treesPool[i].active = 0;
             }
@@ -103,10 +103,10 @@ void updateTrees(float dt, float worldSpeed) {
     }
 }
 
-void updateBushes(float dt, float worldSpeed) {
+void updateBushes(float dt, float world_speed) {
     for(int i = 0; i < MAX_BUSHES; i++) {
         if(bushesPool[i].active) {
-            bushesPool[i].z += worldSpeed * dt;
+            bushesPool[i].z += world_speed * dt;
             if(bushesPool[i].z > 10.0f) {
                 bushesPool[i].active = 0;
             }

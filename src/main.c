@@ -13,6 +13,7 @@
 #include "utils/print.h"
 
 #include "ecs/components/coin.h"
+#include "ecs/components/floor.h"
 #include "ecs/system.h" // menu
 
 #include "game/state.h"
@@ -27,9 +28,11 @@
 
 Player player;
 
-float worldSpeed = 12.0f;
+float world_speed = 12.0f;
 float distanciaPercorrida = 0.0f;
 static const float fator = 0.1f;
+
+float z_far = 200.0f;
 
 float escalaArvoreDefault = 1.0f;
 
@@ -181,7 +184,7 @@ void resetGame() {
     initPlayer(&player);
     initObstacles();
     initObstacles();
-    worldSpeed = 12.0f;
+    world_speed = 12.0f;
     distanciaPercorrida = 0.0f;
     initCoins();
 
@@ -191,10 +194,10 @@ void resetGame() {
 void update(float dt) {
     if(modoAtual != MODO_JOGO) return;
 
-    worldSpeed += dt * 0.5f;
+    world_speed += dt * 0.5f;
 
+    update_floor(dt);
     update_player(&player, dt);
-
     obstacleUpdate(dt);
 
     Obstacle* obstacles = getObstacles();
@@ -223,12 +226,13 @@ void update(float dt) {
         }
     }
 
-    distanciaPercorrida += worldSpeed * dt * fator;
+    distanciaPercorrida += world_speed * dt * fator;
 
-    updateTrees(dt, worldSpeed);
-    updateBushes(dt, worldSpeed);
+    updateTrees(dt, world_speed);
+    updateBushes(dt, world_speed);
     updateCoins(dt);
 }
+
 
 void renderScene() {
     if(modoAtual == MODO_MENU) {
@@ -288,19 +292,7 @@ void renderScene() {
     //glEnable(GL_COLOR_MATERIAL);
     //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-    glDisable(GL_LIGHTING);
-    glColor3f(0.9f, 0.9f, 0.9f);
-    for(int i = -100; i < 100; i++) {
-        float zpos = i * 5.0f;
-        glBegin(GL_QUADS);
-            glVertex3f(-1.5f, 0.0f, zpos);
-            glVertex3f(6.5f, 0.0f, zpos);
-            glVertex3f(6.5f, 0.0f, zpos - 5.0f);
-            glVertex3f(-1.5f, 0.0f, zpos - 5.0f);
-        glEnd();
-    }
-    glEnable(GL_LIGHTING);
-
+    draw_floor();
     drawPlayer(&player);
     drawObstacles();
     drawCoins3D();
@@ -323,7 +315,9 @@ void renderScene() {
 void idleCB() {
     static float last = 0.0f;
     float now = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
-    if(last == 0.0f) last = now;
+    if(last == 0.0f)
+        last = now;
+
     float dt = now - last;
     last = now;
     update(dt);
@@ -370,7 +364,7 @@ void reshape(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60.0, (float)w / (float)h, 0.1, 200.0);
+    gluPerspective(60.0, (float)w / (float)h, 0.1, z_far);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -426,9 +420,9 @@ void initGL() {
     #pragma endregion
 }
 
-
 static void game_run() {
     resetGame();
+    init_floor();
     initCoinModel();
     initCoins();
     initTrees();

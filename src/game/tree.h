@@ -21,11 +21,11 @@ typedef struct {
 #define MAX_BUSHES 250
 
 void initTrees();
-void updateTrees(float dt, float worldSpeed);
+void updateTrees(float dt, float world_speed);
 void drawTrees();
 
 void initBushes();
-void updateBushes(float dt, float worldSpeed);
+void updateBushes(float dt, float world_speed);
 void drawBushes();
 
 void free_bush_model();

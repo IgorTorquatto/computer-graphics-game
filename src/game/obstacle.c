@@ -30,7 +30,7 @@
     Model logModel;
 #pragma endregion
 #pragma region Globals
-    extern float worldSpeed;  // Variável global do jogo para velocidade do mundo
+    extern float world_speed;  // Variável global do jogo para velocidade do mundo
 #pragma endregion
 
 
@@ -58,7 +58,7 @@ void updateObstacles(float dt) {
     for (int i = 0; i < MAX_OBSTACLES; i++) {
         if (!obstacles[i].active) continue;
 
-        obstacles[i].z += worldSpeed * dt;
+        obstacles[i].z += world_speed * dt;
         if (obstacles[i].z > 10.0f) {
             obstacles[i].active = 0;
         }
@@ -185,7 +185,7 @@ void obstacleUpdate(float dt) {
     if (spawnTimer >= spawnInterval) {
         spawnTimer = 0.0f;
         spawnObstacle();
-        spawnInterval = 0.8f - fmin(0.5f, worldSpeed * 0.01f);
+        spawnInterval = 0.8f - fmin(0.5f, world_speed * 0.01f);
         if (spawnInterval < 0.25f)
             spawnInterval = 0.25f;
     }
