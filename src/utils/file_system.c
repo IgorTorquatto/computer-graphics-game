@@ -17,7 +17,7 @@ bool path_is_absolute(const char *p)
 #if defined(_WIN32) || defined(_WIN64)
     // Windows: // UNC \\server\path ou //server/path
     if ((p[0] == '\\' && p[1] == '\\') || (p[0] == '/' && p[1] == '/'))
-        return true
+        return true;
     // Drive letter: C:\  ou C:/
     if (isalpha((unsigned char)p[0]) && p[1] == ':' && (p[2] == '\\' || p[2] == '/'))
         return true;

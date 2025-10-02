@@ -13,8 +13,7 @@
 				<Option type="1" />
 				<Option compiler="gcc-mingw32" />
 				<ExtraCommands>
-					<Add before='xcopy /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\debug\&quot;' />
-					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)assets\audio\music\*.mp3&quot; &quot;bin\debug\&quot;' />
+					<Add before='xcopy /E /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\debug\&quot;' />
 					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2\bin\SDL2.dll&quot; &quot;bin\debug\&quot;' />
 					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2_mixer\bin\SDL2_mixer.dll&quot; &quot;bin\debug\&quot;' />
 					<Mode after="always" />
@@ -27,8 +26,7 @@
 				<Option type="0" />
 				<Option compiler="gcc-mingw32" />
 				<ExtraCommands>
-					<Add before='xcopy /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\release\&quot;' />
-					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)assets\audio\music\*.mp3&quot; &quot;bin\release\&quot;' />
+					<Add before='xcopy /E /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\release\&quot;' />
 					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2\bin\SDL2.dll&quot; &quot;bin\release\&quot;' />
 					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2_mixer\bin\SDL2_mixer.dll&quot; &quot;bin\release\&quot;' />
 					<Mode after="always" />
@@ -40,6 +38,7 @@
 			<Add directory="$(PROJECT_DIR)/dependencies/SDL2/include/SDL2" />
 			<Add directory="$(PROJECT_DIR)/dependencies/SDL2_mixer/include/SDL2" />
 			<Add directory="$(PROJECT_DIR)/src" />
+			<Add directory="$(PROJECT_DIR)/dependencies" />
 		</Compiler>
 		<Linker>
 			<Add library="mingw32" />
@@ -48,11 +47,14 @@
 			<Add library="SDL2_mixer" />
 			<Add library="opengl32" />
 			<Add library="glu32" />
+			<Add library="freeglut" />
 			<Add library="winmm" />
 			<Add library="gdi32" />
 			<Add directory="$(#glut.lib)" />
 			<Add directory="$(PROJECT_DIR)/dependencies/SDL2/lib" />
 			<Add directory="$(PROJECT_DIR)/dependencies/SDL2_mixer/lib" />
+			<Add directory="$(PROJECT_DIR)/src" />
+			<Add directory="$(PROJECT_DIR)/dependencies" />
 		</Linker>
 		<Unit filename="src/ecs/component.c">
 			<Option compilerVar="CC" />
@@ -62,6 +64,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/ecs/components/coin.h" />
+		<Unit filename="src/ecs/components/floor.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/ecs/components/floor.h" />
 		<Unit filename="src/ecs/components/model.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -115,6 +121,10 @@
 		</Unit>
 		<Unit filename="src/stb_image.h" />
 		<Unit filename="src/utils/basics.h" />
+		<Unit filename="src/utils/file_system.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="src/utils/file_system.h" />
 		<Unit filename="src/utils/print.c">
 			<Option compilerVar="CC" />
 		</Unit>
