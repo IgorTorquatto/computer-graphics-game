@@ -1,0 +1,13 @@
+# Blender 4.5.3 LTS MTL File: 'logs.blend'
+# www.blender.org
+
+newmtl Material_#30
+Ns 20.000006
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 1
+map_Kd Log_02_D.tga
+map_Ks Log_02_S.tga
+map_Bump -bm 1.000000 log_N.tga

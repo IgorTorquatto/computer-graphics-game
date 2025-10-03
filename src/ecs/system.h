@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ecs/component.h"
 #include "ecs/systems/menu.h"
 #include "ecs/systems/hud.h"
 #include "ecs/systems/music_bus.h"

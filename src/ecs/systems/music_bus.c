@@ -10,11 +10,6 @@ Mix_Music *music;
 
 void audio_bus_init()
 {
-#ifdef IDE_CORNO_BLOCKS
-    printf("Corno!\n");
-#else
-    printf("Infeliz!");
-#endif
     const char music_path[] = "0-drive.mp3";
 
     music = Mix_LoadMUS(music_path);

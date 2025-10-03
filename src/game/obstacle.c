@@ -1,53 +1,64 @@
+#pragma region Libs
+    #include <GL/glut.h>
+#pragma endregion
+#pragma region Local Includes
+    #include "utils/basics.h" // math, bool, stdlib
+    #include "utils/print.h"
+    #pragma region Dependencies
+        #include "ecs/components/model.h"
+    #pragma endregion
+#pragma endregion
 #include "obstacle.h"
-#include <stdlib.h>
-#include <GL/glut.h>
-#include <math.h>
-#include <stdio.h>
 
-#include "ecs/components/model.h"
 
 #define LANE_WIDTH 2.5f
 #define TARGET_HEIGHT_LOG 1.0f
 #define TARGET_HEIGHT_ROCK 1.0f
 
-static Obstacle obstacles[MAX_OBSTACLES];
-extern float worldSpeed;  // Variável global do jogo para velocidade do mundo
-static float spawnTimer = 0.0f;
-static float spawnInterval = 1.0f;
 
-static float escalaLog = 1.0f;
-static float escalaRock = 1.0f;
+#pragma region Locals
+    static Obstacle obstacles[MAX_OBSTACLES];
+    static float spawnTimer = 0.0f;
+    static float spawnInterval = 1.0f;
 
-Model rockModel;
-Model logModel;
+    static float escalaLog = 1.0f;
+    static float escalaRock = 1.0f;
+
+    enum { ROCK = 1, LOG = 2 };
+    static unsigned model_not_loaded = ROCK | LOG;
+    Model rockModel;
+    Model logModel;
+#pragma endregion
+#pragma region Globals
+    extern float world_speed;  // Variável global do jogo para velocidade do mundo
+#pragma endregion
+
 
 static float laneToX(int lane) {
     return lane * LANE_WIDTH;
 }
 
 void initObstacles() {
-    for (int i = 0; i < MAX_OBSTACLES; i++) {
+    for (int i = 0; i < MAX_OBSTACLES; i++)
         obstacles[i].active = 0;
-    }
+
     spawnTimer = 0.0f;
     spawnInterval = 1.0f;
 
-    float alturaLog = logModel.maxY - logModel.minY;
-    if (alturaLog > 0.0f) {
+    float alturaLog = logModel.max.y - logModel.min.y;
+    if (alturaLog > 0.0f)
         escalaLog = TARGET_HEIGHT_LOG / alturaLog;
-    }
 
-    float alturaRock = rockModel.maxY - rockModel.minY;
-    if (alturaRock > 0.0f) {
+    float alturaRock = rockModel.max.y - rockModel.min.y;
+    if (alturaRock > 0.0f)
         escalaRock = TARGET_HEIGHT_ROCK / alturaRock;
-    }
 }
 
 void updateObstacles(float dt) {
     for (int i = 0; i < MAX_OBSTACLES; i++) {
         if (!obstacles[i].active) continue;
 
-        obstacles[i].z += worldSpeed * dt;
+        obstacles[i].z += world_speed * dt;
         if (obstacles[i].z > 10.0f) {
             obstacles[i].active = 0;
         }
@@ -56,8 +67,16 @@ void updateObstacles(float dt) {
 
 void drawObstacles() {
     for (int i = 0; i < MAX_OBSTACLES; i++) {
-        if (!obstacles[i].active) continue;
-        if (obstacles[i].model == NULL) continue;
+        if (!obstacles[i].active)
+            continue;
+        if (obstacles[i].model == NULL)
+            continue;
+
+        if (obstacles[i].type == OBST_SINGLE && model_not_loaded & ROCK)
+            continue;
+
+        if (obstacles[i].type == OBST_DOUBLE && model_not_loaded & LOG)
+            continue;
 
         glPushMatrix();
         float drawX = obstacles[i].x;
@@ -67,14 +86,18 @@ void drawObstacles() {
 
         if (obstacles[i].type == OBST_SINGLE) {
             glScalef(escalaRock, escalaRock, escalaRock);
-            glColor3f(0.6f, 0.6f, 0.6f); // cinza
+            // usa a textura do material do modelo
+            //glColor3f(0.6f, 0.6f, 0.6f); // cinza
+
         } else {
             glScalef(escalaLog, escalaLog, escalaLog);
-            glColor3f(0.7f, 0.4f, 0.1f); // marrom
+            // usa a textura do material do modelo
+            //glColor3f(0.7f, 0.4f, 0.1f); // marrom
         }
 
-        glColor3f(0.8f, 0.7f, 0.5f);  // Cor básica opcional
-        drawModel(obstacles[i].model);
+        //glColor3f(0.8f, 0.7f, 0.5f);  // Cor básica opcional
+        //glColor3f(1.0f, 1.0f, 1.0f); // Carrega branco para resetar multiplicação na iluminação
+        draw_model(obstacles[i].model);
 
         glPopMatrix();
     }
@@ -162,30 +185,48 @@ void obstacleUpdate(float dt) {
     if (spawnTimer >= spawnInterval) {
         spawnTimer = 0.0f;
         spawnObstacle();
-        spawnInterval = 0.8f - fmin(0.5f, worldSpeed * 0.01f);
+        spawnInterval = 0.8f - fmin(0.5f, world_speed * 0.01f);
         if (spawnInterval < 0.25f)
             spawnInterval = 0.25f;
     }
 }
 
-void initObstacleModels() {
-    if (!loadOBJ("rockTriangulado.obj", &rockModel)) {
-        fprintf(stderr, "Erro ao carregar rock.obj\n");
-        exit(EXIT_FAILURE);
+void init_rock_model()
+{
+    if (load_obj(MODEL_PATH_ROCK, &rockModel)) {
+        print_success("Modelo " MODEL_PATH_ROCK " carregado com sucesso!");
+        model_not_loaded &= ~ROCK; // mark as loaded
     }
+    else
+        print_error("Erro ao carregar " MODEL_PATH_ROCK);
 
-    if (!loadOBJ("logTriangulado.obj", &logModel)) {
-        fprintf(stderr, "Erro ao carregar log.obj\n");
-        exit(EXIT_FAILURE);
-    }
-
-    float alturaLog = logModel.maxY - logModel.minY;
-    if (alturaLog > 0.0f) {
-        escalaLog = TARGET_HEIGHT_LOG / alturaLog;
-    }
-
-    float alturaRock = rockModel.maxY - rockModel.minY;
-    if (alturaRock > 0.0f) {
+    float alturaRock = rockModel.max.y - rockModel.min.y;
+    if (alturaRock > 0.0f)
         escalaRock = TARGET_HEIGHT_ROCK / alturaRock;
+}
+
+void init_logs_model()
+{
+    if (load_obj(MODEL_PATH_LOGS, &logModel)) {
+        print_success("Modelo " MODEL_PATH_LOGS " carregado com sucesso!");
+        model_not_loaded &= ~LOG; // mark as loaded
     }
+    else
+        print_error("Erro ao carregar " MODEL_PATH_LOGS);
+
+    float alturaLog = logModel.max.y - logModel.min.y;
+    if (alturaLog > 0.0f)
+        escalaLog = TARGET_HEIGHT_LOG / alturaLog;
+}
+
+void free_logs_model()
+{
+    free_model(&logModel);
+    model_not_loaded |= LOG;
+}
+
+void free_rock_model()
+{
+    free_model(&rockModel);
+    model_not_loaded |= ROCK;
 }

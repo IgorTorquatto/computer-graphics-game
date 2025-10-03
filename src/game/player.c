@@ -1,5 +1,7 @@
 #include "player.h"
-#include "ecs/component.h"
+
+#include "ecs/components/model.h"
+#include "ecs/components/coin.h"
 
 #include <GL/glut.h>
 
@@ -88,10 +90,13 @@ void handlePlayerSpecial(Player *p, int key) {
 }
 
 void drawPlayer(const Player *p) {
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glColor3f(0.1f, 0.4f, 0.9f);
     glPushMatrix();
     glTranslatef(p->x, p->y + p->height * 0.5f, p->z);
     glScalef(p->width, p->height, p->depth);
     glutSolidCube(1.0f);
     glPopMatrix();
+    glDisable(GL_COLOR_MATERIAL);
 }

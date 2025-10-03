@@ -1,29 +1,67 @@
-#include <stdlib.h>
-#include <GL/glut.h>
+#pragma region STL
+    #include <string.h>
+#pragma endregion
+#pragma region Libs
+    #include <GL/glut.h>
+#pragma endregion
+#pragma region Local Includes
+    #include "utils/basics.h" // math, bool, stdlib
+    #include "utils/print.h"
+    #pragma region Dependencies
+        #include "ecs/components/model.h"
+    #pragma endregion
+#pragma endregion
 #include "tree.h"
-#include "ecs/components/model.h"
 
-extern Model treeModel;
-extern Model bushModel;
-extern float escalaArvoreDefault;
-extern float escalaBushDefault;
 
-static Tree treesPool[MAX_TREES];
-static Bush bushesPool[MAX_BUSHES];
+#pragma region Globals
+    extern float escalaArvoreDefault;
+    extern float escalaBushDefault;
+#pragma endregion
+#pragma region Locals
+    enum { TREE = 1, BUSH = 2 };
+    static unsigned model_not_loaded = TREE | BUSH;
+    static Model treeModel;
+    static Model bushModel;
+    static Tree treesPool[MAX_TREES];
+    static Bush bushesPool[MAX_BUSHES];
+#pragma endregion
+
 
 void initTrees() {
-    for(int i=0; i<MAX_TREES; i++) {
+    for (int i = 0; i < MAX_TREES; i++)
         treesPool[i].active = 0;
-    }
+
+    if (load_obj(MODEL_PATH_TREE, &treeModel)) {
+        float alturaTree = treeModel.max.y - treeModel.min.y;
+        if (alturaTree > 0.1f)
+            escalaArvoreDefault = 2.0f / alturaTree;
+        for (Material* mat = treeModel.materials; mat < treeModel.materials + treeModel.materials_count; mat++)
+            // nome do material que possui transparência
+            if (strcmp(mat->name, "polySurface1SG1") == 0) {
+                mat->is_alpha_enabled = true;
+                break;
+            }
+
+        print_success("Modelo " MODEL_PATH_TREE " carregado com sucesso!");
+        model_not_loaded &= ~TREE; // mark as loaded
+    } else
+        print_error("Falha ao carregar modelo " MODEL_PATH_TREE "!");
 }
 
 void initBushes() {
-    for(int i=0; i<MAX_BUSHES; i++) {
+    for(int i=0; i<MAX_BUSHES; i++)
         bushesPool[i].active = 0;
+
+    if(load_obj(MODEL_PATH_BUSH, &bushModel)) {
+        print_success("Modelo " MODEL_PATH_BUSH " carregado com sucesso!");
+        model_not_loaded &= ~BUSH; // mark as loaded
     }
+    else
+        print_error("Falha ao carregar modelo " MODEL_PATH_BUSH "!");
 }
 
-void updateTrees(float dt, float worldSpeed) {
+void updateTrees(float dt, float world_speed) {
     static float spawnTimer = 0.0f;
     spawnTimer += dt;
 
@@ -55,9 +93,9 @@ void updateTrees(float dt, float worldSpeed) {
         }
     }
 
-    for(int i=0; i<MAX_TREES; i++) {
+    for(int i = 0; i < MAX_TREES; i++) {
         if(treesPool[i].active) {
-            treesPool[i].z += worldSpeed * dt;
+            treesPool[i].z += world_speed * dt;
             if(treesPool[i].z > 10.0f) {
                 treesPool[i].active = 0;
             }
@@ -65,10 +103,10 @@ void updateTrees(float dt, float worldSpeed) {
     }
 }
 
-void updateBushes(float dt, float worldSpeed) {
-    for(int i=0; i<MAX_BUSHES; i++) {
+void updateBushes(float dt, float world_speed) {
+    for(int i = 0; i < MAX_BUSHES; i++) {
         if(bushesPool[i].active) {
-            bushesPool[i].z += worldSpeed * dt;
+            bushesPool[i].z += world_speed * dt;
             if(bushesPool[i].z > 10.0f) {
                 bushesPool[i].active = 0;
             }
@@ -77,27 +115,45 @@ void updateBushes(float dt, float worldSpeed) {
 }
 
 void drawTrees() {
-    glColor3f(0.0f, 0.6f, 0.0f);
-    for(int i=0; i<MAX_TREES; i++) {
-        if(!treesPool[i].active) continue;
-        if (&treeModel == NULL) continue;
+    glColor3f(0.0f, 0.6f, 0.0f); // cor de tree
+    for(int i = 0; i < MAX_TREES; i++) {
+        if(!treesPool[i].active)
+            continue;
+        if (model_not_loaded & TREE)
+            continue;
+
         glPushMatrix();
         glTranslatef(treesPool[i].x, treesPool[i].y, treesPool[i].z);
         glScalef(treesPool[i].escala, treesPool[i].escala, treesPool[i].escala);
-        drawModel(&treeModel);
+        draw_model(&treeModel);
         glPopMatrix();
     }
 }
 
 void drawBushes() {
     glColor3f(0.2f, 0.7f, 0.2f); // cor de bush
-    for(int i=0; i<MAX_BUSHES; i++) {
-        if(!bushesPool[i].active) continue;
-        if (&bushModel == NULL) continue;
+    for(int i = 0; i < MAX_BUSHES; i++) {
+        if(!bushesPool[i].active)
+            continue;
+        if (model_not_loaded & BUSH)
+            continue;
+
         glPushMatrix();
         glTranslatef(bushesPool[i].x, bushesPool[i].y, bushesPool[i].z);
         glScalef(bushesPool[i].escala, bushesPool[i].escala, bushesPool[i].escala);
-        drawModel(&bushModel);
+        draw_model(&bushModel);
         glPopMatrix();
     }
+}
+
+void free_tree_model()
+{
+    free_model(&treeModel);
+    model_not_loaded |= TREE;
+}
+
+void free_bush_model()
+{
+    free_model(&bushModel);
+    model_not_loaded |= BUSH;
 }

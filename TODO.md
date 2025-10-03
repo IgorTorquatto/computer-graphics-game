@@ -1,16 +1,17 @@
 # TODO
 
 ## Design/ Arquitetura
-- [x] Esboço/ base do sistema ECS [@GersonFeDutra](https://github.com/GersonFeDutra).
+- [x] Esboço/ base do sistema ECS [@GersonFeDutra](https://github.com/GersonFeDutra)
 - [x] Esboço dos sistemas de jogo [@IgorTorquatto](https://github.com/IgorTorquatto)
-- [ ] Cenário [@IgorTorquatto](https://github.com/IgorTorquatto) 
+- [ ] Cenário [@AndreCastr0](https://github.com/AndreCastr0)
 
 ### Sistemas de jogo
 
 - [x] Movimentação [@IgorTorquatto](https://github.com/IgorTorquatto)
-  - [x] Interpolação [@GersonFeDutra](https://github.com/GersonFeDutra).
-  - [x] Entrada [@IgorTorquatto](https://github.com/IgorTorquatto).
-  - [x] Pulo [@IgorTorquatto](https://github.com/IgorTorquatto).
+  - [x] Interpolação [@GersonFeDutra](https://github.com/GersonFeDutra)
+  - [x] Entrada [@IgorTorquatto](https://github.com/IgorTorquatto)
+  - [x] Pulo [@IgorTorquatto](https://github.com/IgorTorquatto)
+  - [x] Scroll do cenário [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Coleta de itens [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Colisão e Condição de morte [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Loop de jogabilidade [@IgorTorquatto](https://github.com/IgorTorquatto)
@@ -19,41 +20,50 @@
 
 ### Geometria
 - [ ] Carregamento de objetos 3D com cores distintas
-  - [ ] Personagem
+  - [x] Personagem [@IgorTorquatto](https://github.com/IgorTorquatto)
+    - [x] Cubo
+    - [x] Cores
   - [ ] Inimigos / Obstáculos
-    - [ ] Pedras
+    - [x] Pedras
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [x] Cores / sombreamento
-      - [ ] Texturas
+      - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Materiais [@GersonFeDutra](https://github.com/GersonFeDutra)
+      - [x] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
   - [ ] Coletáveis
     - [x] Moedas [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [x] Modelo
-      - [x] Cores / sombreamento
+      - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
+      - [x] Materiais + Cores [@GersonFeDutra](https://github.com/GersonFeDutra)
   - [ ] Cenário
-    - [x] Piso [@IgorTorquatto](https://github.com/IgorTorquatto)
+    - [x] Piso
+      - [x] Modelo Plano - Quad [@IgorTorquatto](https://github.com/IgorTorquatto)
+      - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
     - [ ] Árvores
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [x] Cores / sombreamento [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Texturas
+      - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Materiais [@GersonFeDutra](https://github.com/GersonFeDutra)
+      - [x] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
     - [ ] Pilha de madeira
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [x] Cores / sombreamento [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Texturas
+      - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Materiais [@GersonFeDutra](https://github.com/GersonFeDutra)
+      - [x] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
     - [ ] Prédios/ Paredes
 - [x] Ative a remoção de superfícies ocultas. [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Anti-aliasing (MSAA) [@GersonFeDutra](https://github.com/GersonFeDutra)
 
 > Extras
 > - [x] Importação de um objeto.
-> - [ ] Adição de texturas nos objetos.
+> - [x] Adição de texturas nos objetos. [@GersonFeDutra](https://github.com/GersonFeDutra)
 > - [x] Limpeza de memória.
 
 ### Iluminação
 
 - [ ] Adicione as iluminações na cena:
   - [ ] Ambiente (para a cena);
-  - [ ] Especular;
-  - [ ] Difusa.
+  - [x] Especular;
+  - [x] Difusa.
 
 > Extras
 > - [ ] Implementação da projeção da sombra dos objetos.
@@ -87,7 +97,9 @@
 ## Funcionalidades extras
 
 - [ ] Sonorização [@GersonFeDutra](https://github.com/GersonFeDutra).
+  - [x] Importar biblioteca [STL2]
   - [x] Música
   - [ ] Efeitos sonoros
+  - [ ] Menu de áudio
 
 <!-- - [x] Contador de fps / debug [@GersonFeDutra](https://github.com/GersonFeDutra). -->

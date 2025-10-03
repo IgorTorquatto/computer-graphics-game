@@ -12,7 +12,8 @@
 
 #include "utils/print.h"
 
-#include "ecs/component.h" // model
+#include "ecs/components/coin.h"
+#include "ecs/components/floor.h"
 #include "ecs/system.h" // menu
 
 #include "game/state.h"
@@ -27,12 +28,11 @@
 
 Player player;
 
-float worldSpeed = 12.0f;
+float world_speed = 12.0f;
 float distanciaPercorrida = 0.0f;
 static const float fator = 0.1f;
 
-Model treeModel;
-Model bushModel;
+float z_far = 200.0f;
 
 float escalaArvoreDefault = 1.0f;
 float distanciaTotal = 0.0f;
@@ -157,9 +157,9 @@ void drawRankingTitle(int ww, int wh) {
 
 void resetGame() {
     initPlayer(&player);
-    initObstacleModels();
     initObstacles();
-    worldSpeed = 12.0f;
+    initObstacles();
+    world_speed = 12.0f;
     distanciaPercorrida = 0.0f;
     initCoins();
 
@@ -169,10 +169,10 @@ void resetGame() {
 void update(float dt) {
     if(modoAtual != MODO_JOGO) return;
 
-    worldSpeed += dt * 0.5f;
+    world_speed += dt * 0.5f;
 
+    update_floor(dt);
     update_player(&player, dt);
-
     obstacleUpdate(dt);
 
     Obstacle* obstacles = getObstacles();
@@ -194,57 +194,58 @@ void update(float dt) {
             obstCenterX, obstY, obstacles[i].z, obstWidth, obstHeight, obstDepth)
         ) {
             float finalScore = calcularDistanciaTotal();
-            printf("Adicionando score: %.2f\n", finalScore);
+            print_info("Adicionando score: %.2f", finalScore);
             ranking_add(finalScore);
             ranking_save();
             modoAtual = MODO_GAMEOVER;
         }
     }
 
-    distanciaPercorrida += worldSpeed * dt * fator;
+    distanciaPercorrida += world_speed * dt * fator;
 
-    updateTrees(dt, worldSpeed);
-    updateBushes(dt, worldSpeed);
+    updateTrees(dt, world_speed);
+    updateBushes(dt, world_speed);
     updateCoins(dt);
 }
 
-/*void renderScene() {
+
+void renderScene() {
     if(modoAtual == MODO_MENU) {
         desenhaMenu();
         return;
     }
 
- if(modoAtual == MODO_RANKING) {
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(modoAtual == MODO_RANKING) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
 
-    // DESABILITA ILUMINAÇÃO E DEPTH TEST PARA TEXTO 2D
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
+        // DESABILITA ILUMINAÇÃO E DEPTH TEST PARA TEXTO 2D
+        glDisable(GL_LIGHTING);
+        glDisable(GL_DEPTH_TEST);
 
-    drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-    ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+        drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+        ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
 
-    // REABILITA APÓS DESENHO
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
+        // REABILITA APÓS DESENHO
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_LIGHTING);
 
-    glPopMatrix();
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
 
-    glutSwapBuffers();
-    return;
-}
+        glutSwapBuffers();
+        return;
+    }
 
 
 #pragma region Render Game
@@ -266,19 +267,7 @@ void update(float dt) {
     //glEnable(GL_COLOR_MATERIAL);
     //glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-    glDisable(GL_LIGHTING);
-    glColor3f(0.9f, 0.9f, 0.9f);
-    for(int i = -100; i < 100; i++) {
-        float zpos = i * 5.0f;
-        glBegin(GL_QUADS);
-            glVertex3f(-1.5f, 0.0f, zpos);
-            glVertex3f(6.5f, 0.0f, zpos);
-            glVertex3f(6.5f, 0.0f, zpos - 5.0f);
-            glVertex3f(-1.5f, 0.0f, zpos - 5.0f);
-        glEnd();
-    }
-    glEnable(GL_LIGHTING);
-
+    draw_floor();
     drawPlayer(&player);
     drawObstacles();
     drawCoins3D();
@@ -606,7 +595,9 @@ void renderScene() {
 void idleCB() {
     static float last = 0.0f;
     float now = glutGet(GLUT_ELAPSED_TIME) / 1000.0f;
-    if(last == 0.0f) last = now;
+    if(last == 0.0f)
+        last = now;
+
     float dt = now - last;
     last = now;
     update(dt);
@@ -621,7 +612,7 @@ void keyboardCB(unsigned char key, int x, int y) {
     if(key == 'p') {
         ranking_add(42.0f); // pontuação teste para salvar
         ranking_save();
-        printf("Ranking manual salvo pela tecla 'p'\n");
+        print_info("Ranking manual salvo pela tecla 'p'");
         return;
     }
 
@@ -653,7 +644,7 @@ void reshape(int w, int h) {
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    gluPerspective(60.0, (float)w / (float)h, 0.1, 200.0);
+    gluPerspective(60.0, (float)w / (float)h, 0.1, z_far);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -669,11 +660,6 @@ void initGL() {
         glCullFace(GL_BACK);
     #pragma endregion
 
-    #pragma region Enable Lighting
-        glEnable(GL_LIGHTING);
-        glEnable(GL_LIGHT0);
-    #pragma endregion
-
     #pragma region Anti-Aliasing // MSAA
         glEnable(GLUT_MULTISAMPLE);
         // Se necessário, descomente para suavizar mais
@@ -685,7 +671,10 @@ void initGL() {
         //glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
     #pragma endregion
 
-    #pragma region Light Setup
+    #pragma region Enable Lighting
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+
         GLfloat light_ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
         GLfloat light_diffuse[]  = { 0.9f, 0.9f, 0.9f, 1.0f };
         GLfloat light_specular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
@@ -702,48 +691,36 @@ void initGL() {
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
         glMaterialfv(GL_FRONT_AND_BACK, GL_SHININESS, mat_shininess);
 
-        // Ativa uso de cor como material ambiente e difuso
-        glEnable(GL_COLOR_MATERIAL);
-        glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+        // Ativar uso de cor como material ambiente e difuso
+        //glEnable(GL_COLOR_MATERIAL);
+
+        // desabilitar color material para garantir que glMaterial tenha efeito
+        glDisable(GL_COLOR_MATERIAL);
+
+        // normalização automática (útil se houver escalas)
         glEnable(GL_NORMALIZE);
     #pragma endregion
 }
 
-
-
-static int game_run() {
+static void game_run() {
     resetGame();
-
-    if(!loadOBJ("tree.obj", &treeModel)) {
-        print_error("Falha ao carregar modelo de árvore.");
-        return EXIT_FAILURE;
-    } else {
-        float alturaTree = treeModel.maxY - treeModel.minY;
-        if (alturaTree > 0.1f) {
-            escalaArvoreDefault = 2.0f / alturaTree;
-        }
-    }
-
-    if(!loadOBJ("bush.obj", &bushModel)) {
-        print_error("Falha ao carregar modelo de arvore.");
-        exit(EXIT_FAILURE);
-    }
-
+    init_floor();
     initCoinModel();
     initCoins();
     initTrees();
     initBushes();
-    return EXIT_SUCCESS;
+    init_rock_model();
+    init_logs_model();
 }
 
 int main(int argc, char** argv) {
-    //para debug excluir depois
+    // DEBUG ->  excluir depois [@GersonFeDutra: ainda usando?]
 #if defined(_WIN32) || defined(_WIN64)
     char cwd[1024];
     if (_getcwd(cwd, sizeof(cwd)) != NULL) {
-        printf("diretorio atual: %s\n", cwd);
+        print_info("diretório atual: %s", cwd);
     } else {
-        perror("erro ao obter diretorio atual");
+        perror("erro ao obter diretório atual");
     }
 #endif
     srand((unsigned)time(NULL));
@@ -789,9 +766,7 @@ int main(int argc, char** argv) {
         ranking_save();
     }
 
-    err = game_run(); // game content created here
-    if (err != EXIT_SUCCESS)
-        return err;
+    game_run(); // game content created here
 
     #pragma region Event Bindings
         glutDisplayFunc(renderScene);
@@ -805,9 +780,11 @@ int main(int argc, char** argv) {
     glutMainLoop();
 
     #pragma region Free Memory
-        freeModel(&treeModel);
-        freeModel(&rockModel);
-        freeModel(&logModel);
+        free_rock_model();
+        free_logs_model();
+        free_coin_model();
+        free_tree_model();
+        free_bush_model();
         audio_bus_close();
         Mix_Quit();
         SDL_Quit();

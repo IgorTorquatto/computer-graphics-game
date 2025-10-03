@@ -1,7 +1,9 @@
-#include "ranking.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <GL/glut.h>
+
+#include "utils/print.h"
+#include "ranking.h"
 
 extern int getTextWidth(const char *text, void *font);
 extern void drawText(const char *text, int x, int y, void *font, float r, float g, float b, int windowHeight);
@@ -26,7 +28,7 @@ void ranking_add(float distanciaTotal) {
     } else if (distanciaTotal > rankingList[rankingCount - 1].distanciaTotal) {
         rankingList[rankingCount - 1].distanciaTotal = distanciaTotal;
     } else {
-        return; // não entrou no ranking
+        return; // nï¿½o entrou no ranking
     }
     qsort(rankingList, rankingCount, sizeof(RankingEntry), compareDesc);
 }
@@ -44,19 +46,19 @@ void ranking_save() {
         perror("Erro ao salvar rankingList");
     }
     fclose(file);
-    printf("Ranking salvo com %d entradas.\n", rankingCount);
+    print_success("Ranking salvo com %d entradas.", rankingCount);
 }
 
 
 
 void ranking_load() {
-    printf("ranking_load called.\n");
+    print_info("ranking_load called.");
     // Limpar lista antes de tentar carregar
     ranking_init();
 
     FILE *file = fopen("ranking.dat", "rb");
     if(!file) {
-        // Arquivo não existe, lista mantém zerada
+        // Arquivo nÃ£o existe, lista mantÃ©m zerada
         return;
     }
 
@@ -82,7 +84,7 @@ void ranking_load() {
 }
 
 void ranking_draw(int windowWidth, int windowHeight) {
-    //printf("ranking_draw called. rankingCount = %d\n", rankingCount); debug
+    //print_info("ranking_draw called. rankingCount = %d\n", rankingCount); debug
 
     int yStart = windowHeight / 2 + 80;
     char buffer[128];
@@ -105,4 +107,3 @@ void ranking_draw(int windowWidth, int windowHeight) {
 int ranking_getCount() {
     return rankingCount;
 }
-
