@@ -8,7 +8,9 @@ Federal do Cariri (UFCA).
 
 - [Objetivos](#objetivos)
 - [Instalação](#instalação)
-    - [Code Blocks](#code-blocks)
+    - [Windows](#windows)
+        - [Code Blocks](#code-blocks)
+        - [MSYS2](#msys2)
     - [Vs Code](#vs-code)
     - [Linux](#linux)
     - [Outros](#objetivos)
@@ -89,9 +91,9 @@ estáticas (libs) e dinâmicas (bin)
 #### MSYS2
 
 1) Baixe e instale o programa no [site oficial](https://www.msys2.org/).
-2) No terminal do ambiente UCRT64 instale os pacotes:
+2) No terminal do ambiente MingW64 instale os pacotes:
     ```bash
-    pacman -S cmake mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb \
+    pacman -Syu cmake mingw-w64-ucrt-x86_64-gcc mingw-w64-ucrt-x86_64-gdb \
             mingw-w64-ucrt-x86_64-mesa mingw-w64-ucrt-x86_64-freeglut \
             mingw-w64-ucrt-x86_64-SDL2 mingw-w64-ucrt-x86_64-SDL2_mixer
     ```
@@ -99,22 +101,43 @@ estáticas (libs) e dinâmicas (bin)
 > [!TIP]
 > **Configurando o ambiente no VSCode**
 > 
-> 1. Abra as configurações do VSCode (Ctrl + ,) e procure por "Terminal".
+> 1. Abra as configurações do VSCode (Ctrl + ,) e procure por `terminal.integrated.profiles.windows`.
 > 2. Clique em "Edit in settings.json" para abrir o arquivo de configuração.
-> 3. Adicione ou modifique a seguinte configuração para definir o terminal do MSYS2 como o terminal padrão:
+> 3. Adicione as configurações abaixo (se já não existirem)
+>    ```json
+>    "terminal.integrated.profiles.windows": {
+>      "MSYS2 MinGW 64-bit": {
+>        "path": "C:\\msys64\\mingw64.exe"
+>      }, // é um terminal externo onde vc deve rodar os scripts de build
+>      "MSYS2 Bash": {
+>         "path": "C:\\msys64\\usr\\bin\\bash.exe",
+>         "args": ["-l"],
+>         "cwd": "${workspaceFolder}"
+>      }, // pode ser usado para taks
+>      "MSYS2 pwd": {
+>         "path": "C:\\msys64\\usr\\bin\\bash.exe",
+>         "args": ["--login", "-i", "-c", "cd '${workspaceFolder}' && exec bash"]
+>      } // terminal padrão, abre no diretório atual (não serve para tasks)
+>    },
+>    ```
+> 4. Adicione ou modifique a seguinte configuração para definir o terminal do MSYS2 como o terminal padrão:
 >   ```json
->   "terminal.integrated.shell.windows": "C:\\msys64\\usr\\bin\\bash.exe"
+>   "terminal.integrated.defaultProfile.windows": "MSYS2 pwd",
 >   ```
-> 4. Torne os scripts de build executáveis:
+> 5. Torne os scripts de build executáveis:
 >   ```bash
 >   chmod +x scripts/*
 >   ```
-> 4. Siga as instruções na [seção abaixo](#vs-code).
-> _Se o atalho `F5` não funcionar, tente executar o comando de build no UCRT64 diretamente:
+> 6. Siga as instruções na [seção abaixo](#vs-code).
+> _Se o atalho `F5` não funcionar, tente executar o comando de build no MingW64 diretamente:
 >    ```bash
 >    ./scripts/build.sh
 >    ./scripts/run.sh
 >    ```
+
+> [!WARNING]
+> Infelizmente o VsCode não consegue setar o pwd do terminal corretamente para
+> executar novas tasks, então vc terá de executar os scripts diretamente.
 
 ### VS Code
 
