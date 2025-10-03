@@ -14,6 +14,17 @@
 #pragma endregion
 #include "coin.h"
 
+#include "game/player.h"
+
+#include <GL/glut.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <math.h>
+#include "ecs/components/model.h"
+#include "game/obstacle.h"
+
+
 #define MAX_COINS 128
 
 #pragma region Locals
@@ -31,6 +42,11 @@
     extern Player player;
 #pragma endregion
 
+extern int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
+                         float bx, float by, float bz, float bw, float bh, float bd);
+
+
+/* Inicializa o pool de moedas */
 void initCoins() {
     for(int i = 0; i < MAX_COINS; i++) {
         coinPool[i].active = 0;
@@ -41,17 +57,52 @@ void initCoins() {
 }
 
 void spawnCoin() {
+    const float exclusionMargin = 1.0f;
     for(int i = 0; i < MAX_COINS; i++) {
         if(!coinPool[i].active) {
-            coinPool[i].active = 1;
-            coinPool[i].lane = rand() % 3;
-            coinPool[i].x = coinPool[i].lane * 2.5f;
-            coinPool[i].y = 0.7f;
-            coinPool[i].z = -40.0f - (rand() % 20);
-            coinPool[i].w = 0.6f;
-            coinPool[i].h = 0.5f;
-            coinPool[i].d = 0.6f;
-            coinPool[i].angle = (float)(rand() % 360);
+            int tentativas = 20;
+            while (tentativas--) {
+                coinPool[i].lane = rand() % 3;
+                coinPool[i].x = coinPool[i].lane * 2.5f;
+                coinPool[i].y = 0.7f;
+                coinPool[i].z = -40.0f - (rand() % 20);
+                coinPool[i].w = 0.6f;
+                coinPool[i].h = 0.5f;
+                coinPool[i].d = 0.6f;
+                coinPool[i].angle = (float)(rand() % 360);
+
+                int ok = 1;
+                Obstacle* obstacles = getObstacles();
+                int maxObs = getMaxObstacles();
+                float cx = coinPool[i].x;
+                float cy = coinPool[i].y + coinPool[i].h * 0.5f;
+                float cz = coinPool[i].z;
+
+                for (int j = 0; j < maxObs; j++) {
+                    if (!obstacles[j].active) continue;
+
+                    if (obstacles[j].type == OBST_SINGLE || obstacles[j].type == OBST_DOUBLE) {
+                        float ox = obstacles[j].x;
+                        float oy = obstacles[j].y + obstacles[j].h * 0.5f;
+                        float oz = obstacles[j].z;
+                        float ow = obstacles[j].w + exclusionMargin;
+                        float oh = obstacles[j].h;
+                        float od = obstacles[j].d + exclusionMargin;
+
+                        if (aabbCollision(
+                                cx, cy, cz, coinPool[i].w, coinPool[i].h, coinPool[i].d,
+                                ox, oy, oz, ow, oh, od)) {
+                            ok = 0;
+                            break;
+                        }
+                    }
+                }
+
+                if (ok) {
+                    coinPool[i].active = 1;
+                    break;
+                }
+            }
             break;
         }
     }
@@ -69,13 +120,11 @@ void updateCoins(float dt) {
             continue;
         }
 
-        float ph = 2.0f; // altura player padrão (ou obtenha via player.height)
+        float ph = 2.0f;
         float pw = 1.0f;
         float pd = 1.0f;
 
         float coinCenterY = coinPool[i].y + coinPool[i].h * 0.5f;
-
-        /* Colisão AABB simples, utilize a função aabbCollision do jogo principal */
 
         extern int aabbCollision(float ax, float ay, float az, float aw, float ah, float ad,
                                 float bx, float by, float bz, float bw, float bh, float bd);
@@ -90,12 +139,10 @@ void updateCoins(float dt) {
         }
     }
 
-    /* Controle de tempo para spawn */
     coinSpawnTimer += dt;
     if(coinSpawnTimer >= coinSpawnInterval) {
         coinSpawnTimer = 0.0f;
         spawnCoin();
-        /* Intervalo diminui conforme velocidade do jogo */
         float minInt = 0.7f;
         coinSpawnInterval = 1.0f - fminf(0.4f, world_speed * 0.005f);
         if(coinSpawnInterval < minInt) coinSpawnInterval = minInt;

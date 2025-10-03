@@ -35,9 +35,8 @@ static const float fator = 0.1f;
 float z_far = 200.0f;
 
 float escalaArvoreDefault = 1.0f;
-
-
 float distanciaTotal = 0.0f;
+
 float calcularDistanciaTotal() {
     int moedas = getCoinCount();
     int bonusPorGrupo = moedas / 10;  // grupos de 10 moedas
@@ -59,30 +58,6 @@ GLboolean validarRasterPos(int x, int y) {
         && y >= viewport[1] && y < viewport[1]+viewport[3]);
 }
 
-/*void drawText(const char *text, int x, int y, void *font, float r, float g, float b, int windowHeight) {
-    int invertedY = windowHeight - y;
-
-    // Desenha contorno preto
-    glColor3f(0,0,0);
-    int offsets[8][2] = {
-        {-1,-1},{0,-1},{1,-1},
-        {-1,0},       {1,0},
-        {-1,1},{0,1},{1,1}};
-    for(int i=0;i<8;i++){
-        int ox = x + offsets[i][0];
-        int oy = invertedY + offsets[i][1];
-        if(!validarRasterPos(ox, oy)) continue;
-        glRasterPos2i(ox, oy);
-        for(const char *c = text; *c; c++) glutBitmapCharacter(font, *c);
-    }
-    glFlush();
-
-    // Desenha texto colorido
-    if(!validarRasterPos(x, invertedY)) return;
-    glColor3f(r, g, b);
-    glRasterPos2i(x, invertedY);
-    for(const char *c = text; *c; c++) glutBitmapCharacter(font, *c);
-}*/
 void drawText(const char *text, int x, int y, void *font, float r, float g, float b, int windowHeight) {
     int invertedY = windowHeight - y;
 
@@ -310,7 +285,312 @@ void renderScene() {
 
     glutSwapBuffers();
 #pragma endregion
+}*/
+
+/*void renderScene() {
+    if(modoAtual == MODO_MENU) {
+        desenhaMenu();
+        return;
+    }
+
+    if(modoAtual == MODO_RANKING) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+
+        glDisable(GL_LIGHTING);
+        glDisable(GL_DEPTH_TEST);
+
+        drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+        ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_LIGHTING);
+
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+
+        glutSwapBuffers();
+        return;
+    }
+
+#pragma region Render Game
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Definindo perspectiva
+    int w = glutGet(GLUT_WINDOW_WIDTH);
+    int h = glutGet(GLUT_WINDOW_HEIGHT);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(60.0f, (float)w/(float)h, 0.1f, 200.0f);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glPushMatrix();
+    glLoadIdentity(); // fixa na origem para seguir a câmera
+
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+
+    glBegin(GL_QUADS);
+        glColor3f(0.5f, 0.8f, 1.0f);
+        glVertex3f(-1.0f, 1.7f, -1.0f);
+        glVertex3f(1.0f, 1.7f, -1.0f);
+
+        glColor3f(0.9f, 0.85f, 0.6f);
+        glVertex3f(1.0f, -1.0f, -1.0f);
+        glVertex3f(-1.0f, -1.0f, -1.0f);
+    glEnd();
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+    glPopMatrix();
+
+    // Aplica a câmera
+    float camX = player.x;
+    float camY = 4.0f;
+    float camZ = player.z + 8.0f;
+    gluLookAt(camX, camY, camZ,
+              player.x, 1.0f, player.z - 8.0f,
+              0.0f, 1.0f, 0.0f);
+
+    glDisable(GL_LIGHTING);
+    glColor3f(0.5f, 0.8f, 1.0f);
+
+    glBegin(GL_QUADS);
+        glVertex3f(-100.0f, 25.0f, -180.0f);
+        glVertex3f(100.0f, 25.0f, -180.0f);
+        glVertex3f(100.0f, 100.0f, -180.0f);
+        glVertex3f(-100.0f, 100.0f, -180.0f);
+    glEnd();
+
+    glEnable(GL_LIGHTING);
+
+    //desenha fundo azul
+    glDisable(GL_LIGHTING);
+    glBegin(GL_QUADS);
+        glColor3f(0.5f, 0.8f, 1.0f); // azul claro
+        glVertex3f(-120.0f, 25.0f, -180.0f);
+        glVertex3f(120.0f, 25.0f, -180.0f);
+        glVertex3f(120.0f, 100.0f, -180.0f);
+        glVertex3f(-120.0f, 100.0f, -180.0f);
+    glEnd();
+
+    //Desenha faixa verde esquerda
+    glBegin(GL_QUADS);
+        glColor3f(0.15f, 0.7f, 0.21f); // verde claro
+        glVertex3f(-30.0f, 0.0f,  20.0f);
+        glVertex3f(-30.0f, 0.0f, -180.0f);
+        glVertex3f(-1.5f, 0.0f, -180.0f);
+        glVertex3f(-1.5f, 0.0f,  20.0f);
+    glEnd();
+
+    //Desenha faixa verde direita
+    glBegin(GL_QUADS);
+        glColor3f(0.15f, 0.7f, 0.21f);
+        glVertex3f(6.5f, 0.0f,  20.0f);
+        glVertex3f(6.5f, 0.0f, -180.0f);
+        glVertex3f(30.0f, 0.0f, -180.0f);
+        glVertex3f(30.0f, 0.0f,  20.0f);
+    glEnd();
+
+    glEnable(GL_LIGHTING);
+
+    // Desenha o chão e objetos
+    glDisable(GL_LIGHTING);
+    glColor3f(0.9f, 0.9f, 0.9f);
+    for(int i = -100; i < 100; i++) {
+        float zpos = i * 5.0f;
+        glBegin(GL_QUADS);
+            glVertex3f(-1.5f, 0.0f, zpos);
+            glVertex3f(6.5f, 0.0f, zpos);
+            glVertex3f(6.5f, 0.0f, zpos - 5.0f);
+            glVertex3f(-1.5f, 0.0f, zpos - 5.0f);
+        glEnd();
+    }
+    glEnable(GL_LIGHTING);
+
+    drawPlayer(&player);
+    drawObstacles();
+    drawCoins3D();
+    drawTrees();
+    drawBushes();
+
+    if(modoAtual == MODO_GAMEOVER) {
+        drawGameOverHUD();
+        glutSwapBuffers();
+        return;
+    }
+
+    drawDistance(distanciaPercorrida);
+    drawCoinsHUD(getCoinCount());
+
+    glutSwapBuffers();
+
+#pragma endregion
+}*/
+void renderScene() {
+    if(modoAtual == MODO_MENU) {
+        desenhaMenu();
+        return;
+    }
+
+    if(modoAtual == MODO_RANKING) {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+
+        glDisable(GL_LIGHTING);
+        glDisable(GL_DEPTH_TEST);
+
+        drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+        ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
+
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_LIGHTING);
+
+        glPopMatrix();
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+        glMatrixMode(GL_MODELVIEW);
+
+        glutSwapBuffers();
+        return;
+    }
+
+#pragma region Render Game
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Definindo perspectiva
+    int w = glutGet(GLUT_WINDOW_WIDTH);
+    int h = glutGet(GLUT_WINDOW_HEIGHT);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(60.0f, (float)w/(float)h, 0.1f, 200.0f);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glPushMatrix();
+    glLoadIdentity(); // fixa na origem para seguir a câmera
+
+    glDisable(GL_LIGHTING);
+    glDisable(GL_DEPTH_TEST);
+
+    glBegin(GL_QUADS);
+        glColor3f(0.5f, 0.8f, 1.0f);
+        glVertex3f(-1.0f, 1.7f, -1.0f);
+        glVertex3f(1.0f, 1.7f, -1.0f);
+        glColor3f(0.9f, 0.85f, 0.6f);
+        glVertex3f(1.0f, -1.0f, -1.0f);
+        glVertex3f(-1.0f, -1.0f, -1.0f);
+    glEnd();
+
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_LIGHTING);
+    glPopMatrix();
+
+    // Aplica a câmera
+    float camX = player.x;
+    float camY = 4.0f;
+    float camZ = player.z + 8.0f;
+    gluLookAt(camX, camY, camZ,
+              player.x, 1.0f, player.z - 8.0f,
+              0.0f, 1.0f, 0.0f);
+
+    glDisable(GL_LIGHTING);
+    glColor3f(0.5f, 0.8f, 1.0f);
+
+    glBegin(GL_QUADS);
+        glVertex3f(-160.0f, 20.0f, -180.0f);
+        glVertex3f(160.0f, 20.0f, -180.0f);
+        glVertex3f(160.0f, 130.0f, -180.0f);
+        glVertex3f(-160.0f, 130.0f, -180.0f);
+    glEnd();
+
+    glEnable(GL_LIGHTING);
+
+    //desenha fundo azul
+    glDisable(GL_LIGHTING);
+    glBegin(GL_QUADS);
+        glColor3f(0.5f, 0.8f, 1.0f); // azul claro
+        glVertex3f(-120.0f, 25.0f, -200.0f);
+        glVertex3f(120.0f, 25.0f, -300.0f);
+        glVertex3f(120.0f, 130.0f, -180.0f);
+        glVertex3f(-120.0f, 130.0f, -80.0f);
+    glEnd();
+
+    //Desenha faixa verde esquerda
+    glBegin(GL_QUADS);
+        glColor3f(0.15f, 0.7f, 0.21f); // verde claro
+        glVertex3f(-30.0f, 0.0f,  20.0f);
+        glVertex3f(-30.0f, 0.0f, -180.0f);
+        glVertex3f(-1.5f, 0.0f, -180.0f);
+        glVertex3f(-1.5f, 0.0f,  20.0f);
+    glEnd();
+
+    //Desenha faixa verde direita
+    glBegin(GL_QUADS);
+        glColor3f(0.15f, 0.7f, 0.21f);
+        glVertex3f(6.5f, 0.0f,  20.0f);
+        glVertex3f(6.5f, 0.0f, -180.0f);
+        glVertex3f(30.0f, 0.0f, -180.0f);
+        glVertex3f(30.0f, 0.0f,  20.0f);
+    glEnd();
+
+    glEnable(GL_LIGHTING);
+
+    // Desenha o chão e objetos
+    glDisable(GL_LIGHTING);
+    glColor3f(0.9f, 0.9f, 0.9f);
+    for(int i = -100; i < 100; i++) {
+        float zpos = i * 5.0f;
+        glBegin(GL_QUADS);
+            glVertex3f(-1.5f, 0.0f, zpos);
+            glVertex3f(6.5f, 0.0f, zpos);
+            glVertex3f(6.5f, 0.0f, zpos - 5.0f);
+            glVertex3f(-1.5f, 0.0f, zpos - 5.0f);
+        glEnd();
+    }
+    glEnable(GL_LIGHTING);
+
+    drawPlayer(&player);
+    drawObstacles();
+    drawCoins3D();
+    drawTrees();
+    drawBushes();
+
+    if(modoAtual == MODO_GAMEOVER) {
+        drawGameOverHUD();
+        glutSwapBuffers();
+        return;
+    }
+
+    drawDistance(distanciaPercorrida);
+    drawCoinsHUD(getCoinCount());
+
+    glutSwapBuffers();
+
+#pragma endregion
 }
+
 
 void idleCB() {
     static float last = 0.0f;
@@ -369,9 +649,11 @@ void reshape(int w, int h) {
 }
 
 void initGL() {
-    glClearColor(0.12f, 0.12f, 0.15f, 1.0f);
+    // Define a cor de limpeza para um tom neutro claro, aproximado da areia
+    glClearColor(0.13f, 0.55f, 0.13f, 1.0f); // verde floresta
 
-    #pragma region Enable Culling
+
+    #pragma region Enable Culling and Depth Test
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glEnable(GL_CULL_FACE);
@@ -380,7 +662,7 @@ void initGL() {
 
     #pragma region Anti-Aliasing // MSAA
         glEnable(GLUT_MULTISAMPLE);
-        // Smoothing -> Modo antigo de anti-alias do opengl
+        // Se necessário, descomente para suavizar mais
         //glEnable(GL_BLEND);
         //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         //glEnable(GL_LINE_SMOOTH);
@@ -403,7 +685,7 @@ void initGL() {
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
     #pragma endregion
 
-    #pragma region Material Setup // especular e brilho
+    #pragma region Material Setup
         GLfloat mat_specular[]  = { 0.3f, 0.3f, 0.3f, 1.0f };
         GLfloat mat_shininess[] = { 16.0f };
         glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, mat_specular);
