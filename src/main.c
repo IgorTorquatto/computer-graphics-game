@@ -37,6 +37,7 @@ float z_far = 200.0f;
 float escalaArvoreDefault = 1.0f;
 float distanciaTotal = 0.0f;
 
+
 float calcularDistanciaTotal() {
     int moedas = getCoinCount();
     int bonusPorGrupo = moedas / 10;  // grupos de 10 moedas
@@ -77,7 +78,6 @@ void drawText(const char *text, int x, int y, void *font, float r, float g, floa
     // Não reabilite iluminação aqui
 }
 
-
 void drawGameOverHUD() {
     int w = glutGet(GLUT_WINDOW_WIDTH);
     int h = glutGet(GLUT_WINDOW_HEIGHT);
@@ -114,7 +114,7 @@ void drawGameOverHUD() {
     char buffer[128];
     int x;
 
-    snprintf(buffer, sizeof(buffer), "Game over! M para voltar ao Menu");
+    snprintf(buffer, sizeof(buffer), "Game over! ESC para voltar ao Menu");
     x = (w - getTextWidth(buffer, GLUT_BITMAP_TIMES_ROMAN_24)) / 2;
     drawText(buffer, x, h/2 + 80, GLUT_BITMAP_TIMES_ROMAN_24, 1, 0, 0, h);
 
@@ -156,14 +156,15 @@ void drawRankingTitle(int ww, int wh) {
 }
 
 void resetGame() {
+    audio_bus_stop_music();
     initPlayer(&player);
+
     initObstacles();
     initObstacles();
-    world_speed = 12.0f;
-    distanciaPercorrida = 0.0f;
     initCoins();
 
-    audio_bus_stop_music();
+    world_speed = 12.0f;
+    distanciaPercorrida = 0.0f;
 }
 
 void update(float dt) {
@@ -194,10 +195,15 @@ void update(float dt) {
             obstCenterX, obstY, obstacles[i].z, obstWidth, obstHeight, obstDepth)
         ) {
             float finalScore = calcularDistanciaTotal();
+            audio_bus_play_sfx(SFX_DAMAGE);
             print_info("Adicionando score: %.2f", finalScore);
             ranking_add(finalScore);
             ranking_save();
-            modoAtual = MODO_GAMEOVER;
+            modoAtual = MODO_GAME_OVER;
+            audio_bus_stop_music();
+            audio_bus_stop_all_channels();
+            audio_bus_play_music(MUSIC_GAME_OVER, false);
+            return;
         }
     }
 
@@ -274,7 +280,7 @@ void renderScene() {
     drawTrees();
     drawBushes();
 
-    if(modoAtual == MODO_GAMEOVER) {
+    if(modoAtual == MODO_GAME_OVER) {
         drawGameOverHUD();
         glutSwapBuffers();
         return;
@@ -286,6 +292,7 @@ void renderScene() {
     glutSwapBuffers();
 #pragma endregion
 }
+
 
 void idleCB() {
     static float last = 0.0f;
@@ -300,38 +307,80 @@ void idleCB() {
 }
 
 void mouseCB(int button, int state, int x, int y) {
-    if(modoAtual == MODO_MENU) cliqueMenu(button, state, x, y);
+    if(modoAtual == MODO_MENU)
+        menu_motion(button, state, x, y);
 }
 
-void keyboardCB(unsigned char key, int x, int y) {
-    if(key == 'p') {
-        ranking_add(42.0f); // pontuação teste para salvar
-        ranking_save();
-        print_info("Ranking manual salvo pela tecla 'p'");
-        return;
-    }
+void mouseMove(int x, int y) {
+    if(modoAtual == MODO_MENU)
+        menu_motion(-1, -1, x, y);
+}
 
-    if(key == 27) { // ESC
-        if(modoAtual == MODO_RANKING) {
-            modoAtual = MODO_MENU;
+void keyboard_event(unsigned char key, int x, int y) {
+    #define KEY_ENTER 13
+    #define KEY_ESCAPE 27
+    switch (key)
+    {
+        case KEY_ENTER: {
+            if (modoAtual == MODO_MENU)
+                menu_select_focused();
+        } break;
+
+        case KEY_ESCAPE: {
+            switch (modoAtual) {
+                case MODO_MENU:
+                    exit(0);
+                    break;
+                case MODO_GAME_OVER:
+                    modoAtual = MODO_MENU;
+                    audio_bus_stop_music();
+                    audio_bus_play_music(MUSIC_MENU, true);
+                    break;
+                case MODO_RANKING:
+                    modoAtual = MODO_MENU;
+                    audio_bus_play_sfx(SFX_UI_CANCEL);
+                    break;
+                default:
+                    break;
+            }
+        } break;
+
+        case 'p': {
+            ranking_add(42.0f); // pontuação teste para salvar
+            ranking_save();
+            print_info("Ranking manual salvo pela tecla 'p'");
             return;
-        }
-        exit(0);
+        } break;
+
+        default:
+            break;
     }
 
-    if(modoAtual == MODO_GAMEOVER && (key == 'm' || key == 'M')) {
-        modoAtual = MODO_MENU;
-        return;
-    }
-
-    if(modoAtual != MODO_JOGO) return;
-
-    handlePlayerInput(&player, key);
+    if(modoAtual == MODO_JOGO)
+        handlePlayerInput(&player, key);
 }
 
 void specialCB(int key, int x, int y) {
-    if(modoAtual != MODO_JOGO) return;
-    handlePlayerSpecial(&player, key);
+    switch (modoAtual)
+    {
+        case MODO_MENU:
+            switch (key) {
+                case GLUT_KEY_UP:
+                    menu_focus_previous();
+                    break;
+                case GLUT_KEY_DOWN:
+                    menu_focus_next();
+                    break;
+                default: break;
+            } break;
+
+        case MODO_JOGO:
+            handlePlayerSpecial(&player, key);
+            break;
+
+        default:
+            break;
+    }
 }
 
 void reshape(int w, int h) {
@@ -398,7 +447,10 @@ void initGL() {
 }
 
 static void game_run() {
-    resetGame();
+    world_speed = 12.0f;
+    distanciaPercorrida = 0.0f;
+
+    initObstacles();
     init_floor();
     initCoinModel();
     initCoins();
@@ -406,6 +458,8 @@ static void game_run() {
     initBushes();
     init_rock_model();
     init_logs_model();
+
+    audio_bus_play_music(MUSIC_MENU, true);
 }
 
 int main(int argc, char** argv) {
@@ -466,10 +520,11 @@ int main(int argc, char** argv) {
     #pragma region Event Bindings
         glutDisplayFunc(renderScene);
         glutIdleFunc(idleCB);
-        glutKeyboardFunc(keyboardCB);
+        glutKeyboardFunc(keyboard_event);
         glutSpecialFunc(specialCB);
         glutReshapeFunc(reshape);
         glutMouseFunc(mouseCB);
+        glutPassiveMotionFunc(mouseMove);
     #pragma endregion
 
     glutMainLoop();

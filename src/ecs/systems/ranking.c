@@ -21,15 +21,18 @@ int compareDesc(const void *a, const void *b) {
 }
 
 void ranking_add(float distanciaTotal) {
-    if (distanciaTotal <= 0.0f) return;
+    if (distanciaTotal <= 0.0f)
+        return;
+
     if (rankingCount < MAX_RANKING) {
         rankingList[rankingCount].distanciaTotal = distanciaTotal;
         rankingCount++;
     } else if (distanciaTotal > rankingList[rankingCount - 1].distanciaTotal) {
         rankingList[rankingCount - 1].distanciaTotal = distanciaTotal;
     } else {
-        return; // n�o entrou no ranking
+        return; // não entrou no ranking
     }
+
     qsort(rankingList, rankingCount, sizeof(RankingEntry), compareDesc);
 }
 
@@ -39,12 +42,12 @@ void ranking_save() {
         perror("Erro ao abrir ranking.dat para salvar");
         return;
     }
-    if (fwrite(&rankingCount, sizeof(int), 1, file) != 1) {
+    if (fwrite(&rankingCount, sizeof(int), 1, file) != 1)
         perror("Erro ao salvar rankingCount");
-    }
-    if (fwrite(rankingList, sizeof(RankingEntry), rankingCount, file) != (size_t)rankingCount) {
+
+    if (fwrite(rankingList, sizeof(RankingEntry), rankingCount, file) != (size_t)rankingCount)
         perror("Erro ao salvar rankingList");
-    }
+
     fclose(file);
     print_success("Ranking salvo com %d entradas.", rankingCount);
 }

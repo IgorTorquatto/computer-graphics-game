@@ -49,7 +49,7 @@
       - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
       - [x] Materiais [@GersonFeDutra](https://github.com/GersonFeDutra)
       - [x] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
-    - [ ] Prédios/ Paredes
+    - [ ] Ambiente [@AndreCastr0](https://github.com/AndreCastr0)
 - [x] Ative a remoção de superfícies ocultas. [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Anti-aliasing (MSAA) [@GersonFeDutra](https://github.com/GersonFeDutra)
 
@@ -88,7 +88,11 @@
 
 - [x] Menu iniciar [@IgorTorquatto](https://github.com/IgorTorquatto)
   - [x] Botão de começar jogo
+  - [x] Botão de ranking
   - [x] Botão de sair do jogo
+- [x] Ranking
+  - [x] Menu
+  - [x] Salvar e carregar arquivos
 - [x] Contador de coletáveis (ex.: número de moedas coletadas, número de mortes)
 
 > Extras
@@ -96,10 +100,10 @@
 
 ## Funcionalidades extras
 
-- [ ] Sonorização [@GersonFeDutra](https://github.com/GersonFeDutra).
+- [x] Sonorização [@GersonFeDutra](https://github.com/GersonFeDutra).
   - [x] Importar biblioteca [STL2]
   - [x] Música
-  - [ ] Efeitos sonoros
-  - [ ] Menu de áudio
+  - [x] Efeitos sonoros
+- [ ] Menu de áudio
 
 <!-- - [x] Contador de fps / debug [@GersonFeDutra](https://github.com/GersonFeDutra). -->
