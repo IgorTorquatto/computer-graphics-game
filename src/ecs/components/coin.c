@@ -14,6 +14,7 @@
 #pragma endregion
 #include "coin.h"
 
+#include "ecs/systems/music_bus.h"
 #include "game/player.h"
 
 #include <GL/glut.h>
@@ -136,6 +137,7 @@ void updateCoins(float dt) {
            ) {
             coinPool[i].active = 0;
             coinCount++;
+            audio_bus_play_sfx(SFX_COIN_PICK);
         }
     }
 
