@@ -210,7 +210,7 @@ void update(float dt) {
     distanciaPercorrida += world_speed * dt * fator;
 
     updateTrees(dt, world_speed);
-    updateBushes(dt, world_speed);
+   // updateBushes(dt, world_speed);
     updateCoins(dt);
 }
 
@@ -278,7 +278,7 @@ void renderScene() {
     drawObstacles();
     drawCoins3D();
     drawTrees();
-    drawBushes();
+   // drawBushes();
 
     if(modoAtual == MODO_GAME_OVER) {
         drawGameOverHUD();
@@ -455,7 +455,7 @@ static void game_run() {
     initCoinModel();
     initCoins();
     initTrees();
-    initBushes();
+    //initBushes();
     init_rock_model();
     init_logs_model();
 
@@ -534,7 +534,7 @@ int main(int argc, char** argv) {
         free_logs_model();
         free_coin_model();
         free_tree_model();
-        free_bush_model();
+       // free_bush_model();
         audio_bus_close();
         Mix_Quit();
         SDL_Quit();
