@@ -13,6 +13,13 @@ static Mix_Chunk *effects[SFX_N];
 
 void audio_bus_init()
 {
+    if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) == -1) {
+        print_error("SDL Failed to load Audio device: %s\n", Mix_GetError());
+        exit(EXIT_FAILURE);
+    }
+
+    Mix_AllocateChannels(32);
+
     struct music_bindings {
         MusicTrack track;
         const char* path;
@@ -73,7 +80,7 @@ void audio_bus_stop_music()
 }
 
 
-void audio_bus_play_sfx(SfxTrack track)
+/*void audio_bus_play_sfx(SfxTrack track)
 {
     if (!effects[track]) {
         print_error("SFX [%d] not loaded", track);
@@ -81,6 +88,19 @@ void audio_bus_play_sfx(SfxTrack track)
     }
     if (Mix_PlayChannel(-1, effects[track], 0) == -1)
         print_error("SFX [%d] playing error: %s", track, Mix_GetError());
+}*/
+
+void audio_bus_play_sfx(SfxTrack track)
+{
+    if (!effects[track]) {
+        print_error("SFX [%d] not loaded", track);
+        return;
+    }
+    int channel = Mix_PlayChannel(-1, effects[track], 0);
+    if (channel == -1) {
+        print_error("SFX [%d] playing error: %s", track, Mix_GetError());
+        // Pode-se optar por parar o som menos importante ou ignorar, dependendo da lógica
+    }
 }
 
 static bool active_channels[8]; // all channels inactive
@@ -92,8 +112,11 @@ void audio_bus_play_channel(SfxTrack track, int channel)
         print_error("SFX [%d] not loaded", track);
         return;
     }
+    //if (Mix_PlayChannel(channel, effects[track], 0) == -1)
+    //    print_error("SFX [%d] playing error on channel %d: %s", track, Mix_GetError(), channel);
     if (Mix_PlayChannel(channel, effects[track], 0) == -1)
-        print_error("SFX [%d] playing error on channel %d: %s", track, Mix_GetError(), channel);
+    print_error("SFX [%d] playing error on channel %d: %s", track, channel, Mix_GetError());
+
 }
 
 void audio_bus_stop_all_channels()
