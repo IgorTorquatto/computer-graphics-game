@@ -76,7 +76,7 @@ void updatePoste(float dt,float world_speed){
 
 }
 
-void drawPoste(){
+/*void drawPoste(){
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -119,7 +119,85 @@ void drawPoste(){
     glPopMatrix();
     
     glDisable(GL_COLOR_MATERIAL);
+}*/
+
+void drawPoste() {
+    // Habilita uso de materiais baseados em cor
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_NORMALIZE);
+
+    // ----- LUZ 1 (poste esquerdo) -----
+    GLfloat light1_pos[] = { p.x, p.altura + 0.2f, p.z, 1.0f }; // w=1 => posicional
+    GLfloat light1_diffuse[]  = { 1.0f, 0.95f, 0.7f, 1.0f };
+    GLfloat light1_ambient[]  = { 0.05f, 0.045f, 0.035f, 1.0f };
+    GLfloat light1_specular[] = { 0.8f, 0.8f, 0.7f, 1.0f };
+
+    glEnable(GL_LIGHT1);
+    glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE,  light1_diffuse);
+    glLightfv(GL_LIGHT1, GL_AMBIENT,  light1_ambient);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
+    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION,  1.0f);
+    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION,    0.05f);
+    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.01f);
+
+    // ----- LUZ 2 (poste direito) -----
+    GLfloat light2_pos[] = { q.x, q.altura + 0.2f, q.z, 1.0f };
+    GLfloat light2_diffuse[]  = { 1.0f, 0.95f, 0.7f, 1.0f };
+    GLfloat light2_ambient[]  = { 0.05f, 0.045f, 0.035f, 1.0f };
+    GLfloat light2_specular[] = { 0.8f, 0.8f, 0.7f, 1.0f };
+
+    glEnable(GL_LIGHT2);
+    glLightfv(GL_LIGHT2, GL_POSITION, light2_pos);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE,  light2_diffuse);
+    glLightfv(GL_LIGHT2, GL_AMBIENT,  light2_ambient);
+    glLightfv(GL_LIGHT2, GL_SPECULAR, light2_specular);
+    glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION,  1.0f);
+    glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION,    0.05f);
+    glLightf(GL_LIGHT2, GL_QUADRATIC_ATTENUATION, 0.01f);
+
+    // ----- DESENHA OS POSTES -----
+    glColor3f(0.15f, 0.15f, 0.15f); // cor cinza escuro
+
+    glPushMatrix();
+        glTranslatef(p.x, p.altura / 2, p.z);
+        glScalef(0.4f, p.altura, 0.4f);
+        glutSolidCube(1.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(q.x, q.altura / 2, q.z);
+        glScalef(0.4f, q.altura, 0.4f);
+        glutSolidCube(1.0f);
+    glPopMatrix();
+
+    // ----- TOPO BRILHANTE (esferas) -----
+    GLfloat emissive[] = { 1.0f, 0.9f, 0.6f, 1.0f }; // brilho amarelo
+    GLfloat no_emissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+    glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
+    glDisable(GL_LIGHTING); // garante que a esfera apareça brilhante
+
+    glColor3f(1.0f, 1.0f, 0.5f);
+    glPushMatrix();
+        glTranslatef(p.x, p.altura + 0.3f, p.z);
+        glutSolidSphere(0.25f, 16, 16);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(q.x, q.altura + 0.3f, q.z);
+        glutSolidSphere(0.25f, 16, 16);
+    glPopMatrix();
+
+    glEnable(GL_LIGHTING);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, no_emissive);
+    glPopAttrib();
+
+    glDisable(GL_COLOR_MATERIAL);
 }
+
 
 float calcularDistanciaTotal() {
     int moedas = getCoinCount();
