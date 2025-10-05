@@ -34,7 +34,8 @@ static void set_state_run(Player* p) {
 
 void initPlayer(Player *p) {
     p->lane = 1;
-    p->x = LANE_X(1);
+   // p->x = LANE_X(1);
+    p->x = LANE_X(p->lane);
     p->y = 0.0f;
     p->z = 0.0f;
     p->vy = 0.0f;

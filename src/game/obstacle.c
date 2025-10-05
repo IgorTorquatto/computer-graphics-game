@@ -15,10 +15,10 @@
 #define TARGET_HEIGHT_LOG 1.0f
 #define TARGET_HEIGHT_ROCK 1.0f
 
-#define Z_CULLING_MIN -100.0f  // Limite mínimo em z para desenhar (mais longe)
+/*#define Z_CULLING_MIN -100.0f  // Limite mínimo em z para desenhar (mais longe)
 #define Z_CULLING_MAX 10.0f    // Limite máximo em z para desenhar (próximo da câmera)
 #define X_CULLING_MIN -5.0f
-#define X_CULLING_MAX 7.5f
+#define X_CULLING_MAX 7.5f*/
 
 
 
@@ -65,9 +65,9 @@ void updateObstacles(float dt) {
         if (!obstacles[i].active) continue;
 
         obstacles[i].z += world_speed * dt;
-        if (obstacles[i].z > Z_CULLING_MAX) {
+       /* if (obstacles[i].z > Z_CULLING_MAX) {
             obstacles[i].active = 0;
-        }
+        }*/
     }
 }
 
@@ -79,11 +79,11 @@ void drawObstacles() {
             continue;
 
         // Culling baseado na posição Z (ajustar X/Y se desejar)
-        if (obstacles[i].z < Z_CULLING_MIN || obstacles[i].z > Z_CULLING_MAX)
+        /*if (obstacles[i].z < Z_CULLING_MIN || obstacles[i].z > Z_CULLING_MAX)
             continue;
         
         if (obstacles[i].x < X_CULLING_MIN || obstacles[i].x > X_CULLING_MAX)
-            continue;
+            continue;*/
 
         if (obstacles[i].type == OBST_SINGLE && model_not_loaded & ROCK)
             continue;
