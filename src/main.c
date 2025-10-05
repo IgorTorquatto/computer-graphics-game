@@ -20,7 +20,7 @@
 #include "game/tree.h"
 #include "game/player.h"
 #include "game/obstacle.h"
-
+//#include "game/poste.h"
 #include "ecs/systems/ranking.h"
 #if defined(_WIN32) || defined(_WIN64)
     #include <direct.h>
@@ -37,6 +37,89 @@ float z_far = 200.0f;
 float escalaArvoreDefault = 1.0f;
 float distanciaTotal = 0.0f;
 
+typedef struct{
+    int active;
+    float x,y,z;
+    float altura;
+}Poste;
+
+static Poste p;
+static Poste q;
+
+void initPoste(){
+    p.active = 1;
+    p.x = -3.0f;
+    p.y = 0.0f;
+    p.z = -60.0f;
+    p.altura = 6.0f;
+
+    q.active = 1;
+    q.x = 8.0f;
+    q.y = 0.0f;
+    q.z = -60.0f;
+    q.altura = 6.0f;
+}
+
+void updatePoste(float dt,float world_speed){
+    if(p.active){
+        p.z += dt*world_speed;
+        if(p.z > 10.0f){
+            p.z = -60.0f;
+        }
+    }
+    if(q.active){
+        q.z += dt*world_speed;
+        if(q.z > 10.0f){
+            q.z = -60.0f;
+        }
+    }
+
+}
+
+void drawPoste(){
+    glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_NORMALIZE);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+
+    GLfloat light_position[] = { p.x, p.altura, p.z, 1.0f }; // Topo do poste
+    GLfloat light_diffuse[] = { 1.0f, 1.0f, 0.8f, 1.0f };   // Luz amarela suave
+    GLfloat light_ambient[] = { 0.3f, 0.3f, 0.2f, 1.0f };   // Ambiente amarelado
+    GLfloat light_specular[] = { 1.0f, 1.0f, 0.9f, 1.0f };  // Especular suave
+
+    glEnable(GL_LIGHT1);
+    glLightfv(GL_LIGHT1, GL_POSITION, light_position);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
+    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
+
+
+    glColor3f(0.0f,0.0f,0.0f);
+    glPushMatrix();
+    glTranslatef(p.x,p.altura/2,p.z);
+    glScalef(0.5f,p.altura,0.5f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(q.x,q.altura/2,q.z);
+    glScalef(0.5f,q.altura,0.5f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(p.x, p.altura + 0.3f, p.z);
+    glColor3f(1.0f, 1.0f, 0.5f); // Amarelo brilhante
+    glutSolidSphere(0.3f, 10, 10);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(q.x, q.altura + 0.3f, q.z);
+    glColor3f(1.0f, 1.0f, 0.5f); // Amarelo brilhante
+    glutSolidSphere(0.3f, 10, 10);
+    glPopMatrix();
+    
+    glDisable(GL_COLOR_MATERIAL);
+}
 
 float calcularDistanciaTotal() {
     int moedas = getCoinCount();
@@ -159,6 +242,7 @@ void resetGame() {
     audio_bus_stop_music();
     initPlayer(&player);
 
+    initPoste();
     initObstacles();
     initObstacles();
     initCoins();
@@ -175,6 +259,7 @@ void update(float dt) {
     update_floor(dt);
     update_player(&player, dt);
     obstacleUpdate(dt);
+    updatePoste(dt,world_speed);
 
     Obstacle* obstacles = getObstacles();
     int maxObs = getMaxObstacles();
@@ -278,6 +363,7 @@ void renderScene() {
     drawObstacles();
     drawCoins3D();
     drawTrees();
+    drawPoste();
    // drawBushes();
 
     if(modoAtual == MODO_GAME_OVER) {
@@ -418,6 +504,15 @@ void initGL() {
     #pragma region Enable Lighting
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
+        glEnable(GL_LIGHT1);
+
+        GLfloat light1_ambient[] = {0.2f, 0.2f, 0.1f, 1.0f};
+        GLfloat light1_diffuse[] = {0.8f, 0.8f, 0.6f, 1.0f};
+        GLfloat light1_specular[] = {0.9f, 0.9f, 0.8f, 1.0f};
+    
+        glLightfv(GL_LIGHT1, GL_AMBIENT, light1_ambient);
+        glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
+        glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
 
         GLfloat light_ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
         GLfloat light_diffuse[]  = { 0.9f, 0.9f, 0.9f, 1.0f };

@@ -10,6 +10,9 @@ typedef struct {
     PlayerState state;
     float width, height, depth;
     float slideTimeRemaining;
+    float animationTime;
+    int side;
+    float sideTimer;
 } Player;
 
 /* Inicializa o jogador com valores padrão */

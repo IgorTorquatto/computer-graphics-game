@@ -7,7 +7,7 @@
     #include <GL/glut.h>
 
     #define STB_IMAGE_IMPLEMENTATION
-    #include <stb_image.h>
+    #include "stb_image.h"
 #pragma endregion
 #pragma region Local Includes
     #include "utils/file_system.h"
@@ -161,13 +161,13 @@ static int material_find(const char* name, Material* materials, size_t n) {
 /**
  * @brief Adiciona material (sem textura ainda).
  * @cond assume que os ponteiros são != NULL
- * 
+ *
  * @param name Nome do material.
  * @param file Ponteiro para o arquivo MTL.
  * @param materials_ptr Ponteiro para a estrutura de materiais.
  * @param n_ptr Ponteiro para o contador de materiais.
  * @param capacity Ponteiro para a capacidade da estrutura de materiais.
- * 
+ *
  * @return retorna índice (0-based).
  */
 static int material_add(const char* name, FILE* file, Material** materials_ptr, size_t* n_ptr, size_t* capacity) {
@@ -189,7 +189,7 @@ static int material_add(const char* name, FILE* file, Material** materials_ptr, 
 
 /**
  * @brief Calcula a normal de uma face (unitária).
- * 
+ *
  * @param a Primeira aresta do triângulo.
  * @param b Segunda aresta do triângulo.
  * @param c Terceira aresta do triângulo.
@@ -225,7 +225,7 @@ static void compute_face_normal(const Vec3 *a, const Vec3 *b, const Vec3 *c, Vec
  *
  * @note O MTL pode conter caminhos relativos para texturas,
  * que devem ser resolvidos com base no diretório do próprio MTL.
- * 
+ *
  * @note A função assume que a estrutura materials tenha espaço suficiente para armazenar
  * os n materiais lidos. Caso contrário, a função não fará nada e retornará sem
  * alterar a estrutura.
@@ -316,7 +316,7 @@ static void load_mtl(const char *mtl_fullpath, Material **materials_ptr, size_t*
                 continue;
             }
             if (sscanf(line, "Tr %f", &d) == 1) {
-                // alguns MTLs usam Tr = 1 -> fully transparent; outros o inverso. 
+                // alguns MTLs usam Tr = 1 -> fully transparent; outros o inverso.
                 // Convenção comum: Tr = 1 - d. Tentamos adotar Tr como transparência direta:
                 mat_ptr->opacity = 1.0f - d;
                 mat_ptr->is_alpha_enabled = mat_ptr->opacity < 1.0f;

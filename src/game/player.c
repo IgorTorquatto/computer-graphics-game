@@ -41,6 +41,9 @@ void initPlayer(Player *p) {
     p->width = 1.0f;
     p->height = 2.0f;
     p->depth = 1.0f;
+    p->animationTime = 0.0f;
+    p->side = 0;
+    p->sideTimer = 0.0f;
     set_state_run(p);
 }
 
@@ -52,6 +55,15 @@ static void set_state_jump(Player* p) {
 
 void update_player(Player *p, float dt) {
     p->x = lerp(p->x, LANE_X(p->lane), ease_out_quad(dt * move_speed));
+
+    if (p->side != 0) {
+        p->sideTimer += dt;
+        if (p->sideTimer >= 0.4f) { 
+            p->side = 0;
+            p->sideTimer = 0.0f;
+        }
+    }
+
 
     switch (p->state) {
 
@@ -66,12 +78,14 @@ void update_player(Player *p, float dt) {
         } break;
 
         case P_RUNNING: {
+            p->animationTime += 0.5f;
             last_step_timer += dt;
             if (last_step_timer >= WALK_SOUND_TIME)
                 play_steps();
         } break;
 
         default:
+            p->animationTime = 0.0f;
             break;
     }
 
@@ -85,6 +99,8 @@ static void endSlide(void *data) {
 }
 
 static void move_left(Player* p) {
+    p->sideTimer = 0.0f;
+    p->side = 1;
     if (p->lane > 0) {
         p->lane--;
         audio_bus_play_sfx(SFX_DASH);
@@ -92,6 +108,8 @@ static void move_left(Player* p) {
 }
 
 static void move_right(Player* p) {
+    p->sideTimer = 0.0f;
+    p->side = 2;
     if (p->lane < 2) {
         p->lane++;
         audio_bus_play_sfx(SFX_DASH);
@@ -99,6 +117,8 @@ static void move_right(Player* p) {
 }
 
 static void jump(Player* p) {
+    //p->sideTimer = 0.0f;
+    p->side = 0;
     if (p->state == P_RUNNING) {
         p->vy = 12.0f;
         set_state_jump(p);
@@ -153,12 +173,113 @@ void handlePlayerSpecial(Player *p, int key) {
 
 void drawPlayer(const Player *p) {
     glEnable(GL_COLOR_MATERIAL);
+    glEnable(GL_NORMALIZE);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    
+
     glColor3f(0.1f, 0.4f, 0.9f);
     glPushMatrix();
     glTranslatef(p->x, p->y + p->height * 0.5f, p->z);
     glScalef(p->width, p->height, p->depth);
     glutSolidCube(1.0f);
     glPopMatrix();
+
+    glColor3f(0.1f,0.1f,0.1f);
+    glPushMatrix();
+    glTranslatef(p->x, p->y + p->height + 0.2f, p->z);
+    glScalef(p->width,0.1f,p->depth);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslatef(p->x, p->y + p->height + 0.3f, p->z);
+    glScalef(p->width - 0.3f,0.3f,p->depth - 0.3f);
+    glutSolidCube(1.0f);
+    glPopMatrix();
+
+
+    glColor3f(0.1f,0.4f,0.9f);
+
+    float armAngle = 0.0f;
+
+    if(p->side == 1){
+        armAngle = 30.0f;
+        // Braço esquerdo
+        glPushMatrix();
+        glTranslatef(p->x - p->width * 0.5f, p->y + p->height * 0.5f, p->z);
+        glRotatef(armAngle,0.0f,0.0f,1.0f);
+        glTranslatef(-p->width * 0.2f + 0.4f, 0.0f, 0.0f);
+        glScalef(p->width * 0.4f, p->height * 0.6f, p->depth * 0.4f);
+        glutSolidCube(1.0f);
+        glPopMatrix();
+        
+        // Braço direito
+        glPushMatrix();
+        glTranslatef(p->x + p->width * 0.5f, p->y + p->height * 0.5f, p->z);
+        glRotatef(armAngle,0.0f,0.0f,1.0f);
+        glTranslatef(p->width * 0.2f + 0.1f, 0.0f, 0.0f);
+        glScalef(p->width * 0.4f, p->height * 0.6f, p->depth * 0.4f);
+        glutSolidCube(1.0f);
+        glPopMatrix();
+
+    }else if (p->side == 2){
+        armAngle = -30.0f;
+        // Braço esquerdo
+        glPushMatrix();
+        glTranslatef(p->x - p->width * 0.5f, p->y + p->height * 0.5f, p->z);
+        glRotatef(armAngle,0.0f,0.0f,1.0f);
+        glTranslatef(-p->width * 0.2f -0.1f, 0.0f, 0.0f);
+        glScalef(p->width * 0.4f, p->height * 0.6f, p->depth * 0.4f);
+        glutSolidCube(1.0f);
+        glPopMatrix();
+        
+        // Braço direito
+        glPushMatrix();
+        glTranslatef(p->x + p->width * 0.5f, p->y + p->height * 0.5f, p->z);
+        glRotatef(armAngle,0.0f,0.0f,1.0f);
+        glTranslatef(p->width * 0.2f - 0.5f, 0.0f, 0.0f);
+        glScalef(p->width * 0.4f, p->height * 0.6f, p->depth * 0.4f);
+        glutSolidCube(1.0f);
+        glPopMatrix();
+    }else{
+        if(p->state == P_RUNNING){
+            armAngle = sinf(p->animationTime) * 30.0f;
+            // Braço esquerdo
+            glPushMatrix();
+            glTranslatef(p->x - p->width * 0.5f, p->y + p->height * 0.5f, p->z);
+            glRotatef(armAngle,1.0f,0.0f,0.0f);
+            glTranslatef(-p->width * 0.2f, 0.0f, 0.0f);
+            glScalef(p->width * 0.4f, p->height * 0.6f, p->depth * 0.4f);
+            glutSolidCube(1.0f);
+            glPopMatrix();
+            
+            // Braço direito
+            glPushMatrix();
+            glTranslatef(p->x + p->width * 0.5f, p->y + p->height * 0.5f, p->z);
+            glRotatef(-armAngle,1.0f,0.0f,0.0f);
+            glTranslatef(p->width * 0.2f, 0.0f, 0.0f);
+            glScalef(p->width * 0.4f, p->height * 0.6f, p->depth * 0.4f);
+            glutSolidCube(1.0f);
+            glPopMatrix();
+        }else if(p->state == P_JUMPING){
+            armAngle = 120;
+            glPushMatrix();
+            glTranslatef(p->x - p->width * 0.9, p->y + p->height * 0.65f, p->z);
+            glRotatef(-armAngle,0.0f,0.0f,1.0f);
+            glTranslatef(-p->width * 0.2f, 0.0f, 0.0f);
+            glScalef(p->width * 0.4f, p->height * 0.6f, p->depth * 0.4f);
+            glutSolidCube(1.0f);
+            glPopMatrix();
+            
+            // Braço direito
+            glPushMatrix();
+            glTranslatef(p->x + p->width * 0.9f, p->y + p->height * 0.65f, p->z);
+            glRotatef(armAngle,0.0f,0.0f,1.0f);
+            glTranslatef(p->width * 0.2f, 0.0f, 0.0f);
+            glScalef(p->width * 0.4f, p->height * 0.6f, p->depth * 0.4f);
+            glutSolidCube(1.0f);
+            glPopMatrix();
+        }
+    }
     glDisable(GL_COLOR_MATERIAL);
 }

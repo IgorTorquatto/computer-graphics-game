@@ -6,3 +6,6 @@ bin/
 *.layout
 *.workspace
 *.cbTemp
+
+build/
+
