@@ -10,6 +10,7 @@
 static Mix_Music *musics[MUSIC_N];
 static Mix_Chunk *effects[SFX_N];
 
+extern int audio_mute;
 
 void audio_bus_init()
 {
@@ -65,6 +66,12 @@ void audio_bus_init()
 
 void audio_bus_play_music(MusicTrack track, bool loop)
 {
+    if (audio_mute) {
+    Mix_HaltMusic();
+    Mix_HaltChannel(-1);
+    return;
+}
+
     if (!musics[track]) {
         print_error("Music [%d] not loaded", track);
         return;
@@ -92,6 +99,12 @@ void audio_bus_stop_music()
 
 void audio_bus_play_sfx(SfxTrack track)
 {
+    if (audio_mute) {
+    Mix_HaltMusic();
+    Mix_HaltChannel(-1);
+    return;
+}
+
     if (!effects[track]) {
         print_error("SFX [%d] not loaded", track);
         return;
@@ -107,6 +120,12 @@ static bool active_channels[8]; // all channels inactive
 
 void audio_bus_play_channel(SfxTrack track, int channel)
 {
+    if (audio_mute) {
+    Mix_HaltMusic();
+    Mix_HaltChannel(-1);
+    return;
+} 
+
     active_channels[channel] = true;
     if (!effects[track]) {
         print_error("SFX [%d] not loaded", track);

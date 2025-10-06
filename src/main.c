@@ -37,6 +37,8 @@ float z_far = 200.0f;
 float escalaArvoreDefault = 1.0f;
 float distanciaTotal = 0.0f;
 
+int audio_mute = 0; // 0 = som ativado, 1 = mutado
+
 typedef struct{
     int active;
     float x,y,z;
@@ -516,6 +518,38 @@ void keyboard_event(unsigned char key, int x, int y) {
             return;
         } break;
 
+         case 'g': case 'G': {
+            if (modoAtual == MODO_JOGO) {
+                float finalScore = calcularDistanciaTotal();
+                audio_bus_play_sfx(SFX_DAMAGE);
+                print_info("Game over! Score: %.2f", finalScore);
+                ranking_add(finalScore);
+                ranking_save();
+                modoAtual = MODO_GAME_OVER;
+                audio_bus_stop_music();
+                audio_bus_stop_all_channels();
+                audio_bus_play_music(MUSIC_GAME_OVER, false);
+                return;
+            }
+        } break;
+
+        // 'm' para mute/unmute
+        case 'm': case 'M':
+            audio_mute = !audio_mute;
+            if (audio_mute) {
+                audio_bus_stop_music();
+                audio_bus_stop_all_channels();
+            } else {
+                // opcional: retomar música
+                if (modoAtual == MODO_MENU)
+                    audio_bus_play_music(MUSIC_MENU, true);
+                else if (modoAtual == MODO_JOGO)
+                    audio_bus_play_music(MUSIC_GAME, true);
+        }
+        print_info("Áudio %s", audio_mute ? "desativado" : "ativado");
+        break;
+
+
         default:
             break;
     }
@@ -557,9 +591,8 @@ void reshape(int w, int h) {
 }
 
 void initGL() {
-    // Define a cor de limpeza para um tom neutro claro, aproximado da areia
-    glClearColor(0.13f, 0.55f, 0.13f, 1.0f); // verde floresta
-
+    // Define a cor de fundo da tela 
+    glClearColor(0.04f, 0.02f, 0.1f, 1.0f); //azul escuro quase preto
 
     #pragma region Enable Culling and Depth Test
         glEnable(GL_DEPTH_TEST);
@@ -581,27 +614,54 @@ void initGL() {
 
     #pragma region Enable Lighting
         glEnable(GL_LIGHTING);
+
         glEnable(GL_LIGHT0);
+
+        GLfloat light_ambient[]   = { 0.04f, 0.04f, 0.06f, 1.0f };
+        GLfloat light_diffuse[]   = { 0.12f, 0.12f, 0.18f, 1.0f };
+        GLfloat light_specular[]  = { 0.02f, 0.02f, 0.03f, 1.0f };
+        GLfloat light_direction[] = { -0.8f, -0.7f, 0.4f, 0.0f };
+
+        glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+        glLightfv(GL_LIGHT0, GL_POSITION, light_direction);
+
         glEnable(GL_LIGHT1);
 
         GLfloat light1_ambient[] = {0.2f, 0.2f, 0.1f, 1.0f};
         GLfloat light1_diffuse[] = {0.8f, 0.8f, 0.6f, 1.0f};
         GLfloat light1_specular[] = {0.9f, 0.9f, 0.8f, 1.0f};
-    
+
         glLightfv(GL_LIGHT1, GL_AMBIENT, light1_ambient);
         glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
         glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
 
-        GLfloat light_ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
-        GLfloat light_diffuse[]  = { 0.9f, 0.9f, 0.9f, 1.0f };
-        GLfloat light_specular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-        GLfloat light_position[] = { 5.0f, 10.0f, 5.0f, 1.0f };
-        glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
-        glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
-        glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    #pragma endregion
+        glEnable(GL_LIGHT2);
 
+        GLfloat light2_ambient[]   = { 0.01f, 0.01f, 0.015f, 1.0f };
+        GLfloat light2_diffuse[]   = { 0.25f, 0.25f, 0.2f, 1.0f };
+        GLfloat light2_specular[]  = { 0.1f, 0.1f, 0.08f, 1.0f };
+
+        glLightfv(GL_LIGHT2, GL_AMBIENT,  light2_ambient);
+        glLightfv(GL_LIGHT2, GL_DIFFUSE,  light2_diffuse);
+        glLightfv(GL_LIGHT2, GL_SPECULAR, light2_specular);
+
+        glEnable(GL_LIGHT3);
+
+        GLfloat light3_ambient[]   = { 0.02f, 0.02f, 0.03f, 1.0f };
+        GLfloat light3_diffuse[]   = { 0.0f, 0.0f, 0.0f, 1.0f };
+        GLfloat light3_specular[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
+        GLfloat light3_direction[] = { 0.0f, -1.0f, 0.0f, 0.0f };
+
+        glLightfv(GL_LIGHT3, GL_AMBIENT, light3_ambient);
+        glLightfv(GL_LIGHT3, GL_DIFFUSE, light3_diffuse);
+        glLightfv(GL_LIGHT3, GL_SPECULAR, light3_specular);
+        glLightfv(GL_LIGHT3, GL_POSITION, light3_direction);
+
+
+    #pragma endregion
+    
     #pragma region Material Setup
         GLfloat mat_specular[]  = { 0.3f, 0.3f, 0.3f, 1.0f };
         GLfloat mat_shininess[] = { 16.0f };
