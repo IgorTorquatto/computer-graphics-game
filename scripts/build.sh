@@ -48,8 +48,8 @@ fi
 
 UNAME="$(uname -s)"
 case "$UNAME" in
-  Linux*|MINGW*|MSYS*|CYGWIN*) LINK_LIBS=( -lglut -lGL -lGLU -lm ) ;;
-  Darwin*) LINK_LIBS=( -framework OpenGL -framework GLUT -lm ) ;;
+  Linux*|Darwin*) LINK_LIBS=( -lglut -lGL -lGLU -lm ) ;;
+  MINGW*|MSYS*|CYGWIN*) LINK_LIBS=( -lglut -lGL -lGLU -lm ) ;;
   *) LINK_LIBS=( -lglut -lGL -lGLU -lm ) ;;
 esac
 
@@ -57,18 +57,59 @@ esac
 if command -v cmake &> /dev/null; then
     print_info "CMake encontrado. Iniciando build via CMake..."
     mkdir -p "$BIN"
-
     BUILD_DIR="$BIN"
     cd "$BUILD_DIR"
 
-    if $DEBUG; then
-      cmake ../scripts -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
-    else
-      cmake ../scripts -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
+    # Detectar ambiente MSYS2/MINGW via MSYSTEM ou uname
+    MSYS_ENV="${MSYSTEM:-}"
+    GENERATOR=""
+    CMAKE_MAKE_PROG=""
+    CMAKE_EXTRA_ARGS=()
+
+    if [[ "$MSYS_ENV" == MSYS* ]] || [[ "$UNAME" == MSYS* ]]; then
+        # Usuário está no MSYS (ambiente POSIX puro) — não é o recomendado para compilar via MinGW
+        print_error "Parece que você está em um shell MSYS puro. Abra o 'mingw64.exe' (MinGW64) em vez de 'msys2.exe' e rode este script novamente."
+        exit 1
     fi
 
+    if [[ "$MSYS_ENV" == MINGW* ]] || [[ "$UNAME" == MINGW* ]]; then
+        # MinGW environment (mingw32/mingw64)
+        GENERATOR="MinGW Makefiles"
+        # Tenta encontrar mingw32-make no PATH
+        if command -v mingw32-make &> /dev/null; then
+            CMAKE_MAKE_PROG="$(command -v mingw32-make)"
+        elif [[ -x "/mingw64/bin/mingw32-make.exe" ]]; then
+            CMAKE_MAKE_PROG="/mingw64/bin/mingw32-make.exe"
+        elif [[ -x "/mingw32/bin/mingw32-make.exe" ]]; then
+            CMAKE_MAKE_PROG="/mingw32/bin/mingw32-make.exe"
+        else
+            print_error "mingw32-make não encontrado. Instale o toolchain do MSYS2: pacman -S mingw-w64-x86_64-toolchain"
+            exit 1
+        fi
+        print_info "Ambiente MinGW detectado. Usando generator: ${GENERATOR}"
+        CMAKE_EXTRA_ARGS+=( "-DCMAKE_MAKE_PROGRAM=${CMAKE_MAKE_PROG}" )
+    else
+        # Linux / macOS or other POSIX
+        GENERATOR="Unix Makefiles"
+        print_info "Ambiente POSIX detectado. Usando generator: ${GENERATOR}"
+    fi
+
+    # Configurar tipo de build
+    if $DEBUG; then
+      CONFIG_TYPE="Debug"
+    else
+      CONFIG_TYPE="Release"
+    fi
+
+    # Invoca o CMake (coloca o source em ../scripts como no seu fluxo)
+    print_info "Executando cmake (source: ../scripts) ..."
+    cmake ../scripts -G "${GENERATOR}" -DCMAKE_BUILD_TYPE="${CONFIG_TYPE}" "${CMAKE_EXTRA_ARGS[@]}"
+
+    # Número de jobs
     jobs=$(nproc 2>/dev/null || sysctl -n hw.ncpu 2>/dev/null || echo 1)
-    make -j"$jobs"
+    # Use cmake --build para ser portável; passa -j para o backend
+    print_info "Compilando com ${jobs} jobs..."
+    cmake --build . --config "${CONFIG_TYPE}" -- -j"${jobs}"
 
     print_success "Build via CMake finalizado."
     exit 0

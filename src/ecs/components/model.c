@@ -20,6 +20,10 @@
 #define DEFAULT_CAPACITY 1024
 #define MAX_MAT_NAME 256
 
+#pragma region Globals
+    extern GLfloat shadow_light_direction[];
+#pragma region 
+
 
 /*--- Funções estáticas auxiliares ---*/
 #pragma region Local Functions
@@ -742,7 +746,7 @@ bool load_obj(const char *filename, Model* model)
     return true;
 }
 
-void draw_model(const Model* model)
+static void _draw_model(const Model* model)
 {
     size_t vertices_count = model->vertices_count;
     size_t normals_count = model->normals_count;
@@ -861,6 +865,41 @@ void draw_model(const Model* model)
 
     glDisable(GL_TEXTURE_2D);
     glDisable(GL_NORMALIZE);
+}
+
+void draw_model(const Model* model)
+{
+// Draw your model normally
+    _draw_model(model);
+    
+    // Set up shadow properties
+    glColor4f(0.1f, 0.1f, 0.1f, 0.5f); // Dark, semi-transparent
+    glDisable(GL_LIGHTING);
+    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    
+    // Push current matrix
+    glPushMatrix();
+    
+    // Create shadow projection matrix (projects onto floor plane y=0)
+    GLfloat shadowMatrix[16] = {
+        shadow_light_direction[1], 0, 0, 0,
+        -shadow_light_direction[0], 0, -shadow_light_direction[2], -1,
+        0, 0, shadow_light_direction[1], 0,
+        0, 0, 0, shadow_light_direction[1]
+    };
+    
+    // Apply shadow projection
+    glMultMatrixf(shadowMatrix);
+    
+    // Draw model as shadow (flattened on floor)
+    _draw_model(model);
+    
+    glPopMatrix();
+    
+    glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
 }
 
 void free_model(Model* model)

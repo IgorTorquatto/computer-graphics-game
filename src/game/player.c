@@ -16,7 +16,11 @@ static float last_step_timer = 0.0f;
 
 static float const move_speed = 10.0f;
 
-extern float world_speed;
+#pragma region Globals
+    extern float world_speed;
+
+    extern GLfloat shadow_light_direction[];
+#pragma region 
 
 static void play_steps()
 {
@@ -172,7 +176,7 @@ void handlePlayerSpecial(Player *p, int key) {
     }
 }
 
-void drawPlayer(const Player *p) {
+void _drawPlayer(const Player *p) {
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -180,7 +184,6 @@ void drawPlayer(const Player *p) {
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-    
 
     glColor3f(0.1f, 0.4f, 0.9f);
     glPushMatrix();
@@ -288,4 +291,144 @@ void drawPlayer(const Player *p) {
     }
     glDisable(GL_CULL_FACE);
     glDisable(GL_COLOR_MATERIAL);
+}
+
+void drawSimplePlayerShadow(const Player *p) {
+    glDisable(GL_LIGHTING);
+    glColor4f(0.1f, 0.1f, 0.1f, 0.5f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glPushMatrix();
+    // Position shadow slightly above floor to avoid z-fighting
+    glTranslatef(p->x, 0.02f, p->z);
+    
+    // Scale based on player height (shadow gets larger when player is higher)
+    float shadowScale = 0.8f + (p->y * 0.1f);
+    glScalef(shadowScale, 1.0f, shadowScale);
+    
+    // Draw circular shadow
+    glBegin(GL_TRIANGLE_FAN);
+    glVertex3f(0.0f, 0.0f, 0.0f);
+    for (int i = 0; i <= 360; i += 20) {
+        float angle = i * 3.14159f / 180.0f;
+        glVertex3f(cos(angle) * p->width, 0.0f, sin(angle) * p->depth);
+    }
+    glEnd();
+    
+    glPopMatrix();
+
+    glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
+}
+
+// void drawPlayer(const Player *p)
+// {
+//     // Draw your model normally
+//     _drawPlayer(p);
+// 
+//     // Draw simple circular shadow
+// }
+
+void drawCuboidProjectionShadow(const Player *p) {
+    glDisable(GL_LIGHTING);
+    glColor4f(0.1f, 0.1f, 0.1f, 0.5f);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Light direction (normalized)
+    float light_dir[3] = {shadow_light_direction[0], 
+                         shadow_light_direction[1], 
+                         shadow_light_direction[2]};
+    
+    // Normalize light direction if needed
+    float length = sqrt(light_dir[0]*light_dir[0] + 
+                       light_dir[1]*light_dir[1] + 
+                       light_dir[2]*light_dir[2]);
+    if (length > 0) {
+        light_dir[0] /= length;
+        light_dir[1] /= length;
+        light_dir[2] /= length;
+    }
+
+    // Player dimensions
+    float half_width = p->width * 0.5f;
+    float half_depth = p->depth * 0.5f;
+    float height = p->height;
+
+    // Calculate the 8 vertices of the player's bounding box
+    float vertices[8][3] = {
+        // Bottom face
+        {p->x - half_width, p->y, p->z - half_depth},
+        {p->x + half_width, p->y, p->z - half_depth},
+        {p->x + half_width, p->y, p->z + half_depth},
+        {p->x - half_width, p->y, p->z + half_depth},
+        // Top face
+        {p->x - half_width, p->y + height, p->z - half_depth},
+        {p->x + half_width, p->y + height, p->z - half_depth},
+        {p->x + half_width, p->y + height, p->z + half_depth},
+        {p->x - half_width, p->y + height, p->z + half_depth}
+    };
+
+    // Project each vertex onto the floor (y=0) along light direction
+    float shadow_vertices[8][3];
+    for (int i = 0; i < 8; i++) {
+        // If light direction is vertical, handle separately
+        if (fabs(light_dir[1]) < 0.001f) {
+            // Horizontal light - project to infinity or use simple shadow
+            shadow_vertices[i][0] = vertices[i][0];
+            shadow_vertices[i][1] = 0.02f;
+            shadow_vertices[i][2] = vertices[i][2];
+        } else {
+            // Calculate projection onto floor plane (y=0)
+            float t = -vertices[i][1] / light_dir[1];
+            shadow_vertices[i][0] = vertices[i][0] + light_dir[0] * t;
+            shadow_vertices[i][1] = 0.02f; // Slightly above floor
+            shadow_vertices[i][2] = vertices[i][2] + light_dir[2] * t;
+        }
+    }
+
+    // Draw the shadow as a projected cuboid
+    glBegin(GL_QUADS);
+    
+    // Bottom face (projected)
+    glVertex3fv(shadow_vertices[0]);
+    glVertex3fv(shadow_vertices[1]);
+    glVertex3fv(shadow_vertices[2]);
+    glVertex3fv(shadow_vertices[3]);
+    
+    // Top face (projected)
+    glVertex3fv(shadow_vertices[4]);
+    glVertex3fv(shadow_vertices[5]);
+    glVertex3fv(shadow_vertices[6]);
+    glVertex3fv(shadow_vertices[7]);
+    
+    // Side faces
+    glVertex3fv(shadow_vertices[0]); glVertex3fv(shadow_vertices[1]);
+    glVertex3fv(shadow_vertices[5]); glVertex3fv(shadow_vertices[4]);
+    
+    glVertex3fv(shadow_vertices[1]); glVertex3fv(shadow_vertices[2]);
+    glVertex3fv(shadow_vertices[6]); glVertex3fv(shadow_vertices[5]);
+    
+    glVertex3fv(shadow_vertices[2]); glVertex3fv(shadow_vertices[3]);
+    glVertex3fv(shadow_vertices[7]); glVertex3fv(shadow_vertices[6]);
+    
+    glVertex3fv(shadow_vertices[3]); glVertex3fv(shadow_vertices[0]);
+    glVertex3fv(shadow_vertices[4]); glVertex3fv(shadow_vertices[7]);
+    
+    glEnd();
+
+    glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
+}
+
+void drawPlayer(const Player *p)
+{
+    // Draw your model normally
+    _drawPlayer(p);
+
+    // Draw proper cuboid projection shadow
+    drawCuboidProjectionShadow(p);
+
+    drawSimplePlayerShadow(p);
 }
