@@ -39,6 +39,10 @@ float distanciaTotal = 0.0f;
 
 int audio_mute = 0; // 0 = som ativado, 1 = mutado
 
+
+
+GLfloat shadow_light_direction[] = {0.9f, 0.9f, 0.8f, 1.0f};
+
 typedef struct{
     int active;
     float x,y,z;
@@ -47,6 +51,9 @@ typedef struct{
 
 static Poste p;
 static Poste q;
+
+static GLfloat light1_pos[4];
+static GLfloat light2_pos[4];
 
 void initPoste(){
     p.active = 1;
@@ -78,7 +85,7 @@ void updatePoste(float dt,float world_speed){
 
 }
 
-void drawPoste() {
+static void _drawPoste() {
 
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -88,35 +95,16 @@ void drawPoste() {
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_NORMALIZE);
 
-    // ----- LUZ 1 (poste esquerdo) -----
-    GLfloat light1_pos[] = { p.x, p.altura + 0.2f, p.z, 1.0f };
-    GLfloat light1_diffuse[]  = { 1.0f, 0.1f, 0.1f, 1.0f };
-    GLfloat light1_ambient[]  = { 0.7f, 0.0f, 0.0f, 1.0f };
-    GLfloat light1_specular[] = { 1.0f, 0.6f, 0.6f, 1.0f };
-
-    glEnable(GL_LIGHT1);
+    // Move lights
+    light1_pos[0] = p.x;
+    light1_pos[1] = p.altura + 0.2f;
+    light1_pos[2] = p.z;
     glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE,  light1_diffuse);
-    glLightfv(GL_LIGHT1, GL_AMBIENT,  light1_ambient);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
-    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION,  1.0f);
-    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION,    0.05f);
-    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.01f);
 
-    // ----- LUZ 2 (poste direito) -----
-    GLfloat light2_pos[] = { q.x, q.altura + 0.2f, q.z, 1.0f };
-    GLfloat light2_diffuse[]  = { 1.0f, 0.1f, 0.1f, 1.0f };
-    GLfloat light2_ambient[]  = { 0.7f, 0.0f, 0.0f, 1.0f };
-    GLfloat light2_specular[] = { 1.0f, 0.6f, 0.5f, 1.0f };
-
-    glEnable(GL_LIGHT2);
-    glLightfv(GL_LIGHT2, GL_POSITION, light2_pos);
-    glLightfv(GL_LIGHT2, GL_DIFFUSE,  light2_diffuse);
-    glLightfv(GL_LIGHT2, GL_AMBIENT,  light2_ambient);
-    glLightfv(GL_LIGHT2, GL_SPECULAR, light2_specular);
-    glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION,  1.0f);
-    glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION,    0.05f);
-    glLightf(GL_LIGHT2, GL_QUADRATIC_ATTENUATION, 0.01f);
+    light2_pos[0] = q.x;
+    light2_pos[1] = q.altura + 0.2f;
+    light2_pos[2] = q.z;
+    glLightfv(GL_LIGHT1, GL_POSITION, light2_pos);
 
     // ----- DESENHA OS POSTES -----
     glColor3f(0.15f, 0.15f, 0.15f);
@@ -159,6 +147,42 @@ void drawPoste() {
     glPopAttrib();
 
     glDisable(GL_COLOR_MATERIAL);
+}
+
+
+void drawPoste()
+{
+    // Draw your model normally
+    _drawPoste();
+
+    // Set up shadow properties
+    glColor4f(0.1f, 0.1f, 0.1f, 0.5f); // Dark, semi-transparent
+    glDisable(GL_LIGHTING);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // Push current matrix
+    glPushMatrix();
+
+    // Create shadow projection matrix (projects onto floor plane y=0)
+    GLfloat shadowMatrix[16] = {
+        shadow_light_direction[1], 0, 0, 0,
+        -shadow_light_direction[0], 0, -shadow_light_direction[2], -1,
+        0, 0, shadow_light_direction[1], 0,
+        0, 0, 0, shadow_light_direction[1]
+    };
+
+    // Apply shadow projection
+    glMultMatrixf(shadowMatrix);
+
+    // Draw poste as shadow (flattened on floor)
+    _drawPoste();
+
+    glPopMatrix();
+
+    glDisable(GL_BLEND);
+    glEnable(GL_LIGHTING);
 }
 
 
@@ -598,32 +622,50 @@ void initGL() {
        // GLfloat light_ambient[]   = { 0.04f, 0.04f, 0.06f, 1.0f };
         GLfloat light_diffuse[]   = { 0.12f, 0.12f, 0.18f, 1.0f };
         GLfloat light_specular[]  = { 0.02f, 0.02f, 0.03f, 1.0f };
-        GLfloat light_direction[] = { -0.8f, -0.7f, 0.4f, 0.0f };
+        GLfloat light0_direction[] = { -0.8f, -0.7f, 0.4f, 0.0f };
 
        // glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
         glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
         glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-        glLightfv(GL_LIGHT0, GL_POSITION, light_direction);
+        glLightfv(GL_LIGHT0, GL_POSITION, light0_direction);
+
+        // ----- LUZ 1 (poste esquerdo) -----
+        GLfloat light1_diffuse[]  = { 1.0f, 0.1f, 0.1f, 1.0f };
+        GLfloat light1_ambient[]  = { 0.7f, 0.0f, 0.0f, 1.0f };
+        GLfloat light1_specular[] = { 1.0f, 0.6f, 0.6f, 1.0f };
+
+        // set positions
+        light1_pos[0] = p.x;
+        light1_pos[1] = p.altura + 0.2f;
+        light1_pos[2] = p.z;
 
         glEnable(GL_LIGHT1);
-
-        GLfloat light1_ambient[] = {0.2f, 0.2f, 0.1f, 1.0f};
-        GLfloat light1_diffuse[] = {0.8f, 0.8f, 0.6f, 1.0f};
-        GLfloat light1_specular[] = {0.9f, 0.9f, 0.8f, 1.0f};
-
-        glLightfv(GL_LIGHT1, GL_AMBIENT, light1_ambient);
-        glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
+        glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
+        glLightfv(GL_LIGHT1, GL_DIFFUSE,  light1_diffuse);
+        glLightfv(GL_LIGHT1, GL_AMBIENT,  light1_ambient);
         glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
 
+        glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION,  1.0f);
+        glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION,    0.05f);
+        glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.01f);
+
+        // ----- LUZ 2 (poste direito) -----
+        light2_pos[0] = q.x;
+        light2_pos[1] = q.altura + 0.2f;
+        light2_pos[2] = q.z;
+        GLfloat light2_diffuse[]  = { 1.0f, 0.1f, 0.1f, 1.0f };
+        GLfloat light2_ambient[]  = { 0.7f, 0.0f, 0.0f, 1.0f };
+        GLfloat light2_specular[] = { 1.0f, 0.6f, 0.5f, 1.0f };
+
         glEnable(GL_LIGHT2);
-
-        GLfloat light2_ambient[]   = { 0.01f, 0.01f, 0.015f, 1.0f };
-        GLfloat light2_diffuse[]   = { 0.25f, 0.25f, 0.2f, 1.0f };
-        GLfloat light2_specular[]  = { 0.1f, 0.1f, 0.08f, 1.0f };
-
-        glLightfv(GL_LIGHT2, GL_AMBIENT,  light2_ambient);
+        glLightfv(GL_LIGHT2, GL_POSITION, light2_pos);
         glLightfv(GL_LIGHT2, GL_DIFFUSE,  light2_diffuse);
+        glLightfv(GL_LIGHT2, GL_AMBIENT,  light2_ambient);
         glLightfv(GL_LIGHT2, GL_SPECULAR, light2_specular);
+
+        glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION,  1.0f);
+        glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION,    0.05f);
+        glLightf(GL_LIGHT2, GL_QUADRATIC_ATTENUATION, 0.01f);
 
         glEnable(GL_LIGHT3);
 
@@ -638,7 +680,7 @@ void initGL() {
         glLightfv(GL_LIGHT3, GL_POSITION, light3_direction);
 
     #pragma endregion
-    
+
     #pragma region Material Setup
         GLfloat mat_specular[]  = { 0.3f, 0.3f, 0.3f, 1.0f };
         GLfloat mat_shininess[] = { 16.0f };
