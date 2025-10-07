@@ -1,7 +1,7 @@
 #include <GL/glut.h>
 
 // Implementation defined in model.c
-#include <stb_image.h>
+#include "stb_image.h"
 
 #pragma region Local Includes
     #include "utils/print.h"

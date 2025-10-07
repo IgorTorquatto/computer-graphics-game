@@ -4,14 +4,14 @@
 	<Project>
 		<Option title="CG-Game" />
 		<Option pch_mode="2" />
-		<Option compiler="copy_of_gnu_gcc_compiler" />
+		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/debug/CG-Game" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin/debug" />
 				<Option object_output="bin/obj/debug/" />
 				<Option type="1" />
-				<Option compiler="copy_of_gnu_gcc_compiler" />
+				<Option compiler="gcc" />
 				<ExtraCommands>
 					<Add before='xcopy /E /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\debug\&quot;' />
 					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2\bin\SDL2.dll&quot; &quot;bin\debug\&quot;' />
@@ -24,7 +24,7 @@
 				<Option working_dir="bin/release" />
 				<Option object_output="bin/obj/release/" />
 				<Option type="0" />
-				<Option compiler="copy_of_gnu_gcc_compiler" />
+				<Option compiler="gcc" />
 				<ExtraCommands>
 					<Add before='xcopy /E /Y /D /I &quot;$(PROJECT_DIR)assets\*&quot; &quot;bin\release\&quot;' />
 					<Add before='xcopy /Y /D &quot;$(PROJECT_DIR)\dependencies\SDL2\bin\SDL2.dll&quot; &quot;bin\release\&quot;' />
@@ -45,7 +45,6 @@
 			<Add library="freeglut" />
 			<Add library="opengl32" />
 			<Add library="glu32" />
-			<Add library="freeglut" />
 			<Add library="winmm" />
 			<Add library="gdi32" />
 			<Add directory="$(#glut.lib)" />

@@ -20,7 +20,7 @@
 #include "game/tree.h"
 #include "game/player.h"
 #include "game/obstacle.h"
-
+//#include "game/poste.h"
 #include "ecs/systems/ranking.h"
 #if defined(_WIN32) || defined(_WIN64)
     #include <direct.h>
@@ -36,6 +36,132 @@ float z_far = 200.0f;
 
 float escalaArvoreDefault = 1.0f;
 float distanciaTotal = 0.0f;
+
+int audio_mute = 0; // 0 = som ativado, 1 = mutado
+
+typedef struct{
+    int active;
+    float x,y,z;
+    float altura;
+}Poste;
+
+static Poste p;
+static Poste q;
+
+void initPoste(){
+    p.active = 1;
+    p.x = -3.0f;
+    p.y = 0.0f;
+    p.z = -60.0f;
+    p.altura = 6.0f;
+
+    q.active = 1;
+    q.x = 8.0f;
+    q.y = 0.0f;
+    q.z = -60.0f;
+    q.altura = 6.0f;
+}
+
+void updatePoste(float dt,float world_speed){
+    if(p.active){
+        p.z += dt*world_speed;
+        if(p.z > 10.0f){
+            p.z = -60.0f;
+        }
+    }
+    if(q.active){
+        q.z += dt*world_speed;
+        if(q.z > 10.0f){
+            q.z = -60.0f;
+        }
+    }
+
+}
+
+void drawPoste() {
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
+    // Habilita uso de materiais baseados em cor
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+    glEnable(GL_NORMALIZE);
+
+    // ----- LUZ 1 (poste esquerdo) -----
+    GLfloat light1_pos[] = { p.x, p.altura + 0.2f, p.z, 1.0f };
+    GLfloat light1_diffuse[]  = { 1.0f, 0.1f, 0.1f, 1.0f };
+    GLfloat light1_ambient[]  = { 0.7f, 0.0f, 0.0f, 1.0f };
+    GLfloat light1_specular[] = { 1.0f, 0.6f, 0.6f, 1.0f };
+
+    glEnable(GL_LIGHT1);
+    glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
+    glLightfv(GL_LIGHT1, GL_DIFFUSE,  light1_diffuse);
+    glLightfv(GL_LIGHT1, GL_AMBIENT,  light1_ambient);
+    glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
+    glLightf(GL_LIGHT1, GL_CONSTANT_ATTENUATION,  1.0f);
+    glLightf(GL_LIGHT1, GL_LINEAR_ATTENUATION,    0.05f);
+    glLightf(GL_LIGHT1, GL_QUADRATIC_ATTENUATION, 0.01f);
+
+    // ----- LUZ 2 (poste direito) -----
+    GLfloat light2_pos[] = { q.x, q.altura + 0.2f, q.z, 1.0f };
+    GLfloat light2_diffuse[]  = { 1.0f, 0.1f, 0.1f, 1.0f };
+    GLfloat light2_ambient[]  = { 0.7f, 0.0f, 0.0f, 1.0f };
+    GLfloat light2_specular[] = { 1.0f, 0.6f, 0.5f, 1.0f };
+
+    glEnable(GL_LIGHT2);
+    glLightfv(GL_LIGHT2, GL_POSITION, light2_pos);
+    glLightfv(GL_LIGHT2, GL_DIFFUSE,  light2_diffuse);
+    glLightfv(GL_LIGHT2, GL_AMBIENT,  light2_ambient);
+    glLightfv(GL_LIGHT2, GL_SPECULAR, light2_specular);
+    glLightf(GL_LIGHT2, GL_CONSTANT_ATTENUATION,  1.0f);
+    glLightf(GL_LIGHT2, GL_LINEAR_ATTENUATION,    0.05f);
+    glLightf(GL_LIGHT2, GL_QUADRATIC_ATTENUATION, 0.01f);
+
+    // ----- DESENHA OS POSTES -----
+    glColor3f(0.15f, 0.15f, 0.15f);
+
+    glPushMatrix();
+        glTranslatef(p.x, p.altura / 2, p.z);
+        glScalef(0.4f, p.altura, 0.4f);
+        glutSolidCube(1.0f);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(q.x, q.altura / 2, q.z);
+        glScalef(0.4f, q.altura, 0.4f);
+        glutSolidCube(1.0f);
+    glPopMatrix();
+
+    glDisable(GL_CULL_FACE);
+
+    // ----- TOPO BRILHANTE (esferas) -----
+    GLfloat emissive[] = { 0.8f, 0.2f, 0.2f, 1.0f }; // brilho vermelho
+    GLfloat no_emissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
+    glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
+    glDisable(GL_LIGHTING);
+
+    glColor3f(1.0f, 0.0f, 0.0f);
+    glPushMatrix();
+        glTranslatef(p.x, p.altura + 0.3f, p.z);
+        glutSolidSphere(0.25f, 16, 16);
+    glPopMatrix();
+
+    glPushMatrix();
+        glTranslatef(q.x, q.altura + 0.3f, q.z);
+        glutSolidSphere(0.25f, 16, 16);
+    glPopMatrix();
+
+    glEnable(GL_LIGHTING);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, no_emissive);
+    glPopAttrib();
+
+    glDisable(GL_COLOR_MATERIAL);
+}
+
+
 
 float calcularDistanciaTotal() {
     int moedas = getCoinCount();
@@ -77,7 +203,6 @@ void drawText(const char *text, int x, int y, void *font, float r, float g, floa
     // Não reabilite iluminação aqui
 }
 
-
 void drawGameOverHUD() {
     int w = glutGet(GLUT_WINDOW_WIDTH);
     int h = glutGet(GLUT_WINDOW_HEIGHT);
@@ -94,7 +219,7 @@ void drawGameOverHUD() {
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
 
-    glColor3f(1.0f, 1.0f, 1.0f);
+    /*glColor3f(1.0f, 1.0f, 1.0f);
 
     int rectWidth = w / 2;
     int rectHeight = 150;
@@ -108,13 +233,13 @@ void drawGameOverHUD() {
         glVertex2i(rectX, rectY + rectHeight);
     glEnd();
 
-    glFlush();
+    glFlush();*/
 
     float distanciaFinal = calcularDistanciaTotal();
     char buffer[128];
     int x;
 
-    snprintf(buffer, sizeof(buffer), "Game over! M para voltar ao Menu");
+    snprintf(buffer, sizeof(buffer), "Game over! ESC para voltar ao Menu");
     x = (w - getTextWidth(buffer, GLUT_BITMAP_TIMES_ROMAN_24)) / 2;
     drawText(buffer, x, h/2 + 80, GLUT_BITMAP_TIMES_ROMAN_24, 1, 0, 0, h);
 
@@ -156,14 +281,16 @@ void drawRankingTitle(int ww, int wh) {
 }
 
 void resetGame() {
+    audio_bus_stop_music();
     initPlayer(&player);
+
+    initPoste();
     initObstacles();
     initObstacles();
-    world_speed = 12.0f;
-    distanciaPercorrida = 0.0f;
     initCoins();
 
-    audio_bus_stop_music();
+    world_speed = 12.0f;
+    distanciaPercorrida = 0.0f;
 }
 
 void update(float dt) {
@@ -174,6 +301,7 @@ void update(float dt) {
     update_floor(dt);
     update_player(&player, dt);
     obstacleUpdate(dt);
+    updatePoste(dt,world_speed);
 
     Obstacle* obstacles = getObstacles();
     int maxObs = getMaxObstacles();
@@ -194,17 +322,22 @@ void update(float dt) {
             obstCenterX, obstY, obstacles[i].z, obstWidth, obstHeight, obstDepth)
         ) {
             float finalScore = calcularDistanciaTotal();
+            audio_bus_play_sfx(SFX_DAMAGE);
             print_info("Adicionando score: %.2f", finalScore);
             ranking_add(finalScore);
             ranking_save();
-            modoAtual = MODO_GAMEOVER;
+            modoAtual = MODO_GAME_OVER;
+            audio_bus_stop_music();
+            audio_bus_stop_all_channels();
+            audio_bus_play_music(MUSIC_GAME_OVER, false);
+            return;
         }
     }
 
     distanciaPercorrida += world_speed * dt * fator;
 
     updateTrees(dt, world_speed);
-    updateBushes(dt, world_speed);
+   // updateBushes(dt, world_speed);
     updateCoins(dt);
 }
 
@@ -272,9 +405,10 @@ void renderScene() {
     drawObstacles();
     drawCoins3D();
     drawTrees();
-    drawBushes();
+    drawPoste();
+   // drawBushes();
 
-    if(modoAtual == MODO_GAMEOVER) {
+    if(modoAtual == MODO_GAME_OVER) {
         drawGameOverHUD();
         glutSwapBuffers();
         return;
@@ -284,310 +418,6 @@ void renderScene() {
     drawCoinsHUD(getCoinCount());
 
     glutSwapBuffers();
-#pragma endregion
-}*/
-
-/*void renderScene() {
-    if(modoAtual == MODO_MENU) {
-        desenhaMenu();
-        return;
-    }
-
-    if(modoAtual == MODO_RANKING) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
-
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
-
-        glDisable(GL_LIGHTING);
-        glDisable(GL_DEPTH_TEST);
-
-        drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-        ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_LIGHTING);
-
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
-
-        glutSwapBuffers();
-        return;
-    }
-
-#pragma region Render Game
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Definindo perspectiva
-    int w = glutGet(GLUT_WINDOW_WIDTH);
-    int h = glutGet(GLUT_WINDOW_HEIGHT);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(60.0f, (float)w/(float)h, 0.1f, 200.0f);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glPushMatrix();
-    glLoadIdentity(); // fixa na origem para seguir a câmera
-
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
-
-    glBegin(GL_QUADS);
-        glColor3f(0.5f, 0.8f, 1.0f);
-        glVertex3f(-1.0f, 1.7f, -1.0f);
-        glVertex3f(1.0f, 1.7f, -1.0f);
-
-        glColor3f(0.9f, 0.85f, 0.6f);
-        glVertex3f(1.0f, -1.0f, -1.0f);
-        glVertex3f(-1.0f, -1.0f, -1.0f);
-    glEnd();
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
-    glPopMatrix();
-
-    // Aplica a câmera
-    float camX = player.x;
-    float camY = 4.0f;
-    float camZ = player.z + 8.0f;
-    gluLookAt(camX, camY, camZ,
-              player.x, 1.0f, player.z - 8.0f,
-              0.0f, 1.0f, 0.0f);
-
-    glDisable(GL_LIGHTING);
-    glColor3f(0.5f, 0.8f, 1.0f);
-
-    glBegin(GL_QUADS);
-        glVertex3f(-100.0f, 25.0f, -180.0f);
-        glVertex3f(100.0f, 25.0f, -180.0f);
-        glVertex3f(100.0f, 100.0f, -180.0f);
-        glVertex3f(-100.0f, 100.0f, -180.0f);
-    glEnd();
-
-    glEnable(GL_LIGHTING);
-
-    //desenha fundo azul
-    glDisable(GL_LIGHTING);
-    glBegin(GL_QUADS);
-        glColor3f(0.5f, 0.8f, 1.0f); // azul claro
-        glVertex3f(-120.0f, 25.0f, -180.0f);
-        glVertex3f(120.0f, 25.0f, -180.0f);
-        glVertex3f(120.0f, 100.0f, -180.0f);
-        glVertex3f(-120.0f, 100.0f, -180.0f);
-    glEnd();
-
-    //Desenha faixa verde esquerda
-    glBegin(GL_QUADS);
-        glColor3f(0.15f, 0.7f, 0.21f); // verde claro
-        glVertex3f(-30.0f, 0.0f,  20.0f);
-        glVertex3f(-30.0f, 0.0f, -180.0f);
-        glVertex3f(-1.5f, 0.0f, -180.0f);
-        glVertex3f(-1.5f, 0.0f,  20.0f);
-    glEnd();
-
-    //Desenha faixa verde direita
-    glBegin(GL_QUADS);
-        glColor3f(0.15f, 0.7f, 0.21f);
-        glVertex3f(6.5f, 0.0f,  20.0f);
-        glVertex3f(6.5f, 0.0f, -180.0f);
-        glVertex3f(30.0f, 0.0f, -180.0f);
-        glVertex3f(30.0f, 0.0f,  20.0f);
-    glEnd();
-
-    glEnable(GL_LIGHTING);
-
-    // Desenha o chão e objetos
-    glDisable(GL_LIGHTING);
-    glColor3f(0.9f, 0.9f, 0.9f);
-    for(int i = -100; i < 100; i++) {
-        float zpos = i * 5.0f;
-        glBegin(GL_QUADS);
-            glVertex3f(-1.5f, 0.0f, zpos);
-            glVertex3f(6.5f, 0.0f, zpos);
-            glVertex3f(6.5f, 0.0f, zpos - 5.0f);
-            glVertex3f(-1.5f, 0.0f, zpos - 5.0f);
-        glEnd();
-    }
-    glEnable(GL_LIGHTING);
-
-    drawPlayer(&player);
-    drawObstacles();
-    drawCoins3D();
-    drawTrees();
-    drawBushes();
-
-    if(modoAtual == MODO_GAMEOVER) {
-        drawGameOverHUD();
-        glutSwapBuffers();
-        return;
-    }
-
-    drawDistance(distanciaPercorrida);
-    drawCoinsHUD(getCoinCount());
-
-    glutSwapBuffers();
-
-#pragma endregion
-}*/
-void renderScene() {
-    if(modoAtual == MODO_MENU) {
-        desenhaMenu();
-        return;
-    }
-
-    if(modoAtual == MODO_RANKING) {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-        glLoadIdentity();
-        gluOrtho2D(0, glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT), 0);
-
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glLoadIdentity();
-
-        glDisable(GL_LIGHTING);
-        glDisable(GL_DEPTH_TEST);
-
-        drawRankingTitle(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-        ranking_draw(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT));
-
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_LIGHTING);
-
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-        glMatrixMode(GL_MODELVIEW);
-
-        glutSwapBuffers();
-        return;
-    }
-
-#pragma region Render Game
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Definindo perspectiva
-    int w = glutGet(GLUT_WINDOW_WIDTH);
-    int h = glutGet(GLUT_WINDOW_HEIGHT);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluPerspective(60.0f, (float)w/(float)h, 0.1f, 200.0f);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glPushMatrix();
-    glLoadIdentity(); // fixa na origem para seguir a câmera
-
-    glDisable(GL_LIGHTING);
-    glDisable(GL_DEPTH_TEST);
-
-    glBegin(GL_QUADS);
-        glColor3f(0.5f, 0.8f, 1.0f);
-        glVertex3f(-1.0f, 1.7f, -1.0f);
-        glVertex3f(1.0f, 1.7f, -1.0f);
-        glColor3f(0.9f, 0.85f, 0.6f);
-        glVertex3f(1.0f, -1.0f, -1.0f);
-        glVertex3f(-1.0f, -1.0f, -1.0f);
-    glEnd();
-
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_LIGHTING);
-    glPopMatrix();
-
-    // Aplica a câmera
-    float camX = player.x;
-    float camY = 4.0f;
-    float camZ = player.z + 8.0f;
-    gluLookAt(camX, camY, camZ,
-              player.x, 1.0f, player.z - 8.0f,
-              0.0f, 1.0f, 0.0f);
-
-    glDisable(GL_LIGHTING);
-    glColor3f(0.5f, 0.8f, 1.0f);
-
-    glBegin(GL_QUADS);
-        glVertex3f(-160.0f, 20.0f, -180.0f);
-        glVertex3f(160.0f, 20.0f, -180.0f);
-        glVertex3f(160.0f, 130.0f, -180.0f);
-        glVertex3f(-160.0f, 130.0f, -180.0f);
-    glEnd();
-
-    glEnable(GL_LIGHTING);
-
-    //desenha fundo azul
-    glDisable(GL_LIGHTING);
-    glBegin(GL_QUADS);
-        glColor3f(0.5f, 0.8f, 1.0f); // azul claro
-        glVertex3f(-120.0f, 25.0f, -200.0f);
-        glVertex3f(120.0f, 25.0f, -300.0f);
-        glVertex3f(120.0f, 130.0f, -180.0f);
-        glVertex3f(-120.0f, 130.0f, -80.0f);
-    glEnd();
-
-    //Desenha faixa verde esquerda
-    glBegin(GL_QUADS);
-        glColor3f(0.15f, 0.7f, 0.21f); // verde claro
-        glVertex3f(-30.0f, 0.0f,  20.0f);
-        glVertex3f(-30.0f, 0.0f, -180.0f);
-        glVertex3f(-1.5f, 0.0f, -180.0f);
-        glVertex3f(-1.5f, 0.0f,  20.0f);
-    glEnd();
-
-    //Desenha faixa verde direita
-    glBegin(GL_QUADS);
-        glColor3f(0.15f, 0.7f, 0.21f);
-        glVertex3f(6.5f, 0.0f,  20.0f);
-        glVertex3f(6.5f, 0.0f, -180.0f);
-        glVertex3f(30.0f, 0.0f, -180.0f);
-        glVertex3f(30.0f, 0.0f,  20.0f);
-    glEnd();
-
-    glEnable(GL_LIGHTING);
-
-    // Desenha o chão e objetos
-    glDisable(GL_LIGHTING);
-    glColor3f(0.9f, 0.9f, 0.9f);
-    for(int i = -100; i < 100; i++) {
-        float zpos = i * 5.0f;
-        glBegin(GL_QUADS);
-            glVertex3f(-1.5f, 0.0f, zpos);
-            glVertex3f(6.5f, 0.0f, zpos);
-            glVertex3f(6.5f, 0.0f, zpos - 5.0f);
-            glVertex3f(-1.5f, 0.0f, zpos - 5.0f);
-        glEnd();
-    }
-    glEnable(GL_LIGHTING);
-
-    drawPlayer(&player);
-    drawObstacles();
-    drawCoins3D();
-    drawTrees();
-    drawBushes();
-
-    if(modoAtual == MODO_GAMEOVER) {
-        drawGameOverHUD();
-        glutSwapBuffers();
-        return;
-    }
-
-    drawDistance(distanciaPercorrida);
-    drawCoinsHUD(getCoinCount());
-
-    glutSwapBuffers();
-
 #pragma endregion
 }
 
@@ -605,38 +435,112 @@ void idleCB() {
 }
 
 void mouseCB(int button, int state, int x, int y) {
-    if(modoAtual == MODO_MENU) cliqueMenu(button, state, x, y);
+    if(modoAtual == MODO_MENU)
+        menu_motion(button, state, x, y);
 }
 
-void keyboardCB(unsigned char key, int x, int y) {
-    if(key == 'p') {
-        ranking_add(42.0f); // pontuação teste para salvar
-        ranking_save();
-        print_info("Ranking manual salvo pela tecla 'p'");
-        return;
-    }
+void mouseMove(int x, int y) {
+    if(modoAtual == MODO_MENU)
+        menu_motion(-1, -1, x, y);
+}
 
-    if(key == 27) { // ESC
-        if(modoAtual == MODO_RANKING) {
-            modoAtual = MODO_MENU;
+void keyboard_event(unsigned char key, int x, int y) {
+    #define KEY_ENTER 13
+    #define KEY_ESCAPE 27
+    switch (key)
+    {
+        case KEY_ENTER: {
+            if (modoAtual == MODO_MENU)
+                menu_select_focused();
+        } break;
+
+        case KEY_ESCAPE: {
+            switch (modoAtual) {
+                case MODO_MENU:
+                    exit(0);
+                    break;
+                case MODO_GAME_OVER:
+                    modoAtual = MODO_MENU;
+                    audio_bus_stop_music();
+                    audio_bus_play_music(MUSIC_MENU, true);
+                    break;
+                case MODO_RANKING:
+                    modoAtual = MODO_MENU;
+                    audio_bus_play_sfx(SFX_UI_CANCEL);
+                    break;
+                default:
+                    break;
+            }
+        } break;
+
+        case 'p': {
+            ranking_add(42.0f); // pontuação teste para salvar
+            ranking_save();
+            print_info("Ranking manual salvo pela tecla 'p'");
             return;
+        } break;
+
+         case 'g': case 'G': {
+            if (modoAtual == MODO_JOGO) {
+                float finalScore = calcularDistanciaTotal();
+                audio_bus_play_sfx(SFX_DAMAGE);
+                print_info("Game over! Score: %.2f", finalScore);
+                ranking_add(finalScore);
+                ranking_save();
+                modoAtual = MODO_GAME_OVER;
+                audio_bus_stop_music();
+                audio_bus_stop_all_channels();
+                audio_bus_play_music(MUSIC_GAME_OVER, false);
+                return;
+            }
+        } break;
+
+        // 'm' para mute/unmute
+        case 'm': case 'M':
+            audio_mute = !audio_mute;
+            if (audio_mute) {
+                audio_bus_stop_music();
+                audio_bus_stop_all_channels();
+            } else {
+                // opcional: retomar música
+                if (modoAtual == MODO_MENU)
+                    audio_bus_play_music(MUSIC_MENU, true);
+                else if (modoAtual == MODO_JOGO)
+                    audio_bus_play_music(MUSIC_GAME, true);
         }
-        exit(0);
+        print_info("Áudio %s", audio_mute ? "desativado" : "ativado");
+        break;
+
+
+        default:
+            break;
     }
 
-    if(modoAtual == MODO_GAMEOVER && (key == 'm' || key == 'M')) {
-        modoAtual = MODO_MENU;
-        return;
-    }
-
-    if(modoAtual != MODO_JOGO) return;
-
-    handlePlayerInput(&player, key);
+    if(modoAtual == MODO_JOGO)
+        handlePlayerInput(&player, key);
 }
 
 void specialCB(int key, int x, int y) {
-    if(modoAtual != MODO_JOGO) return;
-    handlePlayerSpecial(&player, key);
+    switch (modoAtual)
+    {
+        case MODO_MENU:
+            switch (key) {
+                case GLUT_KEY_UP:
+                    menu_focus_previous();
+                    break;
+                case GLUT_KEY_DOWN:
+                    menu_focus_next();
+                    break;
+                default: break;
+            } break;
+
+        case MODO_JOGO:
+            handlePlayerSpecial(&player, key);
+            break;
+
+        default:
+            break;
+    }
 }
 
 void reshape(int w, int h) {
@@ -649,9 +553,8 @@ void reshape(int w, int h) {
 }
 
 void initGL() {
-    // Define a cor de limpeza para um tom neutro claro, aproximado da areia
-    glClearColor(0.13f, 0.55f, 0.13f, 1.0f); // verde floresta
-
+    // Define a cor de fundo da tela 
+    glClearColor(0.04f, 0.02f, 0.1f, 1.0f); // azul escuro quase preto
 
     #pragma region Enable Culling and Depth Test
         glEnable(GL_DEPTH_TEST);
@@ -673,18 +576,58 @@ void initGL() {
 
     #pragma region Enable Lighting
         glEnable(GL_LIGHTING);
+
+        // Luz ambiente global da cena (luz ambiente que não vem das fontes)
+        //GLfloat global_ambient[] = {0.9f, 0.9f, 0.9f, 1.0f}; // muito forte, para ficar claro toda a cena
+        GLfloat global_ambient[] = {0.5f, 0.5f, 0.5f, 1.0f}; //mais fraca para poder dar destaque as luzes dos postes
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+
         glEnable(GL_LIGHT0);
 
-        GLfloat light_ambient[]  = { 0.2f, 0.2f, 0.2f, 1.0f };
-        GLfloat light_diffuse[]  = { 0.9f, 0.9f, 0.9f, 1.0f };
-        GLfloat light_specular[] = { 0.9f, 0.9f, 0.9f, 1.0f };
-        GLfloat light_position[] = { 5.0f, 10.0f, 5.0f, 1.0f };
-        glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
+       // GLfloat light_ambient[]   = { 0.04f, 0.04f, 0.06f, 1.0f };
+        GLfloat light_diffuse[]   = { 0.12f, 0.12f, 0.18f, 1.0f };
+        GLfloat light_specular[]  = { 0.02f, 0.02f, 0.03f, 1.0f };
+        GLfloat light_direction[] = { -0.8f, -0.7f, 0.4f, 0.0f };
+
+       // glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
         glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
         glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-        glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    #pragma endregion
+        glLightfv(GL_LIGHT0, GL_POSITION, light_direction);
 
+        glEnable(GL_LIGHT1);
+
+        GLfloat light1_ambient[] = {0.2f, 0.2f, 0.1f, 1.0f};
+        GLfloat light1_diffuse[] = {0.8f, 0.8f, 0.6f, 1.0f};
+        GLfloat light1_specular[] = {0.9f, 0.9f, 0.8f, 1.0f};
+
+        glLightfv(GL_LIGHT1, GL_AMBIENT, light1_ambient);
+        glLightfv(GL_LIGHT1, GL_DIFFUSE, light1_diffuse);
+        glLightfv(GL_LIGHT1, GL_SPECULAR, light1_specular);
+
+        glEnable(GL_LIGHT2);
+
+        GLfloat light2_ambient[]   = { 0.01f, 0.01f, 0.015f, 1.0f };
+        GLfloat light2_diffuse[]   = { 0.25f, 0.25f, 0.2f, 1.0f };
+        GLfloat light2_specular[]  = { 0.1f, 0.1f, 0.08f, 1.0f };
+
+        glLightfv(GL_LIGHT2, GL_AMBIENT,  light2_ambient);
+        glLightfv(GL_LIGHT2, GL_DIFFUSE,  light2_diffuse);
+        glLightfv(GL_LIGHT2, GL_SPECULAR, light2_specular);
+
+        glEnable(GL_LIGHT3);
+
+        GLfloat light3_ambient[]   = { 0.02f, 0.02f, 0.03f, 1.0f };
+        GLfloat light3_diffuse[]   = { 0.0f, 0.0f, 0.0f, 1.0f };
+        GLfloat light3_specular[]  = { 0.0f, 0.0f, 0.0f, 1.0f };
+        GLfloat light3_direction[] = { 0.0f, -1.0f, 0.0f, 0.0f };
+
+        glLightfv(GL_LIGHT3, GL_AMBIENT, light3_ambient);
+        glLightfv(GL_LIGHT3, GL_DIFFUSE, light3_diffuse);
+        glLightfv(GL_LIGHT3, GL_SPECULAR, light3_specular);
+        glLightfv(GL_LIGHT3, GL_POSITION, light3_direction);
+
+    #pragma endregion
+    
     #pragma region Material Setup
         GLfloat mat_specular[]  = { 0.3f, 0.3f, 0.3f, 1.0f };
         GLfloat mat_shininess[] = { 16.0f };
@@ -702,15 +645,21 @@ void initGL() {
     #pragma endregion
 }
 
+
 static void game_run() {
-    resetGame();
+    world_speed = 12.0f;
+    distanciaPercorrida = 0.0f;
+
+    initObstacles();
     init_floor();
     initCoinModel();
     initCoins();
     initTrees();
-    initBushes();
+    //initBushes();
     init_rock_model();
     init_logs_model();
+
+    audio_bus_play_music(MUSIC_MENU, true);
 }
 
 int main(int argc, char** argv) {
@@ -771,10 +720,11 @@ int main(int argc, char** argv) {
     #pragma region Event Bindings
         glutDisplayFunc(renderScene);
         glutIdleFunc(idleCB);
-        glutKeyboardFunc(keyboardCB);
+        glutKeyboardFunc(keyboard_event);
         glutSpecialFunc(specialCB);
         glutReshapeFunc(reshape);
         glutMouseFunc(mouseCB);
+        glutPassiveMotionFunc(mouseMove);
     #pragma endregion
 
     glutMainLoop();
@@ -784,7 +734,7 @@ int main(int argc, char** argv) {
         free_logs_model();
         free_coin_model();
         free_tree_model();
-        free_bush_model();
+       // free_bush_model();
         audio_bus_close();
         Mix_Quit();
         SDL_Quit();

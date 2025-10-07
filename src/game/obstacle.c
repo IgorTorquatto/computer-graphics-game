@@ -10,11 +10,9 @@
 #pragma endregion
 #include "obstacle.h"
 
-
 #define LANE_WIDTH 2.5f
 #define TARGET_HEIGHT_LOG 1.0f
 #define TARGET_HEIGHT_ROCK 1.0f
-
 
 #pragma region Locals
     static Obstacle obstacles[MAX_OBSTACLES];
@@ -59,13 +57,14 @@ void updateObstacles(float dt) {
         if (!obstacles[i].active) continue;
 
         obstacles[i].z += world_speed * dt;
-        if (obstacles[i].z > 10.0f) {
-            obstacles[i].active = 0;
-        }
     }
 }
 
 void drawObstacles() {
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
     for (int i = 0; i < MAX_OBSTACLES; i++) {
         if (!obstacles[i].active)
             continue;
@@ -86,13 +85,9 @@ void drawObstacles() {
 
         if (obstacles[i].type == OBST_SINGLE) {
             glScalef(escalaRock, escalaRock, escalaRock);
-            // usa a textura do material do modelo
-            //glColor3f(0.6f, 0.6f, 0.6f); // cinza
 
         } else {
             glScalef(escalaLog, escalaLog, escalaLog);
-            // usa a textura do material do modelo
-            //glColor3f(0.7f, 0.4f, 0.1f); // marrom
         }
 
         //glColor3f(0.8f, 0.7f, 0.5f);  // Cor básica opcional
@@ -101,6 +96,7 @@ void drawObstacles() {
 
         glPopMatrix();
     }
+    glDisable(GL_CULL_FACE);
 }
 
 void spawnObstacle() {

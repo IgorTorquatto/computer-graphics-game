@@ -11,22 +11,22 @@ typedef struct {
     float escala;
 } Tree;
 
-typedef struct {
+/*typedef struct {
     int active;
     float x, y, z;
     float escala;
-} Bush;
+} Bush;*/
 
 #define MAX_TREES 150
-#define MAX_BUSHES 250
+//#define MAX_BUSHES 250
 
 void initTrees();
 void updateTrees(float dt, float world_speed);
 void drawTrees();
 
-void initBushes();
-void updateBushes(float dt, float world_speed);
-void drawBushes();
+//void initBushes();
+//void updateBushes(float dt, float world_speed);
+//void drawBushes();
 
-void free_bush_model();
+//void free_bush_model();
 void free_tree_model();

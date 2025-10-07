@@ -24,7 +24,7 @@
     static Model treeModel;
     static Model bushModel;
     static Tree treesPool[MAX_TREES];
-    static Bush bushesPool[MAX_BUSHES];
+   // static Bush bushesPool[MAX_BUSHES];
 #pragma endregion
 
 
@@ -49,7 +49,7 @@ void initTrees() {
         print_error("Falha ao carregar modelo " MODEL_PATH_TREE "!");
 }
 
-void initBushes() {
+/*void initBushes() {
     for(int i=0; i<MAX_BUSHES; i++)
         bushesPool[i].active = 0;
 
@@ -59,7 +59,7 @@ void initBushes() {
     }
     else
         print_error("Falha ao carregar modelo " MODEL_PATH_BUSH "!");
-}
+}*/
 
 void updateTrees(float dt, float world_speed) {
     static float spawnTimer = 0.0f;
@@ -76,7 +76,7 @@ void updateTrees(float dt, float world_speed) {
                 treesPool[i].escala = 2.5f + ((float)(rand() % 100) / 100.0f) * 2.0f;
 
                 // Spawn bush ao lado da árvore
-                for(int j=0; j<MAX_BUSHES; j++) {
+                /*for(int j=0; j<MAX_BUSHES; j++) {
                     if(!bushesPool[j].active) {
                         bushesPool[j].active = 1;
                         // Coloca o bush ao lado da árvore (deslocamento lateral)
@@ -87,7 +87,7 @@ void updateTrees(float dt, float world_speed) {
                         bushesPool[j].escala = 1.0f + ((float)(rand() % 100) / 100.0f) * 0.7f;
                         break;
                     }
-                }
+                }*/
                 break;
             }
         }
@@ -103,7 +103,8 @@ void updateTrees(float dt, float world_speed) {
     }
 }
 
-void updateBushes(float dt, float world_speed) {
+
+/*void updateBushes(float dt, float world_speed) {
     for(int i = 0; i < MAX_BUSHES; i++) {
         if(bushesPool[i].active) {
             bushesPool[i].z += world_speed * dt;
@@ -112,9 +113,13 @@ void updateBushes(float dt, float world_speed) {
             }
         }
     }
-}
+}*/
 
 void drawTrees() {
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
     glColor3f(0.0f, 0.6f, 0.0f); // cor de tree
     for(int i = 0; i < MAX_TREES; i++) {
         if(!treesPool[i].active)
@@ -128,9 +133,10 @@ void drawTrees() {
         draw_model(&treeModel);
         glPopMatrix();
     }
+    glDisable(GL_CULL_FACE);
 }
 
-void drawBushes() {
+/*void drawBushes() {
     glColor3f(0.2f, 0.7f, 0.2f); // cor de bush
     for(int i = 0; i < MAX_BUSHES; i++) {
         if(!bushesPool[i].active)
@@ -144,7 +150,7 @@ void drawBushes() {
         draw_model(&bushModel);
         glPopMatrix();
     }
-}
+}*/
 
 void free_tree_model()
 {
@@ -152,8 +158,8 @@ void free_tree_model()
     model_not_loaded |= TREE;
 }
 
-void free_bush_model()
+/*void free_bush_model()
 {
     free_model(&bushModel);
     model_not_loaded |= BUSH;
-}
+}*/

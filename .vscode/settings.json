@@ -7,7 +7,8 @@
         "basics.h": "c",
         "music_bus.h": "c",
         "sdl.h": "c",
-        "sdl_mixer.h": "c"
+        "sdl_mixer.h": "c",
+        "player.h": "c"
     },
     "cmake.ignoreCMakeListsMissing": true
 }
