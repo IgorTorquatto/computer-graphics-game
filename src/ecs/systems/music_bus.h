@@ -35,6 +35,9 @@ void audio_bus_init();
 void audio_bus_play_music(MusicTrack, bool once);
 void audio_bus_stop_music();
 
+void audio_bus_unpause_music();
+void audio_bus_pause_music();
+
 void audio_bus_play_sfx(SfxTrack);
 void audio_bus_play_channel(SfxTrack track, int channel);
 void audio_bus_stop_channel(int channel);

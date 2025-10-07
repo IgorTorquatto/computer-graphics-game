@@ -87,6 +87,17 @@ void audio_bus_stop_music()
 }
 
 
+void audio_bus_pause_music()
+{
+    Mix_PauseMusic();
+}
+
+void audio_bus_unpause_music()
+{
+    Mix_ResumeMusic();
+}
+
+
 /*void audio_bus_play_sfx(SfxTrack track)
 {
     if (!effects[track]) {

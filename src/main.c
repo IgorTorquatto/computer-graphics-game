@@ -456,6 +456,17 @@ void keyboard_event(unsigned char key, int x, int y) {
 
         case KEY_ESCAPE: {
             switch (modoAtual) {
+                case MODO_JOGO: {
+                    modoAtual = MODO_PAUSE;
+                    print_info("Jogo pausado");
+                    audio_bus_pause_music();
+                    //audio_bus_stop_all_channels();
+                } break;
+                case MODO_PAUSE: {
+                    modoAtual = MODO_JOGO;
+                    print_info("Jogo despausado");
+                    audio_bus_unpause_music();
+                } break;
                 case MODO_MENU:
                     exit(0);
                     break;
