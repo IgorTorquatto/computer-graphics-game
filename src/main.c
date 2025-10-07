@@ -89,10 +89,10 @@ void drawPoste() {
     glEnable(GL_NORMALIZE);
 
     // ----- LUZ 1 (poste esquerdo) -----
-    GLfloat light1_pos[] = { p.x, p.altura + 0.2f, p.z, 1.0f }; // w=1 => posicional
-    GLfloat light1_diffuse[]  = { 1.0f, 0.95f, 0.7f, 1.0f };
-    GLfloat light1_ambient[]  = { 0.05f, 0.045f, 0.035f, 1.0f };
-    GLfloat light1_specular[] = { 0.8f, 0.8f, 0.7f, 1.0f };
+    GLfloat light1_pos[] = { p.x, p.altura + 0.2f, p.z, 1.0f };
+    GLfloat light1_diffuse[]  = { 1.0f, 0.1f, 0.1f, 1.0f };
+    GLfloat light1_ambient[]  = { 0.7f, 0.0f, 0.0f, 1.0f };
+    GLfloat light1_specular[] = { 1.0f, 0.6f, 0.6f, 1.0f };
 
     glEnable(GL_LIGHT1);
     glLightfv(GL_LIGHT1, GL_POSITION, light1_pos);
@@ -105,9 +105,9 @@ void drawPoste() {
 
     // ----- LUZ 2 (poste direito) -----
     GLfloat light2_pos[] = { q.x, q.altura + 0.2f, q.z, 1.0f };
-    GLfloat light2_diffuse[]  = { 1.0f, 0.95f, 0.7f, 1.0f };
-    GLfloat light2_ambient[]  = { 0.05f, 0.045f, 0.035f, 1.0f };
-    GLfloat light2_specular[] = { 0.8f, 0.8f, 0.7f, 1.0f };
+    GLfloat light2_diffuse[]  = { 1.0f, 0.1f, 0.1f, 1.0f };
+    GLfloat light2_ambient[]  = { 0.7f, 0.0f, 0.0f, 1.0f };
+    GLfloat light2_specular[] = { 1.0f, 0.6f, 0.5f, 1.0f };
 
     glEnable(GL_LIGHT2);
     glLightfv(GL_LIGHT2, GL_POSITION, light2_pos);
@@ -119,7 +119,7 @@ void drawPoste() {
     glLightf(GL_LIGHT2, GL_QUADRATIC_ATTENUATION, 0.01f);
 
     // ----- DESENHA OS POSTES -----
-    glColor3f(0.15f, 0.15f, 0.15f); // cor cinza escuro
+    glColor3f(0.15f, 0.15f, 0.15f);
 
     glPushMatrix();
         glTranslatef(p.x, p.altura / 2, p.z);
@@ -136,14 +136,14 @@ void drawPoste() {
     glDisable(GL_CULL_FACE);
 
     // ----- TOPO BRILHANTE (esferas) -----
-    GLfloat emissive[] = { 1.0f, 0.9f, 0.6f, 1.0f }; // brilho amarelo
+    GLfloat emissive[] = { 0.8f, 0.2f, 0.2f, 1.0f }; // brilho vermelho
     GLfloat no_emissive[] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     glPushAttrib(GL_LIGHTING_BIT | GL_CURRENT_BIT);
     glMaterialfv(GL_FRONT_AND_BACK, GL_EMISSION, emissive);
-    glDisable(GL_LIGHTING); // garante que a esfera apareça brilhante
+    glDisable(GL_LIGHTING);
 
-    glColor3f(1.0f, 1.0f, 0.5f);
+    glColor3f(1.0f, 0.0f, 0.0f);
     glPushMatrix();
         glTranslatef(p.x, p.altura + 0.3f, p.z);
         glutSolidSphere(0.25f, 16, 16);
@@ -160,6 +160,7 @@ void drawPoste() {
 
     glDisable(GL_COLOR_MATERIAL);
 }
+
 
 
 float calcularDistanciaTotal() {
@@ -553,7 +554,7 @@ void reshape(int w, int h) {
 
 void initGL() {
     // Define a cor de fundo da tela 
-    glClearColor(0.04f, 0.02f, 0.1f, 1.0f); //azul escuro quase preto
+    glClearColor(0.04f, 0.02f, 0.1f, 1.0f); // azul escuro quase preto
 
     #pragma region Enable Culling and Depth Test
         glEnable(GL_DEPTH_TEST);
@@ -576,14 +577,19 @@ void initGL() {
     #pragma region Enable Lighting
         glEnable(GL_LIGHTING);
 
+        // Luz ambiente global da cena (luz ambiente que não vem das fontes)
+        //GLfloat global_ambient[] = {0.9f, 0.9f, 0.9f, 1.0f}; // muito forte, para ficar claro toda a cena
+        GLfloat global_ambient[] = {0.5f, 0.5f, 0.5f, 1.0f}; //mais fraca para poder dar destaque as luzes dos postes
+        glLightModelfv(GL_LIGHT_MODEL_AMBIENT, global_ambient);
+
         glEnable(GL_LIGHT0);
 
-        GLfloat light_ambient[]   = { 0.04f, 0.04f, 0.06f, 1.0f };
+       // GLfloat light_ambient[]   = { 0.04f, 0.04f, 0.06f, 1.0f };
         GLfloat light_diffuse[]   = { 0.12f, 0.12f, 0.18f, 1.0f };
         GLfloat light_specular[]  = { 0.02f, 0.02f, 0.03f, 1.0f };
         GLfloat light_direction[] = { -0.8f, -0.7f, 0.4f, 0.0f };
 
-        glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
+       // glLightfv(GL_LIGHT0, GL_AMBIENT,  light_ambient);
         glLightfv(GL_LIGHT0, GL_DIFFUSE,  light_diffuse);
         glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
         glLightfv(GL_LIGHT0, GL_POSITION, light_direction);
@@ -620,7 +626,6 @@ void initGL() {
         glLightfv(GL_LIGHT3, GL_SPECULAR, light3_specular);
         glLightfv(GL_LIGHT3, GL_POSITION, light3_direction);
 
-
     #pragma endregion
     
     #pragma region Material Setup
@@ -639,6 +644,7 @@ void initGL() {
         glEnable(GL_NORMALIZE);
     #pragma endregion
 }
+
 
 static void game_run() {
     world_speed = 12.0f;
