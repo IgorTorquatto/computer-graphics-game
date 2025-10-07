@@ -84,7 +84,7 @@ void desenhaMenu() {
     glLoadIdentity();
 
     // Título simples
-    glColor3f(0.01f, .1f, 0.05f);
+    glColor3f(1.0f, 1.0f, 1.0f); // branco
     const char* title = "CORRA DO BICHO DO MATO!";
     float titleX = (ww - (int)strlen(title) * 10) * 0.5f;
     glRasterPos2f(titleX - 10, wh - 80);

@@ -173,6 +173,10 @@ void handlePlayerSpecial(Player *p, int key) {
 }
 
 void drawPlayer(const Player *p) {
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
     glEnable(GL_COLOR_MATERIAL);
     glEnable(GL_NORMALIZE);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -282,5 +286,6 @@ void drawPlayer(const Player *p) {
             glPopMatrix();
         }
     }
+    glDisable(GL_CULL_FACE);
     glDisable(GL_COLOR_MATERIAL);
 }
