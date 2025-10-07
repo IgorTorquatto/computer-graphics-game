@@ -10,17 +10,9 @@
 #pragma endregion
 #include "obstacle.h"
 
-
 #define LANE_WIDTH 2.5f
 #define TARGET_HEIGHT_LOG 1.0f
 #define TARGET_HEIGHT_ROCK 1.0f
-
-/*#define Z_CULLING_MIN -100.0f  // Limite mínimo em z para desenhar (mais longe)
-#define Z_CULLING_MAX 10.0f    // Limite máximo em z para desenhar (próximo da câmera)
-#define X_CULLING_MIN -5.0f
-#define X_CULLING_MAX 7.5f*/
-
-
 
 #pragma region Locals
     static Obstacle obstacles[MAX_OBSTACLES];
@@ -65,25 +57,19 @@ void updateObstacles(float dt) {
         if (!obstacles[i].active) continue;
 
         obstacles[i].z += world_speed * dt;
-       /* if (obstacles[i].z > Z_CULLING_MAX) {
-            obstacles[i].active = 0;
-        }*/
     }
 }
 
 void drawObstacles() {
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
     for (int i = 0; i < MAX_OBSTACLES; i++) {
         if (!obstacles[i].active)
             continue;
         if (obstacles[i].model == NULL)
             continue;
-
-        // Culling baseado na posição Z (ajustar X/Y se desejar)
-        /*if (obstacles[i].z < Z_CULLING_MIN || obstacles[i].z > Z_CULLING_MAX)
-            continue;
-        
-        if (obstacles[i].x < X_CULLING_MIN || obstacles[i].x > X_CULLING_MAX)
-            continue;*/
 
         if (obstacles[i].type == OBST_SINGLE && model_not_loaded & ROCK)
             continue;
@@ -110,6 +96,7 @@ void drawObstacles() {
 
         glPopMatrix();
     }
+    glDisable(GL_CULL_FACE);
 }
 
 void spawnObstacle() {

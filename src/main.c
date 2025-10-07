@@ -78,52 +78,11 @@ void updatePoste(float dt,float world_speed){
 
 }
 
-/*void drawPoste(){
-    glEnable(GL_COLOR_MATERIAL);
-    glEnable(GL_NORMALIZE);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
-    GLfloat light_position[] = { p.x, p.altura, p.z, 1.0f }; // Topo do poste
-    GLfloat light_diffuse[] = { 1.0f, 1.0f, 0.8f, 1.0f };   // Luz amarela suave
-    GLfloat light_ambient[] = { 0.3f, 0.3f, 0.2f, 1.0f };   // Ambiente amarelado
-    GLfloat light_specular[] = { 1.0f, 1.0f, 0.9f, 1.0f };  // Especular suave
-
-    glEnable(GL_LIGHT1);
-    glLightfv(GL_LIGHT1, GL_POSITION, light_position);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, light_diffuse);
-    glLightfv(GL_LIGHT1, GL_AMBIENT, light_ambient);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, light_specular);
-
-
-    glColor3f(0.0f,0.0f,0.0f);
-    glPushMatrix();
-    glTranslatef(p.x,p.altura/2,p.z);
-    glScalef(0.5f,p.altura,0.5f);
-    glutSolidCube(1.0f);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(q.x,q.altura/2,q.z);
-    glScalef(0.5f,q.altura,0.5f);
-    glutSolidCube(1.0f);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(p.x, p.altura + 0.3f, p.z);
-    glColor3f(1.0f, 1.0f, 0.5f); // Amarelo brilhante
-    glutSolidSphere(0.3f, 10, 10);
-    glPopMatrix();
-
-    glPushMatrix();
-    glTranslatef(q.x, q.altura + 0.3f, q.z);
-    glColor3f(1.0f, 1.0f, 0.5f); // Amarelo brilhante
-    glutSolidSphere(0.3f, 10, 10);
-    glPopMatrix();
-    
-    glDisable(GL_COLOR_MATERIAL);
-}*/
-
 void drawPoste() {
+
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+
     // Habilita uso de materiais baseados em cor
     glEnable(GL_COLOR_MATERIAL);
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -173,6 +132,8 @@ void drawPoste() {
         glScalef(0.4f, q.altura, 0.4f);
         glutSolidCube(1.0f);
     glPopMatrix();
+
+    glDisable(GL_CULL_FACE);
 
     // ----- TOPO BRILHANTE (esferas) -----
     GLfloat emissive[] = { 1.0f, 0.9f, 0.6f, 1.0f }; // brilho amarelo
@@ -257,7 +218,7 @@ void drawGameOverHUD() {
     glDisable(GL_LIGHTING);
     glDisable(GL_DEPTH_TEST);
 
-    glColor3f(1.0f, 1.0f, 1.0f);
+    /*glColor3f(1.0f, 1.0f, 1.0f);
 
     int rectWidth = w / 2;
     int rectHeight = 150;
@@ -271,7 +232,7 @@ void drawGameOverHUD() {
         glVertex2i(rectX, rectY + rectHeight);
     glEnd();
 
-    glFlush();
+    glFlush();*/
 
     float distanciaFinal = calcularDistanciaTotal();
     char buffer[128];
