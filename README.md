@@ -27,8 +27,8 @@ linguagem C, integrando elementos visuais, animação e interatividade em suas i
     > a) Desenvolva algum jogo interativo de sua escolha (não é necessário que seja conhecido. [Exemplo](https://www.youtube.com/watch?v=y2PS-YD625k). O jogo 
     deve incluir, no mínimo, os seguintes requisitos:
     > - [x] Carregamento de objetos 3D com cores distintas.
-    > - [ ] Adicione as iluminações na cena:
-    >   - [ ] Ambiente (para a cena);
+    > - [x] Adicione as iluminações na cena:
+    >   - [x] Ambiente (para a cena);
     >   - [x] Especular;
     >   - [x] Difusa.
     > - [x] Uso de câmera para navegação ou visualização da cena. 
@@ -38,7 +38,7 @@ linguagem C, integrando elementos visuais, animação e interatividade em suas i
     > b) Pontos extras (cada item vale 0,5 ponto extra):
     > - [x] Importação de um objeto.
     > - [x] Adição de texturas nos objetos. 
-    > - [ ] Implementação da projeção da sombra dos objetos. 
+    > - [x] Implementação da projeção da sombra dos objetos. 
 2. Demonstração do jogo. 
     - [ ] Durante a apresentação, cada grupo deve demonstrar o funcionamento do 
     jogo e explicar as técnicas de computação gráfica aplicadas. 
