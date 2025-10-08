@@ -3,7 +3,7 @@
 ## Design/ Arquitetura
 - [x] Esboço/ base do sistema ECS [@GersonFeDutra](https://github.com/GersonFeDutra)
 - [x] Esboço dos sistemas de jogo [@IgorTorquatto](https://github.com/IgorTorquatto)
-- [ ] Cenário [@AndreCastr0](https://github.com/AndreCastr0)
+- [x] Cenário [@AndreCastr0](https://github.com/AndreCastr0)
 
 ### Sistemas de jogo
 
@@ -19,37 +19,42 @@
 ## Construção da cena
 
 ### Geometria
-- [ ] Carregamento de objetos 3D com cores distintas
-  - [x] Personagem [@IgorTorquatto](https://github.com/IgorTorquatto)
-    - [x] Cubo
+- [x] Carregamento de objetos 3D com cores distintas
+  - [x] Personagem [@marclobo01](https://github.com/marclobo01)
+    - [x] Modelo cubóide
     - [x] Cores
-  - [ ] Inimigos / Obstáculos
+  - [x] Inimigos / Obstáculos
     - [x] Pedras
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Iluminação [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Sombreamento Helmano
       - [x] Materiais [@GersonFeDutra](https://github.com/GersonFeDutra)
       - [x] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
-  - [ ] Coletáveis
+  - [x] Coletáveis
     - [x] Moedas [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Iluminação [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Sombreamento Helmano
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
       - [x] Materiais + Cores [@GersonFeDutra](https://github.com/GersonFeDutra)
-  - [ ] Cenário
+  - [x] Cenário
     - [x] Piso
       - [x] Modelo Plano - Quad [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Iluminação [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Sombreamento Helmano
       - [x] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
-    - [ ] Árvores
+    - [x] Árvores
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Iluminação [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Sombreamento Helmano
       - [x] Materiais [@GersonFeDutra](https://github.com/GersonFeDutra)
       - [x] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
-    - [ ] Pilha de madeira
+    - [x] Pilha de madeira
       - [x] Modelo [@IgorTorquatto](https://github.com/IgorTorquatto)
-      - [ ] Iluminação / sombreamento [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Iluminação [@AndreCastr0](https://github.com/AndreCastr0)
+      - [x] Sombreamento Helmano
       - [x] Materiais [@GersonFeDutra](https://github.com/GersonFeDutra)
       - [x] Textura [@GersonFeDutra](https://github.com/GersonFeDutra)
-    - [ ] Ambiente [@AndreCastr0](https://github.com/AndreCastr0)
+    - [x] Ambiente [@marclobo01](https://github.com/marclobo01)
 - [x] Ative a remoção de superfícies ocultas. [@IgorTorquatto](https://github.com/IgorTorquatto)
 - [x] Anti-aliasing (MSAA) [@GersonFeDutra](https://github.com/GersonFeDutra)
 
@@ -60,13 +65,13 @@
 
 ### Iluminação
 
-- [ ] Adicione as iluminações na cena:
-  - [ ] Ambiente (para a cena);
+- [x] Adicione as iluminações na cena:
+  - [x] Ambiente (para a cena);
   - [x] Especular;
   - [x] Difusa.
 
 > Extras
-> - [ ] Implementação da projeção da sombra dos objetos.
+> - [x] Implementação da projeção da sombra dos objetos.
 
 ### Camera
 
@@ -76,10 +81,10 @@
 ### Animações
 
 > Extras
-> - [ ] Movimento (interativo) do personagem
+> - [x] Movimento (interativo) do personagem
 >   - [x] Entrada [@IgorTorquatto](https://github.com/IgorTorquatto)
 >   - [x] Interpolação [@GersonFeDutra](https://github.com/GersonFeDutra).
->   - [ ] Animação
+>   - [x] Animação
 > - [x] Movimento dos objetos da cena [@IgorTorquatto](https://github.com/IgorTorquatto)
 >     - [x] Inimigos
 >     - [x] Coletáveis (ex.: moedas)
@@ -96,7 +101,7 @@
 - [x] Contador de coletáveis (ex.: número de moedas coletadas, número de mortes)
 
 > Extras
-> - [ ] Pausar jogo
+> - [x] Pausar jogo [Helmano]
 
 ## Funcionalidades extras
 
@@ -104,6 +109,7 @@
   - [x] Importar biblioteca [STL2]
   - [x] Música
   - [x] Efeitos sonoros
-- [ ] Menu de áudio
+- [ ] Menu de opções
+  - [ ] Controle de áudio
 
 <!-- - [x] Contador de fps / debug [@GersonFeDutra](https://github.com/GersonFeDutra). -->
